@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         microtbx.h
-* \brief        MicroTBX global header file.
+* \file         tbxassert.c
+* \brief        Run-time assertions source file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,39 +30,54 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef MICROTBX_H
-#define MICROTBX_H
 
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
-#include <stdint.h>                         /* for standard integer types              */
-#include <stddef.h>                         /* for standard definitions                */
-#include "tbxassert.h"                      /* run-time assertions                     */
+#include "microtbx.h"                            /* MicroTBX global header             */
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-/****************************************************************************************
-* Macro definitions
+#ifndef NDEBUG
+/************************************************************************************//**
+** \brief     Sets the application specific assertion handler.
+**
 ****************************************************************************************/
-/** \brief Boolean true value. */
-#define TBX_TRUE       (1u)
-
-/** \brief Boolean false value. */
-#define TBX_FALSE      (0u)
-
-/** \brief Macro to flag a function parameter as unused, which allows the associated
- *         lint message and/or compiler warning to be suppressed.
- */
-/*lint !e9026 */
-#define TBX_UNUSED_ARG(x) (void)x
+void TbxAssertSetHandler(void)
+{
+  /* TODO Implement TbxAssertSetHandler(). It needs a param with the actual handler. */
+} /*** end of TbxAssertSetHandler ***/
 
 
-#ifdef __cplusplus
-}
-#endif
+/************************************************************************************//**
+** \brief     Triggers the run-time assertion. The default implementation is to enter an
+**            infinite loop, which halts the program and can be used for debugging 
+**            purposes. Inspecting the values of the file and line parameters gives a 
+**            clear indication where the run-time assertion occured. Note that an
+**            alternative application specific assertion handler can be configured with
+**            function TbxAssertSetHandler().
+** \param     file The filename of the source file where the assertion occurred in.
+** \param     line The line number inside the file where the assertion occorred.
+**
+****************************************************************************************/
+void TbxAssertTrigger(const char * const file, uint32_t line)
+{
+  TBX_UNUSED_ARG(file);
+  TBX_UNUSED_ARG(line);
 
-#endif /* MICROTBX_H */
-/*********************************** end of microtbx.h *********************************/
+  /* TODO Implement feature that allows the default asserting handling to be overridden
+   * with a application specific one that was set with TbxAssertSetHandler().
+   */
+
+  /* The default implementation is to enter an infinite loop, which halts the program
+   * and can be used for debugging purposes. Inspecting the values of the file and line
+   * parameters gives a clear indication where the run-time assertion occured.
+   */
+  while (1)
+  {
+    ;
+  }
+} /*** end of TbxAssertTrigger ***/
+#endif /* NDEBUG */
+
+
+/*********************************** end of tbxassert.c ********************************/

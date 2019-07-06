@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         microtbx.h
-* \brief        MicroTBX global header file.
+* \file         tbxassert.h
+* \brief        Run-time assertions header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,15 +30,8 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef MICROTBX_H
-#define MICROTBX_H
-
-/****************************************************************************************
-* Include files
-****************************************************************************************/
-#include <stdint.h>                         /* for standard integer types              */
-#include <stddef.h>                         /* for standard definitions                */
-#include "tbxassert.h"                      /* run-time assertions                     */
+#ifndef TBXASSERT_H
+#define TBXASSERT_H
 
 
 #ifdef __cplusplus
@@ -47,22 +40,27 @@ extern "C" {
 /****************************************************************************************
 * Macro definitions
 ****************************************************************************************/
-/** \brief Boolean true value. */
-#define TBX_TRUE       (1u)
+#ifdef NDEBUG
+/** \brief Dummy macro for when assertions are disabled. */
+#define TBX_ASSERT(cond) { ; }
+#else
+/** \brief Macro for run-time assertions. */
+#define TBX_ASSERT(cond) { if(!(cond)) { TbxAssertTrigger(__FILE__, __LINE__); } }
+#endif /* NDEBUG */
 
-/** \brief Boolean false value. */
-#define TBX_FALSE      (0u)
 
-/** \brief Macro to flag a function parameter as unused, which allows the associated
- *         lint message and/or compiler warning to be suppressed.
- */
-/*lint !e9026 */
-#define TBX_UNUSED_ARG(x) (void)x
+/****************************************************************************************
+* Function prototypes
+****************************************************************************************/
+#ifndef NDEBUG
+void TbxAssertSetHandler(void);
+void TbxAssertTrigger(const char * const file, uint32_t line);
+#endif /* NDEBUG */
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* MICROTBX_H */
-/*********************************** end of microtbx.h *********************************/
+#endif /* TBXASSERT_H */
+/*********************************** end of tbxassert.h ********************************/
