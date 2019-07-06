@@ -5,7 +5,7 @@
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2019  by Feaser    http://www.feaser.com    All rights reserved
+*   Copyright (c) 2019 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -82,7 +82,7 @@ void TbxAssertTrigger(const char * const file, uint32_t line)
   /* Use the default internal assertion handler which simple enters an infinit loop. */
   else
   {
-    while (1)
+    for (;;)
     {
       ;
     }

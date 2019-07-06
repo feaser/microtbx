@@ -4,5 +4,6 @@ repo_url: https://github.com/feaser/microtbx
 theme: readthedocs
 nav:
   - Home: 'index.md'
-  - Random Number Generator: 'randomnumber.md'
+  - MISRA Compliance: 'misra.md'  
+  - Assertions: 'assertions.md'
 

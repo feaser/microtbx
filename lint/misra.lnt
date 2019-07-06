@@ -1,0 +1,11 @@
+// Note that when adding a MISRA exception here, make sure to describe and justify it in
+// ../docs/misra.md.
+
+// allow function-like macros (4.9)
+-e9026
+
+// allow conversion between a pointer and integer type (11.4) 
+-e9078
+
+// allow conversion from pointer to void to pointer to other type (11.5)
+-e9079
