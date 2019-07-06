@@ -1,0 +1,8 @@
+site_name: MicroTBX User Manual
+site_description: User Manual for MicroTBX, the Swiss army knife for your firmware.
+repo_url: https://github.com/feaser/microtbx
+theme: readthedocs
+nav:
+  - Home: 'index.md'
+  - Random Number Generator: 'randomnumber.md'
+
