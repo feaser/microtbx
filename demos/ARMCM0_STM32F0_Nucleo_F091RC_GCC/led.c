@@ -35,7 +35,6 @@
 * Include files
 ****************************************************************************************/
 #include <stdint.h>                              /* for standard integer types         */
-#include <stdbool.h>                             /* for standard boolean types         */
 #include "led.h"                                 /* LED driver                         */
 #include "stm32f0xx.h"                           /* STM32 CPU and HAL header           */
 
@@ -43,8 +42,8 @@
 /****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
-/** \brief Current state of the LED. Boolean true for ON, boolean false for off. */
-static bool ledState;
+/** \brief Current state of the LED. > 0 for ON, 0 for off. */
+static uint8_t ledState;
 
 
 /************************************************************************************//**
@@ -57,7 +56,7 @@ void LedInit(void)
   GPIO_InitTypeDef GPIO_InitStruct;
 
   /* Initialize locals. */
-  ledState = false;
+  ledState = 0;
 
   /* GPIO ports clock enable. */
   __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -79,19 +78,19 @@ void LedInit(void)
 ** \return    none.
 **
 ****************************************************************************************/
-void LedSet(bool on)
+void LedSet(uint8_t on)
 {
-  if (on == true)
+  if (on > 0)
   {
     /* turn the LED on */
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-    ledState = true;
+    ledState = 1;
   }
   else
   {
     /* turn the LED off */
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-    ledState = false;
+    ledState = 0;
   }
 } /*** end of LedSet ***/
 
@@ -101,7 +100,7 @@ void LedSet(bool on)
 ** \return    Boolean true if the LED is on, boolean false if off.
 **
 ****************************************************************************************/
-bool LedGet(void)
+uint8_t LedGet(void)
 {
   return ledState;
 } /*** end of LedGet ***/

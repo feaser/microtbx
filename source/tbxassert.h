@@ -33,29 +33,28 @@
 #ifndef TBXASSERT_H
 #define TBXASSERT_H
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
 * Macro definitions
 ****************************************************************************************/
-#ifdef NDEBUG
-/** \brief Dummy macro for when assertions are disabled. */
-#define TBX_ASSERT(cond) { ; }
-#else
+#if (TBX_ASSERTIONS_ENABLE > 0u)
 /** \brief Macro for run-time assertions. */
 #define TBX_ASSERT(cond) { if(!(cond)) { TbxAssertTrigger(__FILE__, __LINE__); } }
-#endif /* NDEBUG */
+#else
+/** \brief Dummy macro for when assertions are disabled. */
+#define TBX_ASSERT(cond) { ; }
+#endif /* (TBX_ASSERTIONS_ENABLE > 0u) */
 
 
+#if (TBX_ASSERTIONS_ENABLE > 0u)
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-#ifndef NDEBUG
 void TbxAssertSetHandler(void);
 void TbxAssertTrigger(const char * const file, uint32_t line);
-#endif /* NDEBUG */
+#endif /* (TBX_ASSERTIONS_ENABLE > 0u) */
 
 
 #ifdef __cplusplus

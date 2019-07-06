@@ -36,8 +36,19 @@
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
+/* Note that it is possible to override the standard tbx_conf.h configuration header
+ * file with a project specific one that is defined in the IDE/makefile. For example,
+ * the following define could be configured: PROJ_TBX_CONF_H="my_tbx_config.h". This can
+ * be handy if you use MicroTBX in several projects with a different configuration,
+ * and enables you to have just one MicroTBX source base.
+ */
 #include <stdint.h>                         /* for standard integer types              */
 #include <stddef.h>                         /* for standard definitions                */
+#ifdef PROJ_TBX_CONF_H
+#include PROJ_TBX_CONF_H                    /* custom MicroTBX configuration file      */
+#else
+#include "tbx_conf.h"                       /* standard MicroTBX configuration file    */
+#endif /* PROJ_TBX_CONF_H */
 #include "tbxassert.h"                      /* run-time assertions                     */
 
 

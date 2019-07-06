@@ -37,7 +37,7 @@
 #include "microtbx.h"                            /* MicroTBX global header             */
 
 
-#ifndef NDEBUG
+#if (TBX_ASSERTIONS_ENABLE > 0u)
 /************************************************************************************//**
 ** \brief     Sets the application specific assertion handler.
 **
@@ -77,7 +77,7 @@ void TbxAssertTrigger(const char * const file, uint32_t line)
     ;
   }
 } /*** end of TbxAssertTrigger ***/
-#endif /* NDEBUG */
+#endif /* (TBX_ASSERTIONS_ENABLE > 0u) */
 
 
 /*********************************** end of tbxassert.c ********************************/

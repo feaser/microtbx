@@ -34,8 +34,7 @@
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
-#include <stdint.h>                              /* for standard integer types         */
-#include <stdbool.h>                             /* for standard boolean types         */
+#include "microtbx.h"                            /* MicroTBX library                   */
 #include "timer.h"                               /* timer driver                       */
 #include "led.h"                                 /* LED driver                         */
 #include "stm32f0xx.h"                           /* STM32 CPU and HAL header           */

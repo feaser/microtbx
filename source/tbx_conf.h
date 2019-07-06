@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         demos/ARMCM0_STM32F0_Nucleo_F091RC_GCC/led.h
-* \brief        LED driver header file.
+* \file         tbx_conf.h
+* \brief        MicroTBX configuration header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,16 +30,22 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef LED_H
-#define LED_H
+#ifndef TBX_CONF_H
+#define TBX_CONF_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /****************************************************************************************
-* Function prototypes
+*   A S S E R T I O N S   M O D U L E   C O N F I G U R A T I O N
 ****************************************************************************************/
-void    LedInit(void);
-void    LedSet(uint8_t on);
-uint8_t LedGet(void);
-void    LedToggle(void);
+/** \brief Enable/disable run-time assertons. */
+#define TBX_ASSERTIONS_ENABLE                    (1u)
 
-#endif /* LED_H */
-/*********************************** end of led.h **************************************/
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* TBX_CONF_H */
+/*********************************** end of tbx_conf.h *********************************/
