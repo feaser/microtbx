@@ -39,7 +39,7 @@ extern "C" {
 /****************************************************************************************
 *   A S S E R T I O N S   M O D U L E   C O N F I G U R A T I O N
 ****************************************************************************************/
-/** \brief Enable/disable run-time assertons. */
+/** \brief Enable/disable run-time assertions. */
 #define TBX_ASSERTIONS_ENABLE                    (1u)
 
 

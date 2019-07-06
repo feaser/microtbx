@@ -42,14 +42,14 @@
  * be handy if you use MicroTBX in several projects with a different configuration,
  * and enables you to have just one MicroTBX source base.
  */
-#include <stdint.h>                         /* for standard integer types              */
-#include <stddef.h>                         /* for standard definitions                */
+#include <stdint.h>                         /* Standard integer types                  */
+#include <stddef.h>                         /* Standard definitions                    */
 #ifdef PROJ_TBX_CONF_H
-#include PROJ_TBX_CONF_H                    /* custom MicroTBX configuration file      */
+#include PROJ_TBX_CONF_H                    /* Custom MicroTBX configuration file      */
 #else
-#include "tbx_conf.h"                       /* standard MicroTBX configuration file    */
+#include "tbx_conf.h"                       /* Standard MicroTBX configuration file    */
 #endif /* PROJ_TBX_CONF_H */
-#include "tbxassert.h"                      /* run-time assertions                     */
+#include "tbxassert.h"                      /* Run-time assertions                     */
 
 
 #ifdef __cplusplus

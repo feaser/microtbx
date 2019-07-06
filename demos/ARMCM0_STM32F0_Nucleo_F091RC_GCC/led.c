@@ -34,7 +34,7 @@
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
-#include <stdint.h>                              /* for standard integer types         */
+#include "microtbx.h"                            /* MicroTBX library                   */
 #include "led.h"                                 /* LED driver                         */
 #include "stm32f0xx.h"                           /* STM32 CPU and HAL header           */
 
@@ -42,7 +42,7 @@
 /****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
-/** \brief Current state of the LED. > 0 for ON, 0 for off. */
+/** \brief Current state of the LED. TBX_TRUE for ON, TBX_FALSE for off. */
 static uint8_t ledState;
 
 
@@ -56,7 +56,7 @@ void LedInit(void)
   GPIO_InitTypeDef GPIO_InitStruct;
 
   /* Initialize locals. */
-  ledState = 0;
+  ledState = TBX_FALSE;
 
   /* GPIO ports clock enable. */
   __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -80,17 +80,17 @@ void LedInit(void)
 ****************************************************************************************/
 void LedSet(uint8_t on)
 {
-  if (on > 0)
+  if (on == TBX_TRUE)
   {
     /* turn the LED on */
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-    ledState = 1;
+    ledState = TBX_TRUE;
   }
   else
   {
     /* turn the LED off */
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-    ledState = 0;
+    ledState = TBX_FALSE;
   }
 } /*** end of LedSet ***/
 
@@ -113,8 +113,14 @@ uint8_t LedGet(void)
 ****************************************************************************************/
 void LedToggle(void)
 {
+  uint8_t newState = TBX_TRUE;
+
   /* Toggle the LED state. */
-  LedSet(!LedGet());
+  if (LedGet() == TBX_TRUE)
+  {
+    newState = TBX_FALSE;
+  }
+  LedSet(newState);
 } /*** end of LedToggle ***/
 
 

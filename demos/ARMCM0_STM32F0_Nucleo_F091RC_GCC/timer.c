@@ -34,8 +34,8 @@
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
-#include <stdint.h>                              /* for standard integer types         */
-#include "timer.h"                               /* timer driver                       */
+#include "microtbx.h"                            /* MicroTBX library                   */
+#include "timer.h"                               /* Timer driver                       */
 #include "stm32f0xx.h"                           /* STM32 CPU and HAL header           */
 
 

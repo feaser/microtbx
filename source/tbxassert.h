@@ -50,9 +50,16 @@ extern "C" {
 
 #if (TBX_ASSERTIONS_ENABLE > 0u)
 /****************************************************************************************
+* Type definitions
+****************************************************************************************/
+/** \brief Function type for a run-time assertion handler function. */
+typedef void (* tTbxAssertHandler)(const char * const file, uint32_t line);
+
+
+/****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void TbxAssertSetHandler(void);
+void TbxAssertSetHandler(tTbxAssertHandler assertHandler);
 void TbxAssertTrigger(const char * const file, uint32_t line);
 #endif /* (TBX_ASSERTIONS_ENABLE > 0u) */
 

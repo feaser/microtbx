@@ -38,13 +38,25 @@
 
 
 #if (TBX_ASSERTIONS_ENABLE > 0u)
+/****************************************************************************************
+* Local data declarations
+****************************************************************************************/
+/** \brief Pointer to the application provided assertion handler function that should be
+ *         used, whenever a run-time assertion is triggered.
+ */
+static tTbxAssertHandler tbxAssertHandlerPtr = NULL;
+
+
 /************************************************************************************//**
 ** \brief     Sets the application specific assertion handler.
+** \param     assertHandler Pointer to the application specific assertion handler to use
+**            instead of the default internal handler.
 **
 ****************************************************************************************/
-void TbxAssertSetHandler(void)
+void TbxAssertSetHandler(tTbxAssertHandler assertHandler)
 {
-  /* TODO Implement TbxAssertSetHandler(). It needs a param with the actual handler. */
+  /* Store the pointer to the application specific assertion handler. */
+  tbxAssertHandlerPtr = assertHandler;
 } /*** end of TbxAssertSetHandler ***/
 
 
@@ -52,29 +64,28 @@ void TbxAssertSetHandler(void)
 ** \brief     Triggers the run-time assertion. The default implementation is to enter an
 **            infinite loop, which halts the program and can be used for debugging 
 **            purposes. Inspecting the values of the file and line parameters gives a 
-**            clear indication where the run-time assertion occured. Note that an
+**            clear indication where the run-time assertion occurred. Note that an
 **            alternative application specific assertion handler can be configured with
 **            function TbxAssertSetHandler().
 ** \param     file The filename of the source file where the assertion occurred in.
-** \param     line The line number inside the file where the assertion occorred.
+** \param     line The line number inside the file where the assertion occurred.
 **
 ****************************************************************************************/
 void TbxAssertTrigger(const char * const file, uint32_t line)
 {
-  TBX_UNUSED_ARG(file);
-  TBX_UNUSED_ARG(line);
-
-  /* TODO Implement feature that allows the default asserting handling to be overridden
-   * with a application specific one that was set with TbxAssertSetHandler().
-   */
-
-  /* The default implementation is to enter an infinite loop, which halts the program
-   * and can be used for debugging purposes. Inspecting the values of the file and line
-   * parameters gives a clear indication where the run-time assertion occured.
-   */
-  while (1)
+  /* Check if there is an application specific assertion handler configured. */
+  if (tbxAssertHandlerPtr != NULL)
   {
-    ;
+    /* Call the application specific assertion handler. */
+    tbxAssertHandlerPtr(file, line);
+  }
+  /* Use the default internal assertion handler which simple enters an infinit loop. */
+  else
+  {
+    while (1)
+    {
+      ;
+    }
   }
 } /*** end of TbxAssertTrigger ***/
 #endif /* (TBX_ASSERTIONS_ENABLE > 0u) */

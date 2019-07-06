@@ -35,7 +35,7 @@
 * Include files
 ****************************************************************************************/
 #include "microtbx.h"                            /* MicroTBX library                   */
-#include "timer.h"                               /* timer driver                       */
+#include "timer.h"                               /* Timer driver                       */
 #include "led.h"                                 /* LED driver                         */
 #include "stm32f0xx.h"                           /* STM32 CPU and HAL header           */
 
@@ -45,6 +45,7 @@
 ****************************************************************************************/
 static void Init(void);
 static void SystemClock_Config(void);
+static void CustomAssertionHandler(const char * const file, uint32_t line);
 
 
 /************************************************************************************//**
@@ -82,6 +83,8 @@ int main(void)
 ****************************************************************************************/
 static void Init(void)
 {
+  /* Register the application specific assertion handler. */
+  TbxAssertSetHandler(CustomAssertionHandler);
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
   /* Configure the system clock. */
@@ -116,7 +119,7 @@ static void SystemClock_Config(void)
     /* Clock configuration incorrect or hardware failure. Hang the system to prevent
      * damage.
      */
-    while(1);
+    TBX_ASSERT(TBX_FALSE);
   }
 
   /* Initializes the CPU, AHB and APB busses clocks. */
@@ -131,9 +134,35 @@ static void SystemClock_Config(void)
     /* Flash latency configuration incorrect or hardware failure. Hang the system to
      * prevent damage.
      */
-    while(1);
+    TBX_ASSERT(TBX_FALSE);
   }
 } /*** end of SystemClock_Config ***/
+
+
+/************************************************************************************//**
+** \brief     Triggers the run-time assertion. The default implementation is to enter an
+**            infinite loop, which halts the program and can be used for debugging
+**            purposes. Inspecting the values of the file and line parameters gives a
+**            clear indication where the run-time assertion occurred. Note that an
+**            alternative application specific assertion handler can be configured with
+**            function TbxAssertSetHandler().
+** \param     file The filename of the source file where the assertion occurred in.
+** \param     line The line number inside the file where the assertion occurred.
+**
+****************************************************************************************/
+static void CustomAssertionHandler(const char * const file, uint32_t line)
+{
+  TBX_UNUSED_ARG(file);
+  TBX_UNUSED_ARG(line);
+
+  /* Hang the program by entering an infinite loop. The values for file and line can
+   * then be inspected with the debugger to locate the source of the run-time assertion.
+   */
+  while (1)
+  {
+    ;
+  }
+} /*** end of CustomAssertionHandler ***/
 
 
 /************************************************************************************//**
