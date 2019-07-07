@@ -56,7 +56,14 @@ rwildcard = $(strip $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filte
 # Collect all application files in the current directory and its subdirectories
 PROJ_FILES  = $(call rwildcard, , *.c *.h *.s)
 # Collect MicroTBX sources
-PROJ_FILES += $(call rwildcard, ../../source/, *.c *.h)
+PROJ_FILES += $(wildcard ../../source/*.c)
+PROJ_FILES += $(wildcard ../../source/*.h)
+# Collect MicroTBX port and compiler specific sources
+PROJ_FILES += $(wildcard ../../source/port/ST_STM32/*.c)
+PROJ_FILES += $(wildcard ../../source/port/ST_STM32/*.h)
+PROJ_FILES += $(wildcard ../../source/port/ST_STM32/GCC/*.c)
+PROJ_FILES += $(wildcard ../../source/port/ST_STM32/GCC/*.h)
+PROJ_FILES += $(wildcard ../../source/port/ST_STM32/GCC/*.s)
 
 
 #|--------------------------------------------------------------------------------------|

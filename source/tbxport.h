@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         microtbx.h
-* \brief        MicroTBX global header file.
+* \file         tbxport.h
+* \brief        Port specifics header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,62 +30,29 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef MICROTBX_H
-#define MICROTBX_H
-
-/****************************************************************************************
-* Include files
-****************************************************************************************/
-/* Note that it is possible to override the standard tbx_conf.h configuration header
- * file with a project specific one that is defined in the IDE/makefile. For example,
- * the following define could be configured: PROJ_TBX_CONF_H="my_tbx_config.h". This can
- * be handy if you use MicroTBX in several projects with a different configuration,
- * and enables you to have just one MicroTBX source base.
- */
-#include <stdint.h>                         /* Standard integer types                  */
-#include <stddef.h>                         /* Standard definitions                    */
-#ifdef PROJ_TBX_CONF_H
-#include PROJ_TBX_CONF_H                    /* Custom MicroTBX configuration file      */
-#else
-#include "tbx_conf.h"                       /* Standard MicroTBX configuration file    */
-#endif /* PROJ_TBX_CONF_H */
-#include "tbxport.h"                        /* MicroTBX port specifics                 */
-#include "tbxassert.h"                      /* Run-time assertions                     */
-
+#ifndef TBXPORT_H
+#define TBXPORT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
-* Macro definitions
+* Include files
 ****************************************************************************************/
-/** \brief Boolean true value. */
-#define TBX_TRUE       (1u)
-
-/** \brief Boolean false value. */
-#define TBX_FALSE      (0u)
-
-/** \brief Generic okay value. */
-#define TBX_OK         (1u)
-
-/** \brief Generic error value. */
-#define TBX_ERROR      (0u)
-
-/** \brief Macro to flag a function parameter as unused, which allows the associated
- *         lint message and/or compiler warning to be suppressed.
- */
-#define TBX_UNUSED_ARG(x) (void)x
+#include "tbxporttypes.h"                   /* MicroTBX port specific types            */
 
 
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void TbxInit(void);
+tTbxPortCpuSR TbxPortInterruptsDisable(void);
+void          TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr);
+void          TbxPortSystemTickInit(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* MICROTBX_H */
-/*********************************** end of microtbx.h *********************************/
+#endif /* TBXPORT_H */
+/*********************************** end of tbxport.h **********************************/
