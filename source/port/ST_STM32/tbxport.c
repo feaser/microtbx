@@ -38,48 +38,6 @@
 
 
 /************************************************************************************//**
-** \brief     Stores the current state of the CPU status register and then disables the
-**            generation of global interrupts. The status register contains information
-**            about the interrupts being disable/enabled before they get disabled. This
-**            is needed to later on restore the state. Note that this function should
-**            always be used pair wise together with TbxPortInterruptsRestore(). So
-**            a call to TbxPortInterruptsDisable() should always be followed with a call
-**            to TbxPortInterruptsRestore() eventually.
-** \return    The current value of the CPU status register.
-**
-****************************************************************************************/
-tTbxPortCpuSR TbxPortInterruptsDisable(void)
-{
-  tTbxPortCpuSR result = 0;
-
-  /* TODO Implement TbxPortInterruptsDisable(). */
-
-  /* Give the result back to the caller. */
-  return result;
-} /*** end of TbxPortInterruptsDisable ***/
-
-
-/************************************************************************************//**
-** \brief     Restores the interrupts enabled/disabled state to the state it was when
-**            function TbxPortInterruptsDisable() was previously called. It does this
-**            by writing the value of the CPU status register that was returned by
-**            TbxPortInterruptsDisable(). Note that this function should always be used
-**            pair wise together with TbxPortInterruptsDisable(). So a call to
-**            TbxPortInterruptsDisable() should always be followed with a call to
-**            TbxPortInterruptsRestore() eventually.
-** \param     prev_cpu_sr The previous value of the CPU status register from right before
-**            the interrupts where disabled. This value is returned by function
-**            TbxPortInterruptsDisable().
-**
-****************************************************************************************/
-void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
-{
-  TBX_UNUSED_ARG(prev_cpu_sr);
-  /* TODO Implement TbxPortInterruptsRestore(). */
-} /*** end of TbxPortInterruptsRestore ***/
-
-
-/************************************************************************************//**
 ** \brief     Configures a timer driven interrupt that triggers an interrupt each
 **            millisecond. The interrupt service routine should call the TbxSystemTick()
 **            function, which further handles the system tick event.
@@ -93,6 +51,12 @@ void TbxPortSystemTickInit(void)
   /* TODO Implement framework for the System module with the TbxSystemTick() function. */
 
   /* TODO Implement the timer ISR which then calls the TbxSystemTick() function. */
+
+  /* TODO Decide on supporting the registration of a tick callback function. For example
+   *      for the application to call the HAL's increment tick function. Perhaps not
+   *      needed, if this one has an override/weak definition. It could also be an option
+   *      to implement such functionality with the timers module, which is planned.
+   */
 } /*** end of TbxPortSystemTickInit ***/
 
 
