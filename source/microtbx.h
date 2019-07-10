@@ -51,6 +51,7 @@
 #endif /* PROJ_TBX_CONF_H */
 #include "tbxport.h"                        /* MicroTBX port specifics                 */
 #include "tbxassert.h"                      /* Run-time assertions                     */
+#include "tbxcritsect.h"                    /* Critical sections                       */
 
 
 #ifdef __cplusplus

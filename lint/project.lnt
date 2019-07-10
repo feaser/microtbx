@@ -1,5 +1,6 @@
 // list all sources for linting 
 microtbx.c
 tbxassert.c
+tbxcritsect.c
 port/ST_STM32/tbxport.c
 

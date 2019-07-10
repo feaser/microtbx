@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         tbxport.h
-* \brief        Port specifics header file.
+* \file         tbxcritsect.h
+* \brief        Critical sections header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,29 +30,22 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef TBXPORT_H
-#define TBXPORT_H
+#ifndef TBXCRITSECT_H
+#define TBXCRITSECT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
-* Include files
-****************************************************************************************/
-#include "tbxtypes.h"                       /* MicroTBX port specific types            */
-
-
-/****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-tTbxPortCpuSR TbxPortInterruptsDisable(void);
-void          TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr);
-void          TbxPortSystemTickInit(void);
+void TbxCriticalSectionEnter(void);
+void TbxCriticalSectionExit(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TBXPORT_H */
-/*********************************** end of tbxport.h **********************************/
+#endif /* TBXCRITSECT_H */
+/*********************************** end of tbxcritsect.h ******************************/
