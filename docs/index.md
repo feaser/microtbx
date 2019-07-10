@@ -1,5 +1,14 @@
 MicroTBX is an open source Microcontroller ToolBoX consisting of software components commonly needed in embedded software applications. Think of it as a Swiss army knife for your firmware.
 
+# Components
+
+The following table presents an overview of the currently supported software components inside MicroTBX:
+
+| Name                                  | Description |
+| :------------------------------------ | :---------- |
+| [Assertions](assertions.md)           | For checking situations that should never happen. |
+| [Critical Sections](critsect.md)      | For mutual exclusive access to shared resources. |
+
 # Integration
 
 Adding MicroTBX to your software project is a simple four step process:
@@ -14,19 +23,8 @@ Adding MicroTBX to your software project is a simple four step process:
 # Usage
 
 1. Add the following line to each source-file, where you intend to make use of MicroTBX:
-   ```c
-   #include "microtbx.h"
-   ```
+    ```
+    #include "microtbx.h"
+    ```
 2. Call the function `TbxInit()` once during the initialization of your software program. This is
    typically somewhere before the infinite program loop is entered.
-
-
-
-
-# Components
-
-The following table presents an overview of the currently supported software components inside MicroTBX:
-
-| Name                                  | Description |
-| :------------------------------------ | :---------- |
-| [Assertions](assertions.md)           | For checking situations that should never happen. |
