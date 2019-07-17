@@ -1,5 +1,5 @@
 /************************************************************************************//**
-* \file         tbxport.c
+* \file         port/ST_STM32/tbxport.c
 * \brief        Port specifics source file.
 * \internal
 *----------------------------------------------------------------------------------------
@@ -57,6 +57,8 @@ void TbxPortSystemTickInit(void)
    *      needed, if this one has an override/weak definition. It could also be an option
    *      to implement such functionality with the timers module, which is planned.
    */
+
+  /* TODO Decide on supporting a polling mode configuration with a task function. */
 } /*** end of TbxPortSystemTickInit ***/
 
 

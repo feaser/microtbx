@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         tbx_conf.h
-* \brief        MicroTBX configuration header file.
+* \file         tbxheap.h
+* \brief        Heap memory allocation header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,29 +30,22 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef TBX_CONF_H
-#define TBX_CONF_H
+#ifndef TBXHEAP_H
+#define TBXHEAP_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
-*   A S S E R T I O N S   M O D U L E   C O N F I G U R A T I O N
+* Function prototypes
 ****************************************************************************************/
-/** \brief Enable/disable run-time assertions. */
-#define TBX_ASSERTIONS_ENABLE                    (1u)
-
-
-/****************************************************************************************
-*   H E A P   M O D U L E   C O N F I G U R A T I O N
-****************************************************************************************/
-/** \brief Configure the size of the heap in bytes. */
-#define TBX_HEAP_SIZE                            (2048u)
+void * TbxHeapAllocate(size_t size);
+size_t TbxHeapGetFree(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TBX_CONF_H */
-/*********************************** end of tbx_conf.h *********************************/
+#endif /* TBXHEAP_H */
+/*********************************** end of tbxheap.h **********************************/

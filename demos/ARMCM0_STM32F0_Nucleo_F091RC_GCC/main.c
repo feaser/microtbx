@@ -57,9 +57,15 @@ static void CustomAssertionHandler(const char * const file, uint32_t line);
 int main(void)
 {
   uint32_t lastLedToggleTime = 0;
+  size_t free;
+  uint8_t * myMem;
 
   /* Initialize the microcontroller. */
   Init();
+
+  free = TbxHeapGetFree();
+  myMem = TbxHeapAllocate(1u);
+  free = TbxHeapGetFree();
 
   /* Start the infinite program loop. */
   while (1)

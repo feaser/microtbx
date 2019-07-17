@@ -8,6 +8,7 @@ The following table presents an overview of the currently supported software com
 | :------------------------------------ | :---------- |
 | [Assertions](assertions.md)           | For checking situations that should never happen. |
 | [Critical Sections](critsect.md)      | For mutual exclusive access to shared resources. |
+| [Memory Allocation](heap.md)          | For dynamic memory allocation on the heap. |
 
 # Integration
 

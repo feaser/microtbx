@@ -7,4 +7,5 @@ nav:
   - MISRA Compliance: 'misra.md'  
   - Assertions: 'assertions.md'
   - Critical Sections: 'critsect.md'
+  - Memory Allocation: 'heap.md'
 

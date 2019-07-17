@@ -52,6 +52,7 @@
 #include "tbxport.h"                        /* MicroTBX port specifics                 */
 #include "tbxassert.h"                      /* Run-time assertions                     */
 #include "tbxcritsect.h"                    /* Critical sections                       */
+#include "tbxheap.h"                        /* Heap memory allocation                  */
 
 
 #ifdef __cplusplus
