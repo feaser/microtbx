@@ -4,8 +4,8 @@ repo_url: https://github.com/feaser/microtbx
 theme: readthedocs
 nav:
   - Home: 'index.md'
-  - MISRA Compliance: 'misra.md'  
+  - MISRA Compliance: 'misra.md'
   - Assertions: 'assertions.md'
   - Critical Sections: 'critsect.md'
-  - Memory Allocation: 'heap.md'
-
+  - Heap: 'heap.md'
+  - Memory Pools: 'mempools.md'

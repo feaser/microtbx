@@ -8,13 +8,20 @@ The following table presents an overview of the currently supported software com
 | :------------------------------------ | :---------- |
 | [Assertions](assertions.md)           | For checking situations that should never happen. |
 | [Critical Sections](critsect.md)      | For mutual exclusive access to shared resources. |
-| [Memory Allocation](heap.md)          | For dynamic memory allocation on the heap. |
+| [Heap](heap.md)                       | For static memory pre-allocation on the heap. |
+| [Memory Pools](mempools.md)           | For pool based dynamic memory allocation on the heap. |
+
+# MISRA
+
+MicroTBX was developed with [MISRA-C compliance](misra.md) in mind. This is a software development
+standard to facilitate best practices for programming safety-critical software in road
+vehicles and other embedded systems.
 
 # Integration
 
 Adding MicroTBX to your software project is a simple four step process:
 
-1. Copy the all the files from the `source\` and the correct source\port\XXX port directory to 
+1. Copy the all the files from the `source` and the correct `source\port\XXX` port directory to
    your project.
 2. Configure your project such that the added `.c` files are compiled and linked during
    a build.
@@ -29,3 +36,4 @@ Adding MicroTBX to your software project is a simple four step process:
     ```
 2. Call the function `TbxInit()` once during the initialization of your software program. This is
    typically somewhere before the infinite program loop is entered.
+3. Once `TbxInit()` has been called, all other API function of MicroTBX can be used.
