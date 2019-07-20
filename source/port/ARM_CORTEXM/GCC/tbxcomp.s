@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         port/ST_STM32/tbxcomp.s
-* \brief        Compiler specifics of the port source file.
+* \file         port/ARM_CORTEXM/GCC/tbxcomp.s
+* \brief        GCC compiler specifics of the port source file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T

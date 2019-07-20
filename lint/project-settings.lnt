@@ -2,6 +2,6 @@
 +libclass(angle)
 
 // project specific search directories
--iport/ST_STM32
--iport/ST_STM32/GCC
+-iport/ARM_CORTEXM
+-iport/ARM_CORTEXM/GCC
 

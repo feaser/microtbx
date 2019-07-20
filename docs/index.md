@@ -34,6 +34,3 @@ Adding MicroTBX to your software project is a simple four step process:
     ```
     #include "microtbx.h"
     ```
-2. Call the function `TbxInit()` once during the initialization of your software program. This is
-   typically somewhere before the infinite program loop is entered.
-3. Once `TbxInit()` has been called, all other API function of MicroTBX can be used.

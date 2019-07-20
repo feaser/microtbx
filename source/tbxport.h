@@ -47,7 +47,6 @@ extern "C" {
 ****************************************************************************************/
 tTbxPortCpuSR TbxPortInterruptsDisable(void);
 void          TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr);
-void          TbxPortSystemTickInit(void);
 
 
 #ifdef __cplusplus

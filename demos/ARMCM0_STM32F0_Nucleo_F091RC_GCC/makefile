@@ -59,11 +59,11 @@ PROJ_FILES  = $(call rwildcard, , *.c *.h *.s)
 PROJ_FILES += $(wildcard ../../source/*.c)
 PROJ_FILES += $(wildcard ../../source/*.h)
 # Collect MicroTBX port and compiler specific sources
-PROJ_FILES += $(wildcard ../../source/port/ST_STM32/*.c)
-PROJ_FILES += $(wildcard ../../source/port/ST_STM32/*.h)
-PROJ_FILES += $(wildcard ../../source/port/ST_STM32/GCC/*.c)
-PROJ_FILES += $(wildcard ../../source/port/ST_STM32/GCC/*.h)
-PROJ_FILES += $(wildcard ../../source/port/ST_STM32/GCC/*.s)
+PROJ_FILES += $(wildcard ../../source/port/ARM_CORTEXM/*.c)
+PROJ_FILES += $(wildcard ../../source/port/ARM_CORTEXM/*.h)
+PROJ_FILES += $(wildcard ../../source/port/ARM_CORTEXM/GCC/*.c)
+PROJ_FILES += $(wildcard ../../source/port/ARM_CORTEXM/GCC/*.h)
+PROJ_FILES += $(wildcard ../../source/port/ARM_CORTEXM/GCC/*.s)
 
 
 #|--------------------------------------------------------------------------------------|

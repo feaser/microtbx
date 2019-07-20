@@ -1,7 +1,6 @@
 // list all sources for linting 
-microtbx.c
 tbxassert.c
 tbxcritsect.c
 tbxheap.c
-port/ST_STM32/tbxport.c
+port/ARM_CORTEXM/tbxport.c
 

@@ -1,5 +1,5 @@
 /************************************************************************************//**
-* \file         port/ST_STM32/tbxport.c
+* \file         port/ARM_CORTEXM/tbxport.c
 * \brief        Port specifics source file.
 * \internal
 *----------------------------------------------------------------------------------------
@@ -37,29 +37,13 @@
 #include "microtbx.h"                            /* MicroTBX global header             */
 
 
-/************************************************************************************//**
-** \brief     Configures a timer driven interrupt that triggers an interrupt each
-**            millisecond. The interrupt service routine should call the TbxSystemTick()
-**            function, which further handles the system tick event.
-** \return    none.
-**
-****************************************************************************************/
-void TbxPortSystemTickInit(void)
-{
-  /* TODO Implement TbxPortSystemTickInit(). */
-
-  /* TODO Implement framework for the System module with the TbxSystemTick() function. */
-
-  /* TODO Implement the timer ISR which then calls the TbxSystemTick() function. */
-
-  /* TODO Decide on supporting the registration of a tick callback function. For example
-   *      for the application to call the HAL's increment tick function. Perhaps not
-   *      needed, if this one has an override/weak definition. It could also be an option
-   *      to implement such functionality with the timers module, which is planned.
-   */
-
-  /* TODO Decide on supporting a polling mode configuration with a task function. */
-} /*** end of TbxPortSystemTickInit ***/
+/* At this point nothing is implemented here. The TbxPortInterruptsXxx functions were
+ * implemented in assembly for MISRA compliance. MISRA requires that where assembly
+ * language instructions are required, it is recommended that they be encapsulated and
+ * isolated in either: (a) assembler functions, (b) C functions or (c) macros.
+ * Recommendation (a) was chosen for the TbxPortInterruptsXxx functions. They are located
+ * in the compiler specific part of the port.
+ */
 
 
 /*********************************** end of tbxport.c **********************************/

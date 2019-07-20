@@ -85,8 +85,6 @@ static void Init(void)
 {
   /* Register the application specific assertion handler. */
   TbxAssertSetHandler(CustomAssertionHandler);
-  /* Initialize the MicroTBX stack. */
-  TbxInit();
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
   /* Configure the system clock. */

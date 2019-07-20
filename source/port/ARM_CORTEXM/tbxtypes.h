@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         microtbx.c
-* \brief        MicroTBX source file.
+* \file         port/ARM_CORTEXM/tbxporttypes.h
+* \brief        Port specific types header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,24 +30,26 @@
 *
 * \endinternal
 ****************************************************************************************/
+#ifndef TBXPORTTYPES_H
+#define TBXPORTTYPES_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /****************************************************************************************
-* Include files
+* Type definitions
 ****************************************************************************************/
-#include "microtbx.h"                            /* MicroTBX global header             */
+/** \brief The type for the CPU status register. This type should be configured such
+ *         that the CPU's status register can be fully stored in it. This is the register
+ *         with information about global interrupts being enabled/disabled, among other
+ *         things.
+ */
+typedef uint32_t tTbxPortCpuSR;
 
 
-/************************************************************************************//**
-** \brief     Initialize the entire MicroTBX stack. Should be called once during system
-**            startup before any other functions of MicroTBX are called (with the
-**            exception of TbxAssertSetHandler()).
-**
-****************************************************************************************/
-void TbxInit(void)
-{
-  /* Initialize the system tick, which provides a time base for MicroTBX. */
-  TbxPortSystemTickInit();
-} /*** end of TbxAssertSetHandler ***/
+#ifdef __cplusplus
+}
+#endif
 
-
-/*********************************** end of microtbx.c *********************************/
+#endif /* TBXPORTTYPES_H */
+/*********************************** end of tbxporttypes.h *****************************/
