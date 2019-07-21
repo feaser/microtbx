@@ -39,16 +39,16 @@ extern "C" {
 /****************************************************************************************
 * Macro definitions
 ****************************************************************************************/
-#if (TBX_ASSERTIONS_ENABLE > 0u)
+#if (TBX_ASSERTIONS_ENABLE > 0U)
 /** \brief Macro for run-time assertions. */
 #define TBX_ASSERT(cond) { if(!(cond)) { TbxAssertTrigger(__FILE__, __LINE__); } }
 #else
 /** \brief Dummy macro for when assertions are disabled. */
 #define TBX_ASSERT(cond) { ; }
-#endif /* (TBX_ASSERTIONS_ENABLE > 0u) */
+#endif /* (TBX_ASSERTIONS_ENABLE > 0U) */
 
 
-#if (TBX_ASSERTIONS_ENABLE > 0u)
+#if (TBX_ASSERTIONS_ENABLE > 0U)
 /****************************************************************************************
 * Type definitions
 ****************************************************************************************/
@@ -61,7 +61,7 @@ typedef void (* tTbxAssertHandler)(const char * const file, uint32_t line);
 ****************************************************************************************/
 void TbxAssertSetHandler(tTbxAssertHandler assertHandler);
 void TbxAssertTrigger(const char * const file, uint32_t line);
-#endif /* (TBX_ASSERTIONS_ENABLE > 0u) */
+#endif /* (TBX_ASSERTIONS_ENABLE > 0U) */
 
 
 #ifdef __cplusplus

@@ -41,7 +41,7 @@
 * Local data declarations
 ****************************************************************************************/
 /** \brief Keeps track of how many bytes have already been allocated on the heap. */
-static size_t tbxHeapAllocated = 0;
+static size_t tbxHeapAllocated = 0U;
 
 
 /************************************************************************************//**
@@ -64,10 +64,10 @@ void * TbxHeapAllocate(size_t size)
   size_t sizeAvailable;
 
   /* Verify parameter. */
-  TBX_ASSERT(size > 0u);
+  TBX_ASSERT(size > 0U);
 
   /* Align the desired size to the address size to make it work on all targets. */
-  sizeWanted = (size + (sizeof(void *) - 1u)) & ~(sizeof(void *) - 1u);
+  sizeWanted = (size + (sizeof(void *) - 1U)) & ~(sizeof(void *) - 1U);
   /* Obtain mutual exclusive access to tbxHeapAllocated. */
   TbxCriticalSectionEnter();
     /* Determine the number of still available bytes in the heap buffer. */

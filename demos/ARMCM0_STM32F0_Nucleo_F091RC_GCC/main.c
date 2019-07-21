@@ -37,15 +37,17 @@
 #include "microtbx.h"                            /* MicroTBX library                   */
 #include "timer.h"                               /* Timer driver                       */
 #include "led.h"                                 /* LED driver                         */
+#include "analogfloat.h"                         /* Floating analog input driver       */
 #include "stm32f0xx.h"                           /* STM32 CPU and HAL header           */
 
 
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-static void Init(void);
-static void SystemClock_Config(void);
-static void CustomAssertionHandler(const char * const file, uint32_t line);
+static void     Init(void);
+static void     SystemClock_Config(void);
+static void     CustomAssertionHandler(const char * const file, uint32_t line);
+static uint32_t CustomSeedInitHandler(void);
 
 
 /************************************************************************************//**
@@ -57,9 +59,20 @@ static void CustomAssertionHandler(const char * const file, uint32_t line);
 int main(void)
 {
   uint32_t lastLedToggleTime = 0;
+  uint32_t numbers[8];
+  uint8_t  idx;
 
   /* Initialize the microcontroller. */
   Init();
+
+  /* Generate some random numbers and print them on the terminal. */
+  for (idx = 0; idx < (sizeof(numbers)/sizeof(numbers[0])); idx++)
+  {
+    /* Get a new random number. */
+    numbers[idx] = TbxRandomNumberGet();
+    /* Print the value. */
+    printf("Random number %d: %u.\n", idx+1, (unsigned int)numbers[idx]);
+  }
 
   /* Start the infinite program loop. */
   while (1)
@@ -93,6 +106,13 @@ static void Init(void)
   TimerInit();
   /* Initialize the LED driver. */
   LedInit();
+  /* Initialize the floating analog input driver. */
+  AnalogFloatInit();
+  /* Register the application specific seed initialization handler. It makes use of the
+   * analog float module and therefore needs to be called after the analog float
+   * module was initialized.
+   */
+  //TbxRandomSetSeedInitHandler(CustomSeedInitHandler);
 } /*** end of Init ***/
 
 
@@ -163,6 +183,33 @@ static void CustomAssertionHandler(const char * const file, uint32_t line)
     ;
   }
 } /*** end of CustomAssertionHandler ***/
+
+
+/************************************************************************************//**
+** \brief     Handler function that gets called by the random number generator. This
+**            module requires a seed, which this function should obtain. The actual value
+**            is not really important as long as it is a value that is different every
+**            time the software program runs, so after each reset event.
+** \details   This example implementation set the seed based on the value of a floating
+**            analog input. Such a floating analog input will pick up noise, so the
+**            analog to digital conversion results always vary slightly. Other options
+**            would be to:
+**            * Increment a 32-bit value in EEPROM or a non-volatile register, if
+**              supported by the microcontroller, each time this function is called.
+**              Keep in mind though that these data storage options have a limited amount
+**              of write cycles. A better option might be to use external FRAM.
+**            * If the system was access to an external file system such as an SD-card,
+**              you could increment a 32-bit value in a file each time this function is
+**              called.
+** \return    The 32-bit value that the random number generator module uses as a seed to
+**            initialize itself.
+**
+****************************************************************************************/
+static uint32_t CustomSeedInitHandler(void)
+{
+  /* Create a 32-bit seed value by combining two reads of the floating analog pin. */
+  return (AnalogFloatGet() << 16u) | AnalogFloatGet();
+} /*** end of CustomSeedInitHandler ***/
 
 
 /************************************************************************************//**

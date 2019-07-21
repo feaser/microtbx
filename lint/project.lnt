@@ -2,5 +2,6 @@
 tbxassert.c
 tbxcritsect.c
 tbxheap.c
+tbxrandom.c
 port/ARM_CORTEXM/tbxport.c
 

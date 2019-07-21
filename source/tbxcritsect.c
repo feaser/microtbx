@@ -43,13 +43,13 @@
 /** \brief Counter that gets incremented each time a critical section is entered and
  *         decremented each time a critical section is left.
  */
-static uint32_t tbxCritSectNestingCounter = 0u;
+static uint32_t tbxCritSectNestingCounter = 0U;
 
 /** \brief Holds the copy of the CPU status register from right before the interrupts
  *         were disabled. Needed to restore the interrupts enabled/disabled status upon
  *         exiting the critical section,
  */
-static tTbxPortCpuSR tbxCritSectCpuSR = 0u;
+static tTbxPortCpuSR tbxCritSectCpuSR = 0U;
 
 
 /************************************************************************************//**
@@ -77,7 +77,7 @@ void TbxCriticalSectionEnter(void)
   /* It this the first time we enter the critical section, as opposed to a nested
    * entry?
    */
-  if (tbxCritSectNestingCounter == 0u)
+  if (tbxCritSectNestingCounter == 0U)
   {
     /* Store the CPU status register value in tbxCritSectCpuSR, since it is now safe
      * to access it. It is needed to restore the interrupt status upon exiting the
@@ -107,7 +107,7 @@ void TbxCriticalSectionExit(void)
   /* A call to this function must always be preceded by a call to
    * TbxCriticalSectionEnter(). This means the tbxCritSectNestingCounter must be > 0.
    */
-  TBX_ASSERT(tbxCritSectNestingCounter > 0u);
+  TBX_ASSERT(tbxCritSectNestingCounter > 0U);
 
   /* Decrement the nesting counter. */
   tbxCritSectNestingCounter--;
@@ -115,7 +115,7 @@ void TbxCriticalSectionExit(void)
   /* Is this the final call meaning that it is time we exit the critical section by
    * actually restoring the interrupt status again?
    */
-  if (tbxCritSectNestingCounter == 0u)
+  if (tbxCritSectNestingCounter == 0U)
   {
     /* Restore the interrupt status to the state it was right before the interrupts
      * were all disabled upon the first time the critical section was entered.

@@ -53,6 +53,7 @@
 #include "tbxassert.h"                      /* Run-time assertions                     */
 #include "tbxcritsect.h"                    /* Critical sections                       */
 #include "tbxheap.h"                        /* Heap memory allocation                  */
+#include "tbxrandom.h"                      /* Random number generator                 */
 
 
 #ifdef __cplusplus
@@ -62,16 +63,16 @@ extern "C" {
 * Macro definitions
 ****************************************************************************************/
 /** \brief Boolean true value. */
-#define TBX_TRUE       (1u)
+#define TBX_TRUE       (1U)
 
 /** \brief Boolean false value. */
-#define TBX_FALSE      (0u)
+#define TBX_FALSE      (0U)
 
 /** \brief Generic okay value. */
-#define TBX_OK         (1u)
+#define TBX_OK         (1U)
 
 /** \brief Generic error value. */
-#define TBX_ERROR      (0u)
+#define TBX_ERROR      (0U)
 
 /** \brief Macro to flag a function parameter as unused, which allows the associated
  *         lint message and/or compiler warning to be suppressed.

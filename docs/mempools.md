@@ -11,5 +11,4 @@ TODO Add example of using the memory pools API.
 
 # Configuration
 
-TODO Explan the supported configuration macros of the memory pools software component.
-
+TODO Explain the supported configuration macros of the memory pools software component.

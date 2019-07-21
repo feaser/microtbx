@@ -37,7 +37,7 @@
 #include "microtbx.h"                            /* MicroTBX global header             */
 
 
-#if (TBX_ASSERTIONS_ENABLE > 0u)
+#if (TBX_ASSERTIONS_ENABLE > 0U)
 /****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
@@ -88,7 +88,7 @@ void TbxAssertTrigger(const char * const file, uint32_t line)
     }
   }
 } /*** end of TbxAssertTrigger ***/
-#endif /* (TBX_ASSERTIONS_ENABLE > 0u) */
+#endif /* (TBX_ASSERTIONS_ENABLE > 0U) */
 
 
 /*********************************** end of tbxassert.c ********************************/

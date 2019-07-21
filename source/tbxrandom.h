@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         tbx_conf.h
-* \brief        MicroTBX configuration header file.
+* \file         tbxrandom.h
+* \brief        Random number generator header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -30,29 +30,29 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef TBX_CONF_H
-#define TBX_CONF_H
+#ifndef TBXRANDOM_H
+#define TBXRANDOM_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
-*   A S S E R T I O N S   M O D U L E   C O N F I G U R A T I O N
+* Type definitions
 ****************************************************************************************/
-/** \brief Enable/disable run-time assertions. */
-#define TBX_ASSERTIONS_ENABLE                    (1U)
+/** \brief Function type for an application specific seed initialization handler. */
+typedef uint32_t (* tTbxRandomSeedInitHandler)(void);
 
 
 /****************************************************************************************
-*   H E A P   M O D U L E   C O N F I G U R A T I O N
+* Function prototypes
 ****************************************************************************************/
-/** \brief Configure the size of the heap in bytes. */
-#define TBX_HEAP_SIZE                            (2048U)
+uint32_t TbxRandomNumberGet(void);
+void     TbxRandomSetSeedInitHandler(tTbxRandomSeedInitHandler seedInitHandler);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TBX_CONF_H */
-/*********************************** end of tbx_conf.h *********************************/
+#endif /* TBXRANDOM_H */
+/*********************************** end of tbxrandom.h ********************************/
