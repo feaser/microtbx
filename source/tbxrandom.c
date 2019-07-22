@@ -127,6 +127,9 @@ uint32_t TbxRandomNumberGet(void)
 **               in a file. Then simply increment its value by one upon software program
 **               startup. This way you have a different seed value every time your
 **               software program is started.
+**            4. If your microcontroller based system features a battery backed real-time
+**               clock, you could use the current date/time value to seed the generator
+**               algorithm.
 ** \param     seedInitHandler Pointer to the application specific seed initialization
 **            handler to use instead of the default internal handler.
 **

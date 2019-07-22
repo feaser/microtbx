@@ -112,7 +112,7 @@ static void Init(void)
    * analog float module and therefore needs to be called after the analog float
    * module was initialized.
    */
-  //TbxRandomSetSeedInitHandler(CustomSeedInitHandler);
+  TbxRandomSetSeedInitHandler(CustomSeedInitHandler);
 } /*** end of Init ***/
 
 
