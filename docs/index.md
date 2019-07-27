@@ -10,7 +10,8 @@ The following table presents an overview of the currently supported software com
 | [Critical Sections](critsect.md)      | For mutual exclusive access to shared resources. |
 | [Heap](heap.md)                       | For static memory pre-allocation on the heap. |
 | [Memory Pools](mempools.md)           | For pool based dynamic memory allocation on the heap. |
-| [Random Number Generator](random.md)  | For generating random numbers. |
+| [Random Numbers](random.md)           | For generating random numbers. |
+| [Checksum](checksum.md)               | For calculating data checksums. |
 
 # MISRA
 

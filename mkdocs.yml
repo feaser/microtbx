@@ -9,3 +9,5 @@ nav:
   - Critical Sections: 'critsect.md'
   - Heap: 'heap.md'
   - Memory Pools: 'mempools.md'
+  - Random Numbers: 'random.md'
+  - Checksum: 'checksum.md'

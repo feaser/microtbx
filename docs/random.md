@@ -93,4 +93,5 @@ initialization of your software program:
 
 ```c
 /* Register application specific seed initialization function. */
-TbxRandomSetSeedInitHandler(CustomSeedInitHandler);```
+TbxRandomSetSeedInitHandler(CustomSeedInitHandler);
+```
