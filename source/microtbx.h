@@ -54,6 +54,7 @@
 #include "tbxcritsect.h"                    /* Critical sections                       */
 #include "tbxheap.h"                        /* Heap memory allocation                  */
 #include "tbxrandom.h"                      /* Random number generator                 */
+#include "tbxchecksum.h"                    /* Checksum module                         */
 
 
 #ifdef __cplusplus

@@ -37,14 +37,15 @@
 #include "microtbx.h"                            /* MicroTBX global header             */
 
 
-#if (TBX_ASSERTIONS_ENABLE > 0U)
 /****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
+#if (TBX_CONF_ASSERTIONS_ENABLE > 0U)
 /** \brief Pointer to the application provided assertion handler function that should be
  *         used, whenever a run-time assertion is triggered.
  */
 static tTbxAssertHandler tbxAssertHandlerPtr = NULL;
+#endif /* (TBX_ASSERTIONS_ENABLE > 0U) */
 
 
 /************************************************************************************//**
@@ -55,11 +56,23 @@ static tTbxAssertHandler tbxAssertHandlerPtr = NULL;
 ****************************************************************************************/
 void TbxAssertSetHandler(tTbxAssertHandler assertHandler)
 {
-  /* Store the pointer to the application specific assertion handler. */
-  tbxAssertHandlerPtr = assertHandler;
+#if (TBX_CONF_ASSERTIONS_ENABLE > 0U)
+  /* Verify parameter. */
+  TBX_ASSERT(assertHandler != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if (assertHandler != NULL)
+  {
+    /* Store the pointer to the application specific assertion handler. */
+    tbxAssertHandlerPtr = assertHandler;
+  }
+#else
+  TBX_UNUSED_ARG(assertHandler);
+#endif /* (TBX_CONF_ASSERTIONS_ENABLE > 0U) */
 } /*** end of TbxAssertSetHandler ***/
 
 
+#if (TBX_CONF_ASSERTIONS_ENABLE > 0U)
 /************************************************************************************//**
 ** \brief     Triggers the run-time assertion. The default implementation is to enter an
 **            infinite loop, which halts the program and can be used for debugging 
@@ -79,7 +92,7 @@ void TbxAssertTrigger(const char * const file, uint32_t line)
     /* Call the application specific assertion handler. */
     tbxAssertHandlerPtr(file, line);
   }
-  /* Use the default internal assertion handler which simple enters an infinit loop. */
+  /* Use the default internal assertion handler which simple enters an infinite loop. */
   else
   {
     for (;;)

@@ -40,14 +40,14 @@ extern "C" {
 *   A S S E R T I O N S   M O D U L E   C O N F I G U R A T I O N
 ****************************************************************************************/
 /** \brief Enable/disable run-time assertions. */
-#define TBX_ASSERTIONS_ENABLE                    (1U)
+#define TBX_CONF_ASSERTIONS_ENABLE               (1U)
 
 
 /****************************************************************************************
 *   H E A P   M O D U L E   C O N F I G U R A T I O N
 ****************************************************************************************/
 /** \brief Configure the size of the heap in bytes. */
-#define TBX_HEAP_SIZE                            (2048U)
+#define TBX_CONF_HEAP_SIZE                       (2048U)
 
 
 #ifdef __cplusplus

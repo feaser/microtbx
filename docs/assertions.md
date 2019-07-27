@@ -7,7 +7,7 @@ In MicroTBX, assertions are implemented with the `TBX_ASSERT(argument)` macro. T
 to boolean `true` for the program to continue its execution as expected. If the argument evaluates to
 boolean `false`, an error is triggered.
 
-In this error case, MicroTBX jumps to an internal function with an infinite loop to hang the program. This 
+In this error case, MicroTBX jumps to an internal function with an infinite loop to hang the program. This
 function is called with two important parameters for debugging purposes: the filename of the source file
 that caused the assertion to fail and the line number inside this file where the assertion occurred.
 
@@ -17,7 +17,7 @@ breakpoint. At this point you can inspect the function parameters `file` and `li
 assertion statement caused the problem. Once you know the root cause of the assertion error, you can start
 working on a solution to fix the problem from happening in the future.
 
-In case you do not like the default assertion error handling, MicroTBX also makes it possible for you to configure your own assertion handler with function `TbxAssertSetHandler()`. For example to execute a 
+In case you do not like the default assertion error handling, MicroTBX also makes it possible for you to configure your own assertion handler with function `TbxAssertSetHandler()`. For example to execute a
 `printf` statement, to turn on an LED, or to write assertion error info to a file an on SD-card to indicate that an assertion error was detected.
 
 # Examples
@@ -57,7 +57,7 @@ int main(void)
   /* Register the application specific assertion handler. */
   TbxAssertSetHandler(MyAssertionHandler);
 
-  /* TODO Implement your program here. */ 
+  /* TODO Implement your program here. */
 
   return 0;
 }
@@ -65,18 +65,18 @@ int main(void)
 
 # Configuration
 
-The enable the assertion error handling, set the macro `TBX_ASSERTIONS_ENABLE` to a value of `1`:
+The enable the assertion error handling, set the macro `TBX_CONF_ASSERTIONS_ENABLE` to a value of `1`:
 
 ```c
 /** \brief Enable/disable run-time assertions. */
-#define TBX_ASSERTIONS_ENABLE                    (1u)
+#define TBX__CONF_ASSERTIONS_ENABLE              (1U)
 ```
 
 To disable the assertion error handling, set this macro to a value of `0`. Note that there is not need
 to remove the `TBX_ASSERT()` macros from your code. MicroTBX automatically makes the `TBX_ASSERT()` macro and empty macro wihout side effect, when assertion error handling was disabled.
 
 Assertions are typically enabled in a debug version of the software program and disabled in a
-release version of the software program. 
+release version of the software program.
 
 # Extra tips
 

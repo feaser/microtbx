@@ -73,9 +73,9 @@ for (fifoIdx = 0; fifoIdx < fifoMaxSize; fifoIdx++)
 
 # Configuration
 
-The maximum size of the heap is configured with macro `TBX_HEAP_SIZE`:
+The maximum size of the heap is configured with macro `TBX_CONF_HEAP_SIZE`:
 
 ```c
 /** \brief Configure the size of the heap in bytes. */
-#define TBX_HEAP_SIZE                            (2048u)
+#define TBX_CONF_HEAP_SIZE                       (2048U)
 ```

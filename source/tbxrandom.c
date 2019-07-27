@@ -136,8 +136,15 @@ uint32_t TbxRandomNumberGet(void)
 ****************************************************************************************/
 void TbxRandomSetSeedInitHandler(tTbxRandomSeedInitHandler seedInitHandler)
 {
-  /* Store the pointer to the application specific seed initialization handler. */
-  tbxRandomSeedInitHandler = seedInitHandler;
+  /* Verify parameter. */
+  TBX_ASSERT(seedInitHandler != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if (seedInitHandler != NULL)
+  {
+    /* Store the pointer to the application specific seed initialization handler. */
+    tbxRandomSeedInitHandler = seedInitHandler;
+  }
 } /*** end of TbxRandomSetSeedInitHandler ***/
 
 
@@ -190,18 +197,28 @@ static void TbxRandomInitLFSRs(void)
 ****************************************************************************************/
 static uint32_t TbxRandomShiftLFSR(uint32_t * lfsr, uint32_t polymask)
 {
+  uint32_t result = 0;
   uint32_t feedback;
 
-  /* Perform the linear feedback shift operation. */
-  feedback = *lfsr & 1U;
-  *lfsr >>=1U;
-  if (feedback == 1U)
+  /* Verify parameter. */
+  TBX_ASSERT(lfsr != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if (lfsr != NULL)
   {
-    *lfsr ^= polymask;
+    /* Perform the linear feedback shift operation. */
+    feedback = *lfsr & 1U;
+    *lfsr >>=1U;
+    if (feedback == 1U)
+    {
+      *lfsr ^= polymask;
+    }
+    /* Assign the calculated LFSR to the result. */
+    result = *lfsr;
   }
 
-  /* Give the resulting LFSR back to the caller. */
-  return *lfsr;
+  /* Give the result back to the caller. */
+  return result;
 } /*** end of TbxRandomShiftLFSR ***/
 
 

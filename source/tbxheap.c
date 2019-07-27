@@ -38,6 +38,17 @@
 
 
 /****************************************************************************************
+* Configuration macros
+****************************************************************************************/
+#ifndef TBX_CONF_HEAP_SIZE
+/** \brief Configure the size of the heap in bytes. Note that it is possible to override
+ *         this value by adding this macro definition to the configuration header file.
+ */
+#define TBX_CONF_HEAP_SIZE                       (1024U)
+#endif
+
+
+/****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
 /** \brief Keeps track of how many bytes have already been allocated on the heap. */
@@ -58,7 +69,7 @@ void * TbxHeapAllocate(size_t size)
   /** \brief Heap buffer. Whenever memory needs to be dynamically allocated, it will be
    *         taken from this buffer.
    */
-  static uint8_t tbxHeapBuffer[TBX_HEAP_SIZE];
+  static uint8_t tbxHeapBuffer[TBX_CONF_HEAP_SIZE];
   void * result = NULL;
   size_t sizeWanted;
   size_t sizeAvailable;
@@ -66,22 +77,26 @@ void * TbxHeapAllocate(size_t size)
   /* Verify parameter. */
   TBX_ASSERT(size > 0U);
 
-  /* Align the desired size to the address size to make it work on all targets. */
-  sizeWanted = (size + (sizeof(void *) - 1U)) & ~(sizeof(void *) - 1U);
-  /* Obtain mutual exclusive access to tbxHeapAllocated. */
-  TbxCriticalSectionEnter();
-    /* Determine the number of still available bytes in the heap buffer. */
-  sizeAvailable = TBX_HEAP_SIZE - tbxHeapAllocated;
-  /* Is there enough space left on the heap for this allocation request? */
-  if (sizeAvailable >= sizeWanted)
+  /* Only continue if the parameters are valid. */
+  if (size > 0U)
   {
-    /* Set the address for the newly allocated memory. */
-    result = &tbxHeapBuffer[tbxHeapAllocated];
-    /* Perform the actual allocation by incrementing the counter. */
-    tbxHeapAllocated += sizeWanted;
+    /* Align the desired size to the address size to make it work on all targets. */
+    sizeWanted = (size + (sizeof(void *) - 1U)) & ~(sizeof(void *) - 1U);
+    /* Obtain mutual exclusive access to tbxHeapAllocated. */
+    TbxCriticalSectionEnter();
+      /* Determine the number of still available bytes in the heap buffer. */
+    sizeAvailable = TBX_CONF_HEAP_SIZE - tbxHeapAllocated;
+    /* Is there enough space left on the heap for this allocation request? */
+    if (sizeAvailable >= sizeWanted)
+    {
+      /* Set the address for the newly allocated memory. */
+      result = &tbxHeapBuffer[tbxHeapAllocated];
+      /* Perform the actual allocation by incrementing the counter. */
+      tbxHeapAllocated += sizeWanted;
+    }
+    /* Release mutual exclusive access to tbxHeapAllocated. */
+    TbxCriticalSectionExit();
   }
-  /* Release mutual exclusive access to tbxHeapAllocated. */
-  TbxCriticalSectionExit();
 
   /* Return the address of the allocated memory to the caller. */
   return result;
@@ -100,7 +115,7 @@ size_t TbxHeapGetFree(void)
   /* Obtain mutual exclusive access to tbxHeapAllocated. */
   TbxCriticalSectionEnter();
   /* Determine the number of still available bytes in the heap buffer. */
-  result = TBX_HEAP_SIZE - tbxHeapAllocated;
+  result = TBX_CONF_HEAP_SIZE - tbxHeapAllocated;
   /* Release mutual exclusive access to tbxHeapAllocated. */
   TbxCriticalSectionExit();
 
