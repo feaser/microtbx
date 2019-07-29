@@ -55,6 +55,7 @@
 #include "tbxheap.h"                        /* Heap memory allocation                  */
 #include "tbxrandom.h"                      /* Random number generator                 */
 #include "tbxchecksum.h"                    /* Checksum module                         */
+#include "tbxcrypto.h"                      /* Cryptography module                     */
 
 
 #ifdef __cplusplus

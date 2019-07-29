@@ -11,3 +11,4 @@ nav:
   - Memory Pools: 'mempools.md'
   - Random Numbers: 'random.md'
   - Checksum: 'checksum.md'
+  - Cryptography: 'crypto.md'

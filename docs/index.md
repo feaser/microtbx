@@ -12,6 +12,7 @@ The following table presents an overview of the currently supported software com
 | [Memory Pools](mempools.md)           | For pool based dynamic memory allocation on the heap. |
 | [Random Numbers](random.md)           | For generating random numbers. |
 | [Checksum](checksum.md)               | For calculating data checksums. |
+| [Cryptography](crypto.md)             | For data encryption and decryption. |
 
 # MISRA
 

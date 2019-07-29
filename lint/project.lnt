@@ -4,5 +4,6 @@ tbxcritsect.c
 tbxheap.c
 tbxrandom.c
 tbxchecksum.c
+tbxcrypto.c
 port/ARM_CORTEXM/tbxport.c
 
