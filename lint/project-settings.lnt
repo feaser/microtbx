@@ -2,6 +2,7 @@
 +libclass(angle)
 
 // project specific search directories
+-ithird_party/aes256
 -iport/ARM_CORTEXM
 -iport/ARM_CORTEXM/GCC
 

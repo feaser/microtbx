@@ -35,6 +35,7 @@
 * Include files
 ****************************************************************************************/
 #include "microtbx.h"                            /* MicroTBX global header             */
+#include "aes256.h"                              /* AES256 cryptography                */
 
 
 /****************************************************************************************
@@ -52,12 +53,12 @@
 ** \param     len The number of bytes in the data-array to encrypt. It must be a multiple
 **            of 16, as this is the AES256 minimal block size.
 ** \param     key The 256-bit encryption key as a array of 32 bytes.
-** \return    True if successful, false otherwise.
 **
 ****************************************************************************************/
-uint8_t TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
+void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
 {
-  uint8_t result = TBX_ERROR;
+  aes256_context ctx;
+  size_t         idx;
 
   /* Verify parameters. */
   TBX_ASSERT(data != NULL);
@@ -69,14 +70,46 @@ uint8_t TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
   if ( (data != NULL) && (len > 0U) && (key != NULL) && \
        ((len % TBX_CRYPTO_AES_BLOCK_SIZE) == 0U) )
   {
-    /* TODO Implement TbxCryptoAes256Encrypt(). */
-    data[0] = 0x55;
+    /* Initialize the context. */
+    aes256_init(&ctx, key);
+    /* Encrypt in blocks of 16 bytes. */
+    for (idx = 0U; idx < (len / TBX_CRYPTO_AES_BLOCK_SIZE); idx++)
+    {
+      aes256_encrypt_ecb(&ctx, &data[idx * TBX_CRYPTO_AES_BLOCK_SIZE]);
+    }
+    /* Cleanup */
+    aes256_done(&ctx);
   }
-
-  /* Give the result back to the caller. */
-  return result;
 } /*** end of TbxCryptoAes256Encrypt ***/
 
+
+#if 0
+bool result = false;
+aes256_context ctx;
+
+/* Check parameters */
+assert(data != NULL);
+assert(key != NULL);
+
+/* Only continue with valid parameters. Also add a block size check for 'len'. */
+if ( (data != NULL) && (key != NULL) && ((len % 16u) == 0) ) /*lint !e774 */
+{
+  /* Init context */
+  aes256_init(&ctx, key);
+  /* Decrypt in blocks of 16 bytes. */
+  for (uint32_t i = 0; i < (len / 16u); i++)
+  {
+    aes256_decrypt_ecb(&ctx, &data[i * 16u]);
+  }
+  /* Cleanup */
+  aes256_done(&ctx);
+  /* Set positive result. */
+  result = true;
+}
+/* Give the result back to the caller. */
+return result;
+
+#endif
 
 /************************************************************************************//**
 ** \brief     Decrypts the len-bytes in the specified data-array, using the specified 256-
@@ -86,12 +119,12 @@ uint8_t TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
 ** \param     len The number of bytes in the data-array to decrypt. It must be a multiple
 **            of 16, as this is the AES256 minimal block size.
 ** \param     key The 256-bit decryption key as a array of 32 bytes.
-** \return    True if successful, false otherwise.
 **
 ****************************************************************************************/
-uint8_t TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key)
+void TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key)
 {
-  uint8_t result = TBX_ERROR;
+  aes256_context ctx;
+  size_t         idx;
 
   /* Verify parameters. */
   TBX_ASSERT(data != NULL);
@@ -103,12 +136,16 @@ uint8_t TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key)
   if ( (data != NULL) && (len > 0U) && (key != NULL) && \
        ((len % TBX_CRYPTO_AES_BLOCK_SIZE) == 0U) )
   {
-    /* TODO Implement TbxCryptoAes256Decrypt(). */
-    data[0] = 0x55;
+    /* Initialize the context. */
+    aes256_init(&ctx, key);
+    /* Decrypt in blocks of 16 bytes. */
+    for (idx = 0U; idx < (len / TBX_CRYPTO_AES_BLOCK_SIZE); idx++)
+    {
+      aes256_decrypt_ecb(&ctx, &data[idx * TBX_CRYPTO_AES_BLOCK_SIZE]);
+    }
+    /* Cleanup */
+    aes256_done(&ctx);
   }
-
-  /* Give the result back to the caller. */
-  return result;
 } /*** end of TbxCryptoAes256Decrypt ***/
 
 

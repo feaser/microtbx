@@ -50,6 +50,32 @@ static void     CustomAssertionHandler(const char * const file, uint32_t line);
 static uint32_t CustomSeedInitHandler(void);
 
 
+/****************************************************************************************
+* Local constant declarations
+****************************************************************************************/
+/* The key that will be used to encrypt and decrypt data. */
+static const uint8_t cryptoKey[32] =
+{
+  0x32, 0x72, 0x35, 0x75, 0x38, 0x78, 0x21, 0x41,
+  0x25, 0x44, 0x2A, 0x47, 0x2D, 0x4B, 0x61, 0x50,
+  0x64, 0x53, 0x67, 0x56, 0x6B, 0x59, 0x70, 0x33,
+  0x73, 0x36, 0x76, 0x39, 0x79, 0x24, 0x42, 0x3F
+};
+
+/* Original data. */
+static const uint8_t originalData[64] =
+{
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+  0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+  0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+  0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
+  0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+  0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+  0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F
+};
+
+
 /************************************************************************************//**
 ** \brief     This is the entry point for the bootloader application and is called
 **            by the reset interrupt vector after the C-startup routines executed.
@@ -61,9 +87,28 @@ int main(void)
   uint32_t lastLedToggleTime = 0;
   uint32_t numbers[8];
   uint8_t  idx;
+  uint8_t  buffer[64];
 
   /* Initialize the microcontroller. */
   Init();
+
+  /* Copy the original data to the buffer. */
+  for (idx = 0U; idx < 64U; idx++)
+  {
+    buffer[idx] = originalData[idx];
+  }
+  /* Encrypt the data in the buffer. */
+  TbxCryptoAes256Encrypt(buffer, 64, cryptoKey);
+  /* Decrypt the data in the buffer. */
+  TbxCryptoAes256Decrypt(buffer, 64, cryptoKey);
+  /* Verify that the decrypted data is the same as the original data. */
+  for (idx = 0U; idx < 64U; idx++)
+  {
+    if (buffer[idx] != originalData[idx])
+    {
+      TBX_ASSERT(TBX_ERROR);
+    }
+  }
 
   /* Generate some random numbers and print them on the terminal. */
   for (idx = 0; idx < (sizeof(numbers)/sizeof(numbers[0])); idx++)

@@ -5,5 +5,6 @@ tbxheap.c
 tbxrandom.c
 tbxchecksum.c
 tbxcrypto.c
+third_party/aes256/aes256.c
 port/ARM_CORTEXM/tbxport.c
 

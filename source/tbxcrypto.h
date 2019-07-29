@@ -39,8 +39,8 @@ extern "C" {
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-uint8_t TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key);
-uint8_t TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key);
+void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key);
+void TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key);
 
 
 #ifdef __cplusplus
