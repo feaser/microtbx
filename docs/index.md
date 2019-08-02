@@ -24,11 +24,11 @@ vehicles and other embedded systems.
 
 Adding MicroTBX to your software project is a simple four step process:
 
-1. Copy the all the files from the `source` and the correct `source\port\XXX` port directory to
-   your project.
+1. Copy all the files from the `source`, the `source\third_party`, and the
+   correct `source\port\XXX` port directory to your project.
 2. Configure your project such that the added `.c` files are compiled and linked during
    a build.
-3. Add the directory that contains the `.h` files to your compiler's include path.
+3. Add the directories that contains the `.h` files to your compiler's include path.
 4. Customize the MicroTBX configuraton in `tbx_conf.h`, if desired.
 
 # Usage

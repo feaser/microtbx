@@ -83,34 +83,6 @@ void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
 } /*** end of TbxCryptoAes256Encrypt ***/
 
 
-#if 0
-bool result = false;
-aes256_context ctx;
-
-/* Check parameters */
-assert(data != NULL);
-assert(key != NULL);
-
-/* Only continue with valid parameters. Also add a block size check for 'len'. */
-if ( (data != NULL) && (key != NULL) && ((len % 16u) == 0) ) /*lint !e774 */
-{
-  /* Init context */
-  aes256_init(&ctx, key);
-  /* Decrypt in blocks of 16 bytes. */
-  for (uint32_t i = 0; i < (len / 16u); i++)
-  {
-    aes256_decrypt_ecb(&ctx, &data[i * 16u]);
-  }
-  /* Cleanup */
-  aes256_done(&ctx);
-  /* Set positive result. */
-  result = true;
-}
-/* Give the result back to the caller. */
-return result;
-
-#endif
-
 /************************************************************************************//**
 ** \brief     Decrypts the len-bytes in the specified data-array, using the specified 256-
 **            bit (32 bytes) key. The results are written back into the same array.
