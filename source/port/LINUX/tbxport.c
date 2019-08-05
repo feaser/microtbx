@@ -44,9 +44,6 @@
 /** \brief Flag to determine if the critical section object was already initialized. */
 static volatile uint8_t criticalSectionInitialized = TBX_FALSE;
 
-/** \brief Flag to keep track of the interrupt disabled status. */
-static volatile uint8_t interruptsDisabled = TBX_FALSE;
-
 /** \brief Critical section object. */
 static volatile pthread_mutex_t mtxCritSect;
 
@@ -77,12 +74,8 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
     criticalSectionInitialized = TBX_TRUE;
   }
 
-  /* Enter the critical section, if not already entered. */
-  if (interruptsDisabled == TBX_FALSE)
-  {
-    interruptsDisabled = TBX_TRUE;
-    (void)pthread_mutex_lock((pthread_mutex_t *)&mtxCritSect);
-  }
+  /* Enter the critical section, if not yet entered. */
+  (void)pthread_mutex_trylock((pthread_mutex_t *)&mtxCritSect);
   
   /* Give the result back to the caller. */
   return result;
@@ -109,12 +102,8 @@ void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
   /* Make sure the critical section object was initialized. */
   TBX_ASSERT(criticalSectionInitialized == TBX_TRUE);
 
-  /* Leave the critical section, if is was entered. */
-  if (interruptsDisabled == TBX_TRUE)
-  {
-    (void)pthread_mutex_unlock((pthread_mutex_t *)&mtxCritSect);
-    interruptsDisabled = TBX_FALSE;
-  }
+  /* Leave the critical section. */
+  (void)pthread_mutex_unlock((pthread_mutex_t *)&mtxCritSect);
 } /*** end of TbxPortInterruptsRestore ***/
 
 
