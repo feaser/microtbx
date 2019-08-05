@@ -51,7 +51,7 @@ static uint32_t CustomSeedInitHandler(void);
 
 
 /************************************************************************************//**
-** \brief     This is the entry point for the bootloader application and is called
+** \brief     This is the entry point for the software application and is called
 **            by the reset interrupt vector after the C-startup routines executed.
 ** \return    Program exit code.
 **
@@ -71,7 +71,8 @@ int main(void)
     /* Get a new random number. */
     numbers[idx] = TbxRandomNumberGet();
     /* Print the value. */
-    printf("Random number %d: %u.\n", idx+1, (unsigned int)numbers[idx]);
+    printf("Random number %u: %u.\n", idx+1, (uint32_t)numbers[idx]);
+    
   }
 
   /* Start the infinite program loop. */
@@ -178,7 +179,7 @@ static void CustomAssertionHandler(const char * const file, uint32_t line)
   /* Hang the program by entering an infinite loop. The values for file and line can
    * then be inspected with the debugger to locate the source of the run-time assertion.
    */
-  while (1)
+  for (;;)
   {
     ;
   }
