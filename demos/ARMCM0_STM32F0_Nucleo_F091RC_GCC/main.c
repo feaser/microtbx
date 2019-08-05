@@ -71,7 +71,7 @@ int main(void)
     /* Get a new random number. */
     numbers[idx] = TbxRandomNumberGet();
     /* Print the value. */
-    printf("Random number %u: %u.\n", idx+1, (uint32_t)numbers[idx]);
+    printf("Random number %u: %u.\n", idx+1, (unsigned int)numbers[idx]);
     
   }
 
