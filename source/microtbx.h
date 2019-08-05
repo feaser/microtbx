@@ -65,21 +65,21 @@ extern "C" {
 * Macro definitions
 ****************************************************************************************/
 /** \brief Boolean true value. */
-#define TBX_TRUE       (1U)
+#define TBX_TRUE                                 (1U)
 
 /** \brief Boolean false value. */
-#define TBX_FALSE      (0U)
+#define TBX_FALSE                                (0U)
 
 /** \brief Generic okay value. */
-#define TBX_OK         (1U)
+#define TBX_OK                                   (1U)
 
 /** \brief Generic error value. */
-#define TBX_ERROR      (0U)
+#define TBX_ERROR                                (0U)
 
 /** \brief Macro to flag a function parameter as unused, which allows the associated
  *         lint message and/or compiler warning to be suppressed.
  */
-#define TBX_UNUSED_ARG(x) (void)x
+#define TBX_UNUSED_ARG(x)                        (void)x
 
 
 #ifdef __cplusplus
