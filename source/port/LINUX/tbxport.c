@@ -1,5 +1,5 @@
 /************************************************************************************//**
-* \file         port/WINDOWS/tbxport.c
+* \file         port/LINUX/tbxport.c
 * \brief        Port specifics source file.
 * \internal
 *----------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@
 * Include files
 ****************************************************************************************/
 #include "microtbx.h"                            /* MicroTBX global header             */
-#include <windows.h>                             /* Windows specific functions.        */
+#include <pthread.h>                             /* Posix thread utilities             */
 
 
 /****************************************************************************************
@@ -44,9 +44,11 @@
 /** \brief Flag to determine if the critical section object was already initialized. */
 static volatile uint8_t criticalSectionInitialized = TBX_FALSE;
 
+/** \brief Flag to keep track of the interrupt disabled status. */
+static volatile uint8_t interruptsDisabled = TBX_FALSE;
+
 /** \brief Critical section object. */
-/* TODO ##Vg Shouldn't this one be volatile? */
-static CRITICAL_SECTION criticalSection;
+static volatile pthread_mutex_t mtxCritSect;
 
 
 /************************************************************************************//**
@@ -62,7 +64,7 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
   tTbxPortCpuSR result;
 
   /* Initialize the result. Note that this value is don't care for this port, as under
-   * Windows, the already available CriticalSection API is used.
+   * Linux, the already available PThread Mutex API is used.
    */
   result = 0;
   
@@ -70,13 +72,17 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
   if (criticalSectionInitialized == TBX_FALSE)
   {
     /* Initialize the critical section object. */
-    InitializeCriticalSection((CRITICAL_SECTION *)&criticalSection);
+    (void)pthread_mutex_init((pthread_mutex_t *)&mtxCritSect, NULL);
     /* Set initialized flag. */
     criticalSectionInitialized = TBX_TRUE;
   }
 
   /* Enter the critical section, if not already entered. */
-  EnterCriticalSection((CRITICAL_SECTION *)&criticalSection);
+  if (interruptsDisabled == TBX_FALSE)
+  {
+    interruptsDisabled = TBX_TRUE;
+    (void)pthread_mutex_lock((pthread_mutex_t *)&mtxCritSect);
+  }
   
   /* Give the result back to the caller. */
   return result;
@@ -95,16 +101,20 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
 ****************************************************************************************/
 void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
 {
-  /* The parameter is not used for this port, because under Windows, the already
-   * available CriticalSection API is used. 
+  /* The parameter is not used for this port, because under Linux, the already
+   * available PThread Mutex API is used. 
    */
   TBX_UNUSED_ARG(prev_cpu_sr);
 
   /* Make sure the critical section object was initialized. */
   TBX_ASSERT(criticalSectionInitialized == TBX_TRUE);
 
-  /* Leave the critical section. */
-  LeaveCriticalSection((CRITICAL_SECTION *)&criticalSection);
+  /* Leave the critical section, if is was entered. */
+  if (interruptsDisabled == TBX_TRUE)
+  {
+    (void)pthread_mutex_unlock((pthread_mutex_t *)&mtxCritSect);
+    interruptsDisabled = TBX_FALSE;
+  }
 } /*** end of TbxPortInterruptsRestore ***/
 
 

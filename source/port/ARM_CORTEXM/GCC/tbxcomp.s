@@ -44,10 +44,7 @@
 ** \brief     Stores the current state of the CPU status register and then disables the
 **            generation of global interrupts. The status register contains information
 **            about the interrupts being disable/enabled before they get disabled. This
-**            is needed to later on restore the state. Note that this function should
-**            always be used pair wise together with TbxPortInterruptsRestore(). So
-**            a call to TbxPortInterruptsDisable() should always be followed with a call
-**            to TbxPortInterruptsRestore() eventually.
+**            is needed to later on restore the state. 
 **            Prototype: 
 **              tTbxPortCpuSR TbxPortInterruptsDisable(void);
 ** \return    The current value of the CPU status register.
@@ -76,10 +73,7 @@ TbxPortInterruptsDisable:
 ** \brief     Restores the interrupts enabled/disabled state to the state it was when
 **            function TbxPortInterruptsDisable() was previously called. It does this
 **            by writing the value of the CPU status register that was returned by
-**            TbxPortInterruptsDisable(). Note that this function should always be used
-**            pair wise together with TbxPortInterruptsDisable(). So a call to
-**            TbxPortInterruptsDisable() should always be followed with a call to
-**            TbxPortInterruptsRestore() eventually.
+**            TbxPortInterruptsDisable(). 
 **            Prototype: 
 **              void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr);
 ** \param     prev_cpu_sr The previous value of the CPU status register from right before
