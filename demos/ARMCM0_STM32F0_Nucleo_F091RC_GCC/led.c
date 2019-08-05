@@ -84,13 +84,17 @@ void LedSet(uint8_t on)
   {
     /* turn the LED on */
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+    TbxCriticalSectionEnter();
     ledState = TBX_TRUE;
+    TbxCriticalSectionExit();
   }
   else
   {
     /* turn the LED off */
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+    TbxCriticalSectionEnter();
     ledState = TBX_FALSE;
+    TbxCriticalSectionExit();
   }
 } /*** end of LedSet ***/
 

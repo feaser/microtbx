@@ -65,14 +65,13 @@ int main(void)
   /* Initialize the microcontroller. */
   Init();
 
-  /* Generate some random numbers and print them on the terminal. */
+  /* Generate some random numbers and print them on the terminal (57600 bps). */
   for (idx = 0; idx < (sizeof(numbers)/sizeof(numbers[0])); idx++)
   {
     /* Get a new random number. */
     numbers[idx] = TbxRandomNumberGet();
     /* Print the value. */
     printf("Random number %u: %u.\n", idx+1, (unsigned int)numbers[idx]);
-    
   }
 
   /* Start the infinite program loop. */
