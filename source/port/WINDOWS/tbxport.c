@@ -45,8 +45,7 @@
 static volatile uint8_t criticalSectionInitialized = TBX_FALSE;
 
 /** \brief Critical section object. */
-/* TODO ##Vg Shouldn't this one be volatile? */
-static CRITICAL_SECTION criticalSection;
+static volatile CRITICAL_SECTION criticalSection;
 
 
 /************************************************************************************//**
@@ -75,9 +74,12 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
     criticalSectionInitialized = TBX_TRUE;
   }
 
-  /* Enter the critical section, if not already entered. */
-  EnterCriticalSection((CRITICAL_SECTION *)&criticalSection);
-  
+  /* Enter the critical section, if not yet entered. */
+  if (criticalSection.RecursionCount == 0)
+  {
+    EnterCriticalSection((CRITICAL_SECTION *)&criticalSection);
+  }
+
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxPortInterruptsDisable ***/
@@ -104,7 +106,10 @@ void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
   TBX_ASSERT(criticalSectionInitialized == TBX_TRUE);
 
   /* Leave the critical section. */
-  LeaveCriticalSection((CRITICAL_SECTION *)&criticalSection);
+  while (criticalSection.RecursionCount > 0U)
+  {
+    LeaveCriticalSection((CRITICAL_SECTION *)&criticalSection);
+  }
 } /*** end of TbxPortInterruptsRestore ***/
 
 
