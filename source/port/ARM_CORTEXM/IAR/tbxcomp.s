@@ -31,6 +31,7 @@
 ;* \endinternal
 ;****************************************************************************************
 
+
         PUBLIC  TbxPortInterruptsDisable
         PUBLIC  TbxPortInterruptsRestore
 
