@@ -34,6 +34,7 @@
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
+#include <stdio.h>                               /* C standard input/output            */
 #include "microtbx.h"                            /* MicroTBX library                   */
 #include "timer.h"                               /* Timer driver                       */
 #include "led.h"                                 /* LED driver                         */
