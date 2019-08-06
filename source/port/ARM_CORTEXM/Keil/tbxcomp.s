@@ -86,4 +86,3 @@ TbxPortInterruptsRestore FUNCTION
   
   END
 ;*********************************** end of tbxcomp.s ***********************************
-	  
