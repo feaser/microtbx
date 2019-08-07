@@ -33,6 +33,8 @@
 #ifndef MICROTBX_H
 #define MICROTBX_H
 
+/* TODO ##Vg Probably want to add version information somewhere. */
+
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
@@ -53,6 +55,7 @@
 #include "tbxassert.h"                      /* Run-time assertions                     */
 #include "tbxcritsect.h"                    /* Critical sections                       */
 #include "tbxheap.h"                        /* Heap memory allocation                  */
+#include "tbxmempool.h"                     /* Pool based heap memory manager          */
 #include "tbxrandom.h"                      /* Random number generator                 */
 #include "tbxchecksum.h"                    /* Checksum module                         */
 #include "tbxcrypto.h"                      /* Cryptography module                     */
