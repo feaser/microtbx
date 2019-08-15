@@ -172,25 +172,33 @@ size-options.lnt // This .lnt file should be generated (preferrably
 
 // =========================================================
 // Generally useful suppressions:
--wlib(1)      // sets the warning level within library headers to 1
-              // (no warnings, just syntax errors).  Comment out if you
-              // are actually linting library headers.
--elib(123)    // 123 is really a warning, but it's in the "Error" range.
--elib(93)     // allow newlines within quoted string arguments to macros
--elib(46)     // allow bit fields to have integral types other than
-              // '_Bool' and 'int'.
--elib(553)    // undefined preprocessor variable
--elib(9021)   // use of '#undef' is discouraged
--elib(9023)   // multiple use of '#/##' operators in definition of macro
--elib(9024)   // '#/##' operator used in macro
--elib(9027)   // unpermitted operand to operator '!'
--elib(9050)   // dependence placed on C/C++ operator precedence
--elib(9051)   // macro 'int' defined with the same name as a C keyword
--elib(9053)   // the shift value is at least the precision of the essential type of the left hand side
--elib(9083)   // undefined macro matches an identifier reserved to the compiler              
--elibsym(628) // Suppress 628 for __builtin symbols.
--elibsym(793) // allow > 31 significant characters in an external identifier
+-wlib(1)       // sets the warning level within library headers to 1
+               // (no warnings, just syntax errors).  Comment out if you
+               // are actually linting library headers.
+-elib(123)     // 123 is really a warning, but it's in the "Error" range.
+-elib(93)      // allow newlines within quoted string arguments to macros
+-elib(46)      // allow bit fields to have integral types other than
+               // '_Bool' and 'int'.
+-elib(553)     // undefined preprocessor variable
+-elib(9021)    // use of '#undef' is discouraged
+-elib(9023)    // multiple use of '#/##' operators in definition of macro
+-elib(9024)    // '#/##' operator used in macro
+-elib(9027)    // unpermitted operand to operator '!'
+-elib(9050)    // dependence placed on C/C++ operator precedence
+-elib(9051)    // macro 'int' defined with the same name as a C keyword
+-elib(9053)    // the shift value is at least the precision of the essential type of the left hand side
+-elib(9083)    // undefined macro matches an identifier reserved to the compiler              
+-elibsym(628)  // Suppress 628 for __builtin symbols.
+-elibsym(793)  // allow > 31 significant characters in an external identifier
+-elibsym(9058) // unused tag in type definition
 
+// Suppress 9045 for a few library symbols when including for example pthread.h library
+// header
+-esym(9045,*timespec)
+-esym(9045,*itimerspec)
+-esym(9045,*tm)
+-esym(9045,*sched_param)
+-esym(9045,*__locale_struct)
 
 -esym(528,__huge_val,__nan,__qnan,__qnanf,__snan,__snanf)
                        // We don't care if we don't reference some GNU functions

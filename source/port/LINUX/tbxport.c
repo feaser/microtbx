@@ -31,6 +31,7 @@
 * \endinternal
 ****************************************************************************************/
 
+
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
@@ -42,10 +43,15 @@
 * Local data declarations
 ****************************************************************************************/
 /** \brief Flag to determine if the critical section object was already initialized. */
-static volatile uint8_t criticalSectionInitialized = TBX_FALSE;
+static uint8_t criticalSectionInitialized = TBX_FALSE;
 
-/** \brief Critical section object. */
-static volatile pthread_mutex_t mtxCritSect;
+/** \brief Critical section object. Note that it was wrapped in a structure for MISRA
+ *         19.2 compliance about not using unions.
+ */
+static struct
+{
+  pthread_mutex_t u;
+} mtxCritSect;
 
 
 /************************************************************************************//**
@@ -69,13 +75,13 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
   if (criticalSectionInitialized == TBX_FALSE)
   {
     /* Initialize the critical section object. */
-    (void)pthread_mutex_init((pthread_mutex_t *)&mtxCritSect, NULL);
+    (void)pthread_mutex_init(&(mtxCritSect.u), NULL);
     /* Set initialized flag. */
     criticalSectionInitialized = TBX_TRUE;
   }
 
   /* Enter the critical section, if not yet entered. */
-  (void)pthread_mutex_trylock((pthread_mutex_t *)&mtxCritSect);
+  (void)pthread_mutex_trylock(&(mtxCritSect.u));
   
   /* Give the result back to the caller. */
   return result;
@@ -102,8 +108,13 @@ void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
   /* Make sure the critical section object was initialized. */
   TBX_ASSERT(criticalSectionInitialized == TBX_TRUE);
 
-  /* Leave the critical section. */
-  (void)pthread_mutex_unlock((pthread_mutex_t *)&mtxCritSect);
+  /* Leave the critical section. Note the this generates a lint warning because a thread
+   * mutex is being unlocked, without being first locked in this function. This is not
+   * a problem because this function will only be called after TbxPortInterruptsDisable()
+   * is first caleld, which does the actual thread mutex locking.
+   */
+  (void)pthread_mutex_unlock(&(mtxCritSect.u)); /*lint !e455 */
+
 } /*** end of TbxPortInterruptsRestore ***/
 
 
