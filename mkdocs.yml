@@ -5,6 +5,7 @@ theme: readthedocs
 nav:
   - Home: 'index.md'
   - MISRA Compliance: 'misra.md'
+  - Licensing: 'license.md'
   - Assertions: 'assertions.md'
   - Critical Sections: 'critsect.md'
   - Heap: 'heap.md'

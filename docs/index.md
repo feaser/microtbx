@@ -1,5 +1,11 @@
 MicroTBX is an open source Microcontroller ToolBoX consisting of software components commonly needed in embedded software applications. Think of it as a Swiss army knife for your firmware.
 
+MicroTBX is written in the C programming language (C99). It currently supports all microcontrollers based on an ARM Cortex-M core, for example: ST STM32, Infineon XMC, and NXP S32K. There is little effort involved with porting MicroTBX to different microcontroller families.
+
+If you do not feel like reinventing the wheel, consider using MicroTBX. Ideally, MicroTBX is integrated into your embedded software program at the start of each new project. The following image illustrates where MicroTBX fits into your firmware's architecture:
+
+![alt text](images/software_architecture.png "Software architecture with MicroTBX")
+
 # Components
 
 The following table presents an overview of the currently supported software components inside MicroTBX:
@@ -16,9 +22,7 @@ The following table presents an overview of the currently supported software com
 
 # MISRA
 
-MicroTBX was developed with [MISRA-C compliance](misra.md) in mind. This is a software development
-standard to facilitate best practices for programming safety-critical software in road
-vehicles and other embedded systems.
+MicroTBX was developed with [MISRA-C compliance](misra.md) in mind. This is a software development standard to facilitate best practices for programming safety-critical software in road vehicles and other embedded systems.
 
 # Integration
 
@@ -28,7 +32,7 @@ Adding MicroTBX to your software project is a simple four step process:
    correct `source\port\XXX` port directory to your project.
 2. Configure your project such that the added `.c` files are compiled and linked during
    a build.
-3. Add the directories that contains the `.h` files to your compiler's include path.
+3. Add the directories that contain the `.h` files to your compiler's include path.
 4. Customize the MicroTBX configuraton in `tbx_conf.h`, if desired.
 
 # Usage
@@ -37,3 +41,7 @@ Adding MicroTBX to your software project is a simple four step process:
     ```
     #include "microtbx.h"
     ```
+
+# Licensing
+
+MicroTBX is licensed under the [MIT license](license.md). This permissive license enables you to include and distribute MicroTBX with your firmware, even if it is proprietary. The only requirements are that you include a copy of the MIT license and do not change the copyright notice, when you distribute MicroTBX.
