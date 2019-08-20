@@ -11,5 +11,5 @@ nav:
   - Heap: 'heap.md'
   - Memory Pools: 'mempools.md'
   - Random Numbers: 'random.md'
-  - Checksum: 'checksum.md'
+  - Checksums: 'checksum.md'
   - Cryptography: 'crypto.md'

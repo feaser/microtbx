@@ -2,6 +2,8 @@ MicroTBX is an open source Microcontroller ToolBoX consisting of software compon
 
 MicroTBX is written in the C programming language (C99). It currently supports all microcontrollers based on an ARM Cortex-M core, for example: ST STM32, Infineon XMC, and NXP S32K. There is little effort involved with porting MicroTBX to different microcontroller families.
 
+While developing MicroTBX, special care was given to making the code threadsafe. Access to shared resources are serialized with the help of [critical sections](critsect.md). This make it safe to use MicroTBX in a multithreaded environment, for example when your embedded software program is built upon a pre-emptive RTOS.
+
 If you do not feel like reinventing the wheel, consider using MicroTBX. Ideally, MicroTBX is integrated into your embedded software program at the start of each new project. The following image illustrates where MicroTBX fits into your firmware's architecture:
 
 ![alt text](images/software_architecture.png "Software architecture with MicroTBX")
@@ -17,7 +19,7 @@ The following table presents an overview of the currently supported software com
 | [Heap](heap.md)                       | For static memory pre-allocation on the heap. |
 | [Memory Pools](mempools.md)           | For pool based dynamic memory allocation on the heap. |
 | [Random Numbers](random.md)           | For generating random numbers. |
-| [Checksum](checksum.md)               | For calculating data checksums. |
+| [Checksums](checksum.md)              | For calculating data checksums. |
 | [Cryptography](crypto.md)             | For data encryption and decryption. |
 
 # MISRA

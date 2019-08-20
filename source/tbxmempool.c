@@ -86,7 +86,14 @@ static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr);
 ****************************************************************************************/
 /* TODO ##Vg Improve such that multiple memory pools are supported and dynamically
  *      allocated, instead of just this one. Do not forget to properly use critical
- *      sections while implementing this part.
+ *      sections while implementing this part. It should be such that the following
+ *      requirements are met:
+ *      1) When calling TbxMemPoolCreate() with a blockSize for which a memory pool was
+ *         already created before, the existing memory pool should be extended instead
+ *         of creating a new memory pool.
+ *      2) When TbxMemPoolAllocate() is called and the best fitting memory pool from a
+ *         block size perspective is full, it should automatically attempt to allocate
+ *         from a memory pool of a larger block size, until it finds one.
  */
 /** \brief Temporary single memory pool. Eventually, this software module should support
  *         multiple dynamically allocated memory pools.

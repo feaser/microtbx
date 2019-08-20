@@ -1,4 +1,4 @@
-MicroTBX is licensed under the MIT license. This permissive license enables you to include and distribute MicroTBX with your firmware, even if it is proprietary. Refer to the following table for answers to frequently asked questions regarding the MIT license.
+MicroTBX is released under the MIT license. This permissive license enables you to include and distribute MicroTBX with your firmware, even if it is proprietary. Refer to the following table for answers to frequently asked questions regarding the MIT license.
 
 | Question                                                            | MIT license |
 | :------------------------------------------------------------------ | :---------: |

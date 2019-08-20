@@ -69,11 +69,11 @@ The enable the assertion error handling, set the macro `TBX_CONF_ASSERTIONS_ENAB
 
 ```c
 /** \brief Enable/disable run-time assertions. */
-#define TBX__CONF_ASSERTIONS_ENABLE              (1U)
+#define TBX_CONF_ASSERTIONS_ENABLE              (1U)
 ```
 
 To disable the assertion error handling, set this macro to a value of `0`. Note that there is not need
-to remove the `TBX_ASSERT()` macros from your code. MicroTBX automatically makes the `TBX_ASSERT()` macro and empty macro wihout side effect, when assertion error handling was disabled.
+to remove the `TBX_ASSERT()` macros from your code. MicroTBX automatically makes the `TBX_ASSERT()` macro and empty macro without side effect, when assertion error handling was disabled.
 
 Assertions are typically enabled in a debug version of the software program and disabled in a
 release version of the software program.
