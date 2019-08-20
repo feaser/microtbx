@@ -41,7 +41,7 @@
 * Type definitions
 ****************************************************************************************/
 /** \brief Layout of a block node, which forms the building block of a linked list
- *         consisting free data blocks.
+ *         consisting of data blocks.
  */
 typedef struct t_block_node
 {
@@ -63,12 +63,29 @@ typedef struct
   tBlockList * freeBlockListPtr;
   /** \brief Pointer to the linked list with used data block nodes. */
   tBlockList * usedBlockListPtr;
-} tMemPool;
+} tPool;
+
+/** \brief Layout of a memory pool node, which forms the building block of a linked list
+ *         consisting of memory pools.
+ */
+typedef struct t_pool_node
+{
+  /** \brief Pointer to the memory pool. */
+  tPool              * poolPtr;
+  /** \brief Pointer to the next node in the list or NULL if it is the list end. */
+  struct t_pool_node * nextNodePtr;
+} tPoolNode;
+
+/** \brief Linked list consisting of memory pool nodes. */
+typedef tPoolNode (* tPoolList);
 
 
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
+/* Pool list management functions */
+static tPoolNode  * TbxMemPoolListFind(size_t blockSize);
+static void         TbxMemPoolListInsert(tPoolNode * nodePtr);
 /* Block management functions. */
 static void       * TbxMemPoolBlockCreate(size_t size);
 static void       * TbxMemPoolBlockGetDataPtr(void * memPtr);
@@ -98,7 +115,10 @@ static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr);
 /** \brief Temporary single memory pool. Eventually, this software module should support
  *         multiple dynamically allocated memory pools.
  */
-static tMemPool * tbxMemPoolPtr;
+static tPool * tbxMemPoolPtr;
+
+/** \brief Linked list with memory pools. */
+static tPoolList tbxPoolList = NULL;
 
 
 /************************************************************************************//**
@@ -137,7 +157,7 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
     /* Set the result value to okay. */
     result = TBX_OK;
     /* Create the memory pool object. */
-    tbxMemPoolPtr = TbxHeapAllocate(sizeof(tMemPool));
+    tbxMemPoolPtr = TbxHeapAllocate(sizeof(tPool));
     /* Verify that the memory pool object could be created. */
     if (tbxMemPoolPtr == NULL)
     {
@@ -322,6 +342,167 @@ void TbxMemPoolRelease(void * memPtr)
     }
   }
 } /*** end of TbxMemPoolRelease ***/
+
+
+/****************************************************************************************
+*   P O O L   L I S T   M A N A G E M E N T   F U N C T I O N S
+****************************************************************************************/
+
+/************************************************************************************//**
+** \brief     Searches through the linked list with memory pools to find a pool that was
+**            created to hold blocks that are of the exact size as specified by the
+**            parameter.
+** \param     blockSize Size of the blocks managed by the memory pool.
+** \return    Pointer to the found memory pool node if successful, NULL otherwise.
+**
+****************************************************************************************/
+static tPoolNode * TbxMemPoolListFind(size_t blockSize)
+{
+  tPoolNode * result = NULL;
+  tPoolNode * poolNodePtr;
+
+  /* Verify parameter. */
+  TBX_ASSERT(blockSize > 0U);
+
+  /* Only continue if the parameter is valid. */
+  if (blockSize > 0U)
+  {
+    /* Obtain mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionEnter();
+    /* Get pointer to the pool node at the head of the linked list. */
+    poolNodePtr = tbxPoolList;
+    /* Loop through all nodes until a match is found. */
+    while (poolNodePtr != NULL)
+    {
+      /* Does this node hold a memory pool created for the same block size as we are
+       * trying to find?
+       */
+      if (poolNodePtr->poolPtr->blockSize == blockSize)
+      {
+        /* Update the result because a match was found. */
+        result = poolNodePtr;
+        /* No need to continue looping since a match was found. */
+        break;
+      }
+      /* Continue with the next pool node in the list. */
+      poolNodePtr = poolNodePtr->nextNodePtr;
+    }
+    /* Release mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionExit();
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxMemPoolListFind ***/
+
+
+/************************************************************************************//**
+** \brief     Inserts the specified memory pool node into the linked list with memory
+**            pool nodes. It automatically sorts the nodes by ascending block size. Note
+**            that this function only works properly is there is not already a memory
+**            pool in the list configured for the same block size as the new one that
+**            this function should insert.
+** \param     nodePtr Pointer to the memory pool node to insert.
+**
+****************************************************************************************/
+static void TbxMemPoolListInsert(tPoolNode * nodePtr)
+{
+  tPoolNode * currentNodePtr;
+  tPoolNode * prevNodePtr = NULL;
+  uint8_t     nodeInserted = TBX_FALSE;
+
+  /* Verify parameter. */
+  TBX_ASSERT(nodePtr != NULL);
+
+  /* Only continue if the parameter is valid. */
+  if (nodePtr != NULL)
+  {
+    /* Sanity check. The pointer to the memory pool should not be NULL here. */
+    TBX_ASSERT(nodePtr->poolPtr != NULL);
+    /* Obtain mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionEnter();
+    /* Is the list with memory pools empty? */
+    if (tbxPoolList == NULL)
+    {
+      /* Add the node at the start of the list. */
+      nodePtr->nextNodePtr = NULL;
+      tbxPoolList = nodePtr;
+    }
+    /* The list with memory pools is not empty. */
+    else
+    {
+      /* Get pointer to the pool node at the head of the linked list. */
+      currentNodePtr = tbxPoolList;
+      /* Loop through the nodes to find the location where the new node should be
+       * inserted, such that the nodes always remain sorted by ascending block size.
+       */
+      while (currentNodePtr != NULL)
+      {
+        /* Sanity check. The pointer to the memory pool should not be NULL here. */
+        TBX_ASSERT(currentNodePtr->poolPtr != NULL);
+        /* This function should not be used to insert a memory pool node that has a
+         * block size that equals an already existing node. Verify this.
+         */
+        TBX_ASSERT(currentNodePtr->poolPtr->blockSize != nodePtr->poolPtr->blockSize);
+        /* Is the block size of this node's memory pool larger than the new one? */
+        if (currentNodePtr->poolPtr->blockSize > nodePtr->poolPtr->blockSize)
+        {
+          /* The new node should be inserted before this one. If the current node is
+           * the head of the list, the new node should become the new head.
+           */
+          if (currentNodePtr == tbxPoolList)
+          {
+            /* Sanity check. In this case the previous node should still be NULL. */
+            TBX_ASSERT(prevNodePtr == NULL);
+            /* Add the node at the start of the list, right before the current node. */
+            nodePtr->nextNodePtr = currentNodePtr;
+            tbxPoolList = nodePtr;
+          }
+          /* The current node is not the head of the list, so the new node should be
+           * inserted between previous node and the current node.
+           */
+          else
+          {
+            /* Sanity check. In this case the previous node should not be NULL. */
+            TBX_ASSERT(prevNodePtr != NULL);
+            /* Only continue if the sanity check passed. */
+            if (prevNodePtr != NULL)
+            {
+              /* Insert the node between the previous and current nodes. */
+              nodePtr->nextNodePtr = currentNodePtr;
+              prevNodePtr->nextNodePtr = nodePtr;
+            }
+          }
+          /* Set flag to indicate that the new node was successfully inserted. */
+          nodeInserted = TBX_TRUE;
+        }
+        /* Did we reach the end of the list and the new node was not yet inserted? */
+        if ( (currentNodePtr->nextNodePtr == NULL) && (nodeInserted == TBX_FALSE) )
+        {
+          /* There are no memory pools present in the list that have a block size larger
+           * than the new node. This means that the new node should be inserted at the
+           * tail of the list.
+           */
+          nodePtr->nextNodePtr = NULL;
+          currentNodePtr->nextNodePtr = nodePtr;
+          /* Set flag to indicate that the new node was successfully inserted. */
+          nodeInserted = TBX_TRUE;
+        }
+        /* Check if the new node was already inserted. */
+        if (nodeInserted == TBX_TRUE)
+        {
+          /* All done so no need to continue looping. */
+          break;
+        }
+        /* Update loop variables. */
+        prevNodePtr = currentNodePtr;
+        currentNodePtr = currentNodePtr->nextNodePtr;
+      }
+    }
+    /* Release mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionExit();
+  }
+} /*** end of TbxMemPoolListInsert ***/
 
 
 /****************************************************************************************
