@@ -108,14 +108,16 @@ static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr);
  *      1) When calling TbxMemPoolCreate() with a blockSize for which a memory pool was
  *         already created before, the existing memory pool should be extended instead
  *         of creating a new memory pool.
+ *         ---> DONE
  *      2) When TbxMemPoolAllocate() is called and the best fitting memory pool from a
  *         block size perspective is full, it should automatically attempt to allocate
  *         from a memory pool of a larger block size, until it finds one.
+ *         ===== CONTINUE HERE =====
  */
 /** \brief Temporary single memory pool. Eventually, this software module should support
  *         multiple dynamically allocated memory pools.
  */
-static tPool * tbxMemPoolPtr;
+static tPool * tbxMemPoolPtr = NULL;
 
 /** \brief Linked list with memory pools. */
 static tPoolList tbxPoolList = NULL;
@@ -131,8 +133,11 @@ static tPoolList tbxPoolList = NULL;
 **            can be called to perform dynamic memory allocation. A well designed memory
 **            pool approach makes dynamic memory allocation possible on RAM constrained
 **            microcontrollers, without the need to worry about memory fragmentation.
-**            Note that deleting a previously created memory pool is no supported on
+**            Note that deleting a previously created memory pool is not supported on
 **            purpose to prevent memory fragmentation.
+**            When this function is called to create a memory pool with a size that was
+**            already created before, the already existing memory pool is extended
+**            instead of creating a new memory pool.
 ** \param     numBlocks The number of blocks to statically preallocate on the heap for
 **            this memory pool.
 ** \param     blockSize The size of each block in bytes.
@@ -146,6 +151,8 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
   size_t       blockNodeIdx;
   tBlockNode * blockNodePtr;
   void       * blockPtr;
+  tPool      * poolPtr;
+  tPoolNode  * poolNodePtr;
 
   /* Verify parameters. */
   TBX_ASSERT(numBlocks > 0U);
@@ -156,35 +163,73 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
   {
     /* Set the result value to okay. */
     result = TBX_OK;
-    /* Create the memory pool object. */
-    tbxMemPoolPtr = TbxHeapAllocate(sizeof(tPool));
-    /* Verify that the memory pool object could be created. */
-    if (tbxMemPoolPtr == NULL)
+    /* Obtain mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionEnter();
+    /* Attempt to locate a memory pool node in the list that is configured for the same
+     * block size.
+     */
+    poolNodePtr = TbxMemPoolListFind(blockSize);
+    /* Create a new memory pool node and its associated empty memory pool if a memory
+     * pool node for this block size does not yet exist.
+     */
+    if (poolNodePtr == NULL)
     {
-      /* Flag the error. */
-      result = TBX_ERROR;
-    }
-    /* Only continue if all is okay so far. */
-    if (result == TBX_OK)
-    {
-      /* Store the data size of the blocks managed by the memory pool. */
-      tbxMemPoolPtr->blockSize = blockSize;
-      /* Create the block list object that will hold blocks that are still free. */
-      tbxMemPoolPtr->freeBlockListPtr = TbxMemPoolBlockListCreate();
-      /* Create the block list object that will hold blocks that are in use. */
-      tbxMemPoolPtr->usedBlockListPtr = TbxMemPoolBlockListCreate();
-      /* Verify that the block list objects could be created. */
-      if ( (tbxMemPoolPtr->freeBlockListPtr == NULL) ||
-           (tbxMemPoolPtr->usedBlockListPtr == NULL) )
+      /* Create a new memory pool node. */
+      poolNodePtr = TbxHeapAllocate(sizeof(tPoolNode));
+      /* Verify that the memory pool node could be created. */
+      if (poolNodePtr == NULL)
       {
         /* Flag the error. */
         result = TBX_ERROR;
+      }
+      /* Continue with creating the memory pool object. */
+      else
+      {
+        /* Create a new memory pool object. */
+        poolPtr = TbxHeapAllocate(sizeof(tPool));
+        /* Verify that the memory pool object could be created. */
+        if (poolPtr == NULL)
+        {
+          /* Flag the error. */
+          result = TBX_ERROR;
+        }
+        /* Continue with initializing both the memory pool and its node. */
+        else
+        {
+          /* Initialize the memory pool node. */
+          poolNodePtr->nextNodePtr = NULL;
+          poolNodePtr->poolPtr = poolPtr;
+          /* Store the data size of the blocks managed by the memory pool. */
+          poolPtr->blockSize = blockSize;
+          /* Create the block list object that will hold blocks that are still free. */
+          poolPtr->freeBlockListPtr = TbxMemPoolBlockListCreate();
+          /* Create the block list object that will hold blocks that are in use. */
+          poolPtr->usedBlockListPtr = TbxMemPoolBlockListCreate();
+          /* Verify that the block list objects could be created. */
+          if ( (poolPtr->freeBlockListPtr == NULL) ||
+               (poolPtr->usedBlockListPtr == NULL) )
+          {
+            /* Flag the error. */
+            result = TBX_ERROR;
+          }
+          /* The (empty) memory pool and its node were created. Time to insert it into
+           * the list.
+           */
+          else
+          {
+            TbxMemPoolListInsert(poolNodePtr);
+          }
+        }
       }
     }
     /* Only continue if all is okay so far. */
     if (result == TBX_OK)
     {
-      /* Create the blocks one by one and add them as nodes to the free block list. */
+      /* The pool node pointer it now valid. It either points to a node that holds a
+       * newly created and empty memory pool or to a node that holds an already existing
+       * memory pool that can be extended. Create the blocks one by one and add them as
+       * nodes to the free block list.
+       */
       for (blockNodeIdx = 0; blockNodeIdx < numBlocks; blockNodeIdx++)
       {
         /* Allocate memory for the block node. */
@@ -209,14 +254,29 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
           /* The data block was created. */
           else
           {
-            /* Initialize the block node and insert it into the free block list. */
+            /* Initialize the block node. */
             blockNodePtr->blockPtr = blockPtr;
             blockNodePtr->nextNodePtr = NULL;
-            TbxMemPoolBlockListInsert(tbxMemPoolPtr->freeBlockListPtr, blockNodePtr);
+            /* Sanity check. The pool node pointer should not be NULL here. */
+            TBX_ASSERT(poolNodePtr != NULL);
+            /* Flag error in case the sanity check failed. */
+            if (poolNodePtr == NULL)
+            {
+              /* Flag the error. */
+              result = TBX_ERROR;
+            }
+            else
+            {
+              /* Insert the block node into the free block list. */
+              TbxMemPoolBlockListInsert(poolNodePtr->poolPtr->freeBlockListPtr,
+                                        blockNodePtr);
+            }
           }
         }
       }
     }
+    /* Release mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionExit();
   }
 
   /* Give the result back to the caller. */
@@ -255,6 +315,16 @@ void * TbxMemPoolAllocate(size_t size)
   /* Only continue if the parameter is valid. */
   if (size > 0U)
   {
+    /* TODO ##Vg Continue here. Probably want to loop through the memory pool list until
+     *           a memory pool node was found with a block size equal or larger than
+     *           the size parameter. Then try to extract a block from the free block
+     *           list. If no free ones were available, continue with the next memory
+     *           pool node. This should work nicely in a loop since the memory pool list
+     *           is automatically ordered by block size in ascending order.
+     *
+     *           Note that afterwards, tbxMemPoolPtr can be completely removed.
+     */
+
     /* Make sure that the size fits inside a block of the memory pool. */
     if (size <= tbxMemPoolPtr->blockSize)
     {
@@ -298,9 +368,11 @@ void * TbxMemPoolAllocate(size_t size)
 ****************************************************************************************/
 void TbxMemPoolRelease(void * memPtr)
 {
-  size_t       blockSize;
-  tBlockNode * blockNodePtr;
-  void       * blockPtr;
+  size_t            blockSize;
+  tBlockNode      * blockNodePtr;
+  void            * blockPtr;
+  tPoolNode const * poolNodePtr;
+  tPool     const * poolPtr;
 
   /* Verify parameter. */
   TBX_ASSERT(memPtr != NULL);
@@ -315,30 +387,48 @@ void TbxMemPoolRelease(void * memPtr)
     {
       /* Get the block's data size. */
       blockSize = TbxMemPoolBlockGetBlockSize(blockPtr);
-      /* Only continue if the block size matches the one of the memory pool. */
-      if (blockSize == tbxMemPoolPtr->blockSize)
+      /* Obtain mutual exclusive access to the memory pool list. */
+      TbxCriticalSectionEnter();
+      /* Attempt to locate the memory pool node that holds the memory pool with this
+       * block size.
+       */
+      poolNodePtr = TbxMemPoolListFind(blockSize);
+      /* Sanity check. The memory pool node that to be released memory originally
+       * belonged too should have been found.
+       */
+      TBX_ASSERT(poolNodePtr != NULL);
+      /* Only continue if the sanity check passed. */
+      if (poolNodePtr != NULL)
       {
-        /* Obtain mutual exclusive access to the memory pool. */
-        TbxCriticalSectionEnter();
-        /* Attempt to extract a block node from the linked list with used block nodes. */
-        blockNodePtr = TbxMemPoolBlockListExtract(tbxMemPoolPtr->usedBlockListPtr);
-        /* Sanity check. A node should be available, otherwise more blocks were released
-         * then actually allocated, which shouldn't happen.
-         */
-        TBX_ASSERT(blockNodePtr != NULL);
-        /* Only continue if a free block node could be extracted. */
-        if (blockNodePtr != NULL)
+        /* Get the pointer to the actual memory pool. */
+        poolPtr = poolNodePtr->poolPtr;
+        /* Sanity check. The memory pool should not be NULL here. */
+        TBX_ASSERT(poolPtr != NULL);
+        /* Only continue if the sanity check passed. */
+        if (poolPtr != NULL)
         {
-          /* Initialize the block. */
-          blockNodePtr->blockPtr = blockPtr;
-          /* Now the node itself needs to be inserted into the linked list with free
-           * block nodes. This way this node can be allocated again in the future.
+          /* Attempt to extract a block node from the linked list with used block
+           * nodes.
            */
-          TbxMemPoolBlockListInsert(tbxMemPoolPtr->freeBlockListPtr, blockNodePtr);
+          blockNodePtr = TbxMemPoolBlockListExtract(poolPtr->usedBlockListPtr);
+          /* Sanity check. A node should be available, otherwise more blocks were
+           * released then actually allocated, which shouldn't happen.
+           */
+          TBX_ASSERT(blockNodePtr != NULL);
+          /* Only continue if a block node could be extracted. */
+          if (blockNodePtr != NULL)
+          {
+            /* Initialize the block. */
+            blockNodePtr->blockPtr = blockPtr;
+            /* Now the node itself needs to be inserted into the linked list with free
+             * block nodes. This way this node can be allocated again in the future.
+             */
+            TbxMemPoolBlockListInsert(poolPtr->freeBlockListPtr, blockNodePtr);
+          }
         }
-        /* Release mutual exclusive access to the memory pool. */
-        TbxCriticalSectionExit();
       }
+      /* Release mutual exclusive access to the memory pool list. */
+      TbxCriticalSectionExit();
     }
   }
 } /*** end of TbxMemPoolRelease ***/
