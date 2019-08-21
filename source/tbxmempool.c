@@ -85,6 +85,7 @@ typedef tPoolNode (* tPoolList);
 ****************************************************************************************/
 /* Pool list management functions */
 static tPoolNode  * TbxMemPoolListFind(size_t blockSize);
+static tPoolNode  * TbxMemPoolListFindBestFit(size_t blockSize);
 static void         TbxMemPoolListInsert(tPoolNode * nodePtr);
 /* Block management functions. */
 static void       * TbxMemPoolBlockCreate(size_t size);
@@ -96,34 +97,12 @@ static tBlockList * TbxMemPoolBlockListCreate(void);
 static void         TbxMemPoolBlockListInsert(tBlockList * listPtr,
                                               tBlockNode * nodePtr);
 static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr);
+static uint8_t      TbxMemPoolBlockListIsEmpty(tBlockList const * listPtr);
 
 
 /****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
-/* TODO ##Vg Improve such that multiple memory pools are supported and dynamically
- *      allocated, instead of just this one. Do not forget to properly use critical
- *      sections while implementing this part. It should be such that the following
- *      requirements are met:
- *      1) When calling TbxMemPoolCreate() with a blockSize for which a memory pool was
- *         already created before, the existing memory pool should be extended instead
- *         of creating a new memory pool.
- *         ---> DONE
- *      2) When TbxMemPoolAllocate() is called and the best fitting memory pool from a
- *         block size perspective is full, it should automatically attempt to allocate
- *         from a memory pool of a larger block size, until it finds one.
- *         ===== CONTINUE HERE =====
- *      3) Refactor critical section usage. There seems to be a critical section in the
- *         3 global functions: Create, Allocate, and Release. Then it is not really
- *         necessary to have them in the local utility functions anymore, as long as the
- *         critical sections are all around the parts that call the local utility
- *         functions.
- */
-/** \brief Temporary single memory pool. Eventually, this software module should support
- *         multiple dynamically allocated memory pools.
- */
-static tPool * tbxMemPoolPtr = NULL;
-
 /** \brief Linked list with memory pools. */
 static tPoolList tbxPoolList = NULL;
 
@@ -310,9 +289,11 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
 ****************************************************************************************/
 void * TbxMemPoolAllocate(size_t size)
 {
-  void       * result = NULL;
-  tBlockNode * blockNodePtr;
-  void       * blockDataPtr;
+  void            * result = NULL;
+  tBlockNode      * blockNodePtr;
+  void            * blockDataPtr;
+  tPoolNode const * poolNodePtr;
+  tPool     const * poolPtr;
 
   /* Verify parameter. */
   TBX_ASSERT(size > 0U);
@@ -320,40 +301,41 @@ void * TbxMemPoolAllocate(size_t size)
   /* Only continue if the parameter is valid. */
   if (size > 0U)
   {
-    /* TODO ##Vg Continue here. Probably want to loop through the memory pool list until
-     *           a memory pool node was found with a block size equal or larger than
-     *           the size parameter. Then try to extract a block from the free block
-     *           list. If no free ones were available, continue with the next memory
-     *           pool node. This should work nicely in a loop since the memory pool list
-     *           is automatically ordered by block size in ascending order.
-     *
-     *           Note that afterwards, tbxMemPoolPtr can be completely removed.
-     */
-
-    /* Make sure that the size fits inside a block of the memory pool. */
-    if (size <= tbxMemPoolPtr->blockSize)
+    /* Obtain mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionEnter();
+    /* Try to find the best fitting memory pool that has a block available. */
+    poolNodePtr = TbxMemPoolListFindBestFit(size);
+    /* Only continue with the allocation of a memory pool candidate was found. */
+    if (poolNodePtr != NULL)
     {
-      /* Obtain mutual exclusive access to the memory pool. */
-      TbxCriticalSectionEnter();
-      /* Attempt to extract a block node from the linked list with free block nodes. */
-      blockNodePtr = TbxMemPoolBlockListExtract(tbxMemPoolPtr->freeBlockListPtr);
-      /* Only continue if a free block node could be extracted. */
-      if (blockNodePtr != NULL)
+      /* Get the pointer to the actual memory pool. */
+      poolPtr = poolNodePtr->poolPtr;
+      /* Sanity check. The memory pool should not be NULL here. */
+      TBX_ASSERT(poolPtr != NULL);
+      /* Only continue if the sanity check passed. */
+      if (poolPtr != NULL)
       {
-        /* Read and store the pointer that points to the block's data. */
-        blockDataPtr = TbxMemPoolBlockGetDataPtr(blockNodePtr->blockPtr);
-        /* Now the node itself needs to be inserted into the linked list with used block
-         * nodes. This way this node can be reused when freeing this or another block.
-         */
-        TbxMemPoolBlockListInsert(tbxMemPoolPtr->usedBlockListPtr, blockNodePtr);
-        /* Perform a sanity check. The block's data pointer should not be NULL here. */
-        TBX_ASSERT(blockDataPtr != NULL);
-        /* Set the result value. */
-        result = blockDataPtr;
+        /* Attempt to extract a block node from the linked list with free block nodes. */
+        blockNodePtr = TbxMemPoolBlockListExtract(poolPtr->freeBlockListPtr);
+        /* Only continue if a free block node could be extracted. */
+        if (blockNodePtr != NULL)
+        {
+          /* Read and store the pointer that points to the block's data. */
+          blockDataPtr = TbxMemPoolBlockGetDataPtr(blockNodePtr->blockPtr);
+          /* Now the node itself needs to be inserted into the linked list with used
+           * block nodes. This way this node can be reused when freeing this or another
+           * block.
+           */
+          TbxMemPoolBlockListInsert(poolPtr->usedBlockListPtr, blockNodePtr);
+          /* Perform a sanity check. The block's data pointer should not be NULL here. */
+          TBX_ASSERT(blockDataPtr != NULL);
+          /* Set the result value. */
+          result = blockDataPtr;
+        }
       }
-      /* Release mutual exclusive access to the memory pool. */
-      TbxCriticalSectionExit();
     }
+    /* Release mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionExit();
   }
 
   /* Give the result back to the caller. */
@@ -385,6 +367,8 @@ void TbxMemPoolRelease(void * memPtr)
   /* Only continue if the parameter is valid. */
   if (memPtr != NULL)
   {
+    /* Obtain mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionEnter();
     /* First convert the block's data pointer to the block's base memory pointer. */
     blockPtr = TbxMemPoolBlockGetMemPtr(memPtr);
     /* Only continue if the block pointer is valid. */
@@ -392,14 +376,12 @@ void TbxMemPoolRelease(void * memPtr)
     {
       /* Get the block's data size. */
       blockSize = TbxMemPoolBlockGetBlockSize(blockPtr);
-      /* Obtain mutual exclusive access to the memory pool list. */
-      TbxCriticalSectionEnter();
       /* Attempt to locate the memory pool node that holds the memory pool with this
        * block size.
        */
       poolNodePtr = TbxMemPoolListFind(blockSize);
-      /* Sanity check. The memory pool node that to be released memory originally
-       * belonged too should have been found.
+      /* Sanity check. The memory pool node that the to be released memory originally
+       * belonged to should have been found.
        */
       TBX_ASSERT(poolNodePtr != NULL);
       /* Only continue if the sanity check passed. */
@@ -417,7 +399,7 @@ void TbxMemPoolRelease(void * memPtr)
            */
           blockNodePtr = TbxMemPoolBlockListExtract(poolPtr->usedBlockListPtr);
           /* Sanity check. A node should be available, otherwise more blocks were
-           * released then actually allocated, which shouldn't happen.
+           * released than actually allocated, which shouldn't happen.
            */
           TBX_ASSERT(blockNodePtr != NULL);
           /* Only continue if a block node could be extracted. */
@@ -432,9 +414,9 @@ void TbxMemPoolRelease(void * memPtr)
           }
         }
       }
-      /* Release mutual exclusive access to the memory pool list. */
-      TbxCriticalSectionExit();
     }
+    /* Release mutual exclusive access to the memory pool list. */
+    TbxCriticalSectionExit();
   }
 } /*** end of TbxMemPoolRelease ***/
 
@@ -462,8 +444,6 @@ static tPoolNode * TbxMemPoolListFind(size_t blockSize)
   /* Only continue if the parameter is valid. */
   if (blockSize > 0U)
   {
-    /* Obtain mutual exclusive access to the memory pool list. */
-    TbxCriticalSectionEnter();
     /* Get pointer to the pool node at the head of the linked list. */
     poolNodePtr = tbxPoolList;
     /* Loop through all nodes until a match is found. */
@@ -482,13 +462,60 @@ static tPoolNode * TbxMemPoolListFind(size_t blockSize)
       /* Continue with the next pool node in the list. */
       poolNodePtr = poolNodePtr->nextNodePtr;
     }
-    /* Release mutual exclusive access to the memory pool list. */
-    TbxCriticalSectionExit();
   }
 
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxMemPoolListFind ***/
+
+
+/************************************************************************************//**
+** \brief     Searches through the linked list with memory pools to find a pool that was:
+**            (a) created to hold blocks that are of the greater or equal size as
+**            specified by the parameter, and (b) still have a free block available.
+**            Note that this function relies on the fact that the memory pools in the
+**            list are sorted by ascending block size.
+** \param     blockSize Size of the block to fit.
+** \return    Pointer to the found memory pool node if successful, NULL otherwise.
+**
+****************************************************************************************/
+static tPoolNode * TbxMemPoolListFindBestFit(size_t blockSize)
+{
+  tPoolNode * result = NULL;
+  tPoolNode * poolNodePtr;
+
+  /* Verify parameter. */
+  TBX_ASSERT(blockSize > 0U);
+
+  /* Only continue if the parameter is valid. */
+  if (blockSize > 0U)
+  {
+    /* Get pointer to the pool node at the head of the linked list. */
+    poolNodePtr = tbxPoolList;
+    /* Loop through all nodes until a fit is found. */
+    while (poolNodePtr != NULL)
+    {
+      /* Does this memory pool hold blocks that would fit the specified block size? */
+      if (poolNodePtr->poolPtr->blockSize >= blockSize)
+      {
+        /* Does this memory pool have free blocks available? */
+        if (TbxMemPoolBlockListIsEmpty(poolNodePtr->poolPtr->freeBlockListPtr) \
+            == TBX_FALSE)
+        {
+          /* Found a match so update the result value. */
+          result = poolNodePtr;
+          /* Match found so no need to continue looping. */
+          break;
+        }
+      }
+      /* Continue with the next pool node in the list. */
+      poolNodePtr = poolNodePtr->nextNodePtr;
+    }
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxMemPoolListFindBestFit ***/
 
 
 /************************************************************************************//**
@@ -514,8 +541,6 @@ static void TbxMemPoolListInsert(tPoolNode * nodePtr)
   {
     /* Sanity check. The pointer to the memory pool should not be NULL here. */
     TBX_ASSERT(nodePtr->poolPtr != NULL);
-    /* Obtain mutual exclusive access to the memory pool list. */
-    TbxCriticalSectionEnter();
     /* Is the list with memory pools empty? */
     if (tbxPoolList == NULL)
     {
@@ -594,8 +619,6 @@ static void TbxMemPoolListInsert(tPoolNode * nodePtr)
         currentNodePtr = currentNodePtr->nextNodePtr;
       }
     }
-    /* Release mutual exclusive access to the memory pool list. */
-    TbxCriticalSectionExit();
   }
 } /*** end of TbxMemPoolListInsert ***/
 
@@ -668,14 +691,10 @@ static void * TbxMemPoolBlockGetDataPtr(void * memPtr)
   /* Only continue if the parameter is valid. */
   if (memPtr != NULL)
   {
-    /* Obtain mutual exclusive access to the block. */
-    TbxCriticalSectionEnter();
     /* Create a pointer to an array of size_t elements. */
     blockSizeArray = memPtr;
     /* The block data starts after the block size value. */
     dataPtr = &blockSizeArray[1U];
-    /* Release mutual exclusive access to the block. */
-    TbxCriticalSectionExit();
     /* Set the result value. */
     result = dataPtr;
   }
@@ -704,14 +723,10 @@ static size_t TbxMemPoolBlockGetBlockSize(void const * memPtr)
   /* Only continue if the parameter is valid. */
   if (memPtr != NULL)
   {
-    /* Obtain mutual exclusive access to the block. */
-    TbxCriticalSectionEnter();
     /* Create a pointer to an array of size_t elements. */
     blockSizeArray = memPtr;
     /* The block size value is located at the start of the block, */
     blockSize = blockSizeArray[0U];
-    /* Release mutual exclusive access to the block. */
-    TbxCriticalSectionExit();
     /* Set the result value. */
     result = blockSize;
   }
@@ -740,16 +755,12 @@ static void * TbxMemPoolBlockGetMemPtr(void * dataPtr)
   /* Only continue if the parameter is valid. */
   if (dataPtr != NULL)
   {
-    /* Obtain mutual exclusive access to the block. */
-    TbxCriticalSectionEnter();
     /* Create a pointer to an array of size_t elements. */
     blockSizeArray = dataPtr;
     /* Get pointer to the start of the block, which is one size_t element before the
      * pointer to the block's data.
      */
     blockMemPtr = &blockSizeArray[-1];
-    /* Release mutual exclusive access to the block. */
-    TbxCriticalSectionExit();
     /* Set the result value. */
     result = blockMemPtr;
   }
@@ -805,8 +816,6 @@ static void TbxMemPoolBlockListInsert(tBlockList * listPtr, tBlockNode * nodePtr
   /* Only continue if the parameters are valid. */
   if ( (listPtr != NULL) && (nodePtr != NULL) )
   {
-    /* Obtain mutual exclusive access to the linked list with block nodes. */
-    TbxCriticalSectionEnter();
     /* Is the list currently empty? */
     if (*listPtr == NULL)
     {
@@ -821,8 +830,6 @@ static void TbxMemPoolBlockListInsert(tBlockList * listPtr, tBlockNode * nodePtr
     }
     /* Insert the new node at the start of the list. */
     *listPtr = nodePtr;
-    /* Release mutual exclusive access to the linked list with block nodes. */
-    TbxCriticalSectionExit();
   }
 } /*** end of TbxMemPoolBlockListInsert ***/
 
@@ -844,8 +851,6 @@ static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr)
   /* Only continue if the parameter is valid. */
   if (listPtr != NULL)
   {
-    /* Obtain mutual exclusive access to the linked list with block nodes. */
-    TbxCriticalSectionEnter();
     /* Only extract a node if the list currently not empty. */
     if (*listPtr != NULL)
     {
@@ -864,13 +869,41 @@ static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr)
         *listPtr = result->nextNodePtr;
       }
     }
-    /* Release mutual exclusive access to the linked list with block nodes. */
-    TbxCriticalSectionExit();
   }
 
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxMemPoolBlockListExtract ***/
+
+
+/************************************************************************************//**
+** \brief     Checks if the linked list with block nodes is empty. So when it does not
+**            contain any nodes.
+** \param     listPtr Pointer to the linked list with blocks.
+** \return    TBX_TRUE if the block list is empty, TBX_FALSE otherwise.
+**
+****************************************************************************************/
+static uint8_t TbxMemPoolBlockListIsEmpty(tBlockList const * listPtr)
+{
+  uint8_t result = TBX_FALSE;
+
+  /* Verify parameter. */
+  TBX_ASSERT(listPtr != NULL);
+
+  /* Only continue if the parameter is valid. */
+  if (listPtr != NULL)
+  {
+    /* Is the list empty? */
+    if (*listPtr == NULL)
+    {
+      /* Update the result value. */
+      result = TBX_TRUE;
+    }
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxMemPoolBlockListIsEmpty ***/
 
 
 /*********************************** end of tbxmempool.c *******************************/
