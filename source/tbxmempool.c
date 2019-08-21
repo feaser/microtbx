@@ -113,6 +113,11 @@ static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr);
  *         block size perspective is full, it should automatically attempt to allocate
  *         from a memory pool of a larger block size, until it finds one.
  *         ===== CONTINUE HERE =====
+ *      3) Refactor critical section usage. There seems to be a critical section in the
+ *         3 global functions: Create, Allocate, and Release. Then it is not really
+ *         necessary to have them in the local utility functions anymore, as long as the
+ *         critical sections are all around the parts that call the local utility
+ *         functions.
  */
 /** \brief Temporary single memory pool. Eventually, this software module should support
  *         multiple dynamically allocated memory pools.
