@@ -7,8 +7,3 @@ TODO Add explanation of how the API of the memory pools software component is us
 # Examples
 
 TODO Add example of using the memory pools API.
-
-
-# Configuration
-
-TODO Explain the supported configuration macros of the memory pools software component.

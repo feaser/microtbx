@@ -1,5 +1,5 @@
 Assertions are statements used for checking situations that should never happen. It is a good coding practice to add such statements to your software program. For example to validate the values of function
-parameters, to check pointers for not being NULL, to check that an array index is not negative, etc.
+parameters, to check pointers for not being NULL, to check that an array index is not out of range, etc.
 
 # Usage
 

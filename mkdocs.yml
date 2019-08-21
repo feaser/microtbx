@@ -4,6 +4,7 @@ repo_url: https://github.com/feaser/microtbx
 theme: readthedocs
 nav:
   - Home: 'index.md'
+  - API Reference: 'apiref.md'
   - MISRA Compliance: 'misra.md'
   - Licensing: 'license.md'
   - Assertions: 'assertions.md'
