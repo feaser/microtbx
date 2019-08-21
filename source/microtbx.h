@@ -65,6 +65,19 @@
 extern "C" {
 #endif
 /****************************************************************************************
+* Version definitions
+****************************************************************************************/
+/** \brief Main version number of MicroTBX. */
+#define TBX_VERSION_MAIN                         (0U)
+
+/** \brief Minor version number of MicroTBX. */
+#define TBX_VERSION_MINOR                        (9U)
+
+/** \brief Patch number of MicroTBX. */
+#define TBX_VERSION_PATCH                        (0U)
+
+
+/****************************************************************************************
 * Macro definitions
 ****************************************************************************************/
 /** \brief Boolean true value. */
