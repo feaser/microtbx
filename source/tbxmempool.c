@@ -214,7 +214,7 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
        * memory pool that can be extended. Create the blocks one by one and add them as
        * nodes to the free block list.
        */
-      for (blockNodeIdx = 0; blockNodeIdx < numBlocks; blockNodeIdx++)
+      for (blockNodeIdx = 0U; blockNodeIdx < numBlocks; blockNodeIdx++)
       {
         /* Allocate memory for the block node. */
         blockNodePtr = TbxHeapAllocate(sizeof(tBlockNode));
@@ -713,7 +713,7 @@ static void * TbxMemPoolBlockGetDataPtr(void * memPtr)
 ****************************************************************************************/
 static size_t TbxMemPoolBlockGetBlockSize(void const * memPtr)
 {
-  size_t         result = 0;
+  size_t         result = 0U;
   size_t const * blockSizeArray;
   size_t         blockSize;
 
