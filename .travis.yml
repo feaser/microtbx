@@ -1,0 +1,27 @@
+language: python
+dist: bionic
+sudo: true
+python: 3.6
+branches: master
+
+before_install:
+  - sudo apt-get install -y build-essential cmake
+  
+install:
+  - pip install mkdocs  
+
+script: 
+  - "cd ${TRAVIS_BUILD_DIR}/demos/LINUX_PC_GCC/build/"
+  - cmake ..
+  - make clean all
+
+before_deploy:
+  - mkdocs build --verbose --clean --strict
+  
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $github_token
+  local_dir: site
+  on:
+    branch: master  
