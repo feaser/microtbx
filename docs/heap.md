@@ -13,11 +13,11 @@ found for handling dynamic allocation. The solution is two-fold:
 
 1. Use static memory preallocation. This entails performing the memory
    allocation once during software program initialization and never releasing
-   (free-ing) the allocated memory.
+   (free-ing) the allocated memory. This means that the lifetime of the allocated data spans the run-time of the entire software program.
 2. Use memory pools. With a memory pool, memory is allocated as fixed-size memory
    blocks (partitions). The benefit of dynamic memory allocation using memory
    pools is that the memory can be released again without the before mentioned
-   fragmentation risk.
+   fragmentation risk. It is perfect in situations when temporary data storage is needed, and the lifetime of the data is longer than just one function.
 
 MicroTBX offers software components for both solutions. The heap software
 component described in this section covers solution (1) with static memory
