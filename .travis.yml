@@ -14,6 +14,7 @@ script:
   - "cd ${TRAVIS_BUILD_DIR}/demos/LINUX_PC_GCC/build/"
   - cmake ..
   - make clean all
+  - "cd ${TRAVIS_BUILD_DIR}"
 
 before_deploy:
   - mkdocs build --verbose --clean --strict
