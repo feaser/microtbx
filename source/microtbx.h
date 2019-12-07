@@ -33,8 +33,6 @@
 #ifndef MICROTBX_H
 #define MICROTBX_H
 
-/* TODO ##Vg Probably want to add version information somewhere. */
-
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
