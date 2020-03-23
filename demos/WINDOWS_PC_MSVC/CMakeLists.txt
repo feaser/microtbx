@@ -63,7 +63,6 @@ set(MICROTBX_BASE ${PROJECT_SOURCE_DIR}/../../source)
 set(MICROTBX_INCS
   "${MICROTBX_BASE}"
   "${MICROTBX_BASE}/port/WINDOWS"
-  "${MICROTBX_BASE}/third_party/aes256"
 )
 
 
@@ -93,14 +92,9 @@ file(GLOB MICROTBX_PORT_SRCS
   "${MICROTBX_BASE}/port/WINDOWS/*.h"
   "${MICROTBX_BASE}/port/WINDOWS/*.c"
 )
-file(GLOB MICROTBX_THIRDPARTY_SRCS
-  "${MICROTBX_BASE}/third_party/aes256/*.h"
-  "${MICROTBX_BASE}/third_party/aes256/*.c"
-)
 set(MICROTBX_SRCS
   "${MICROTBX_CORE_SRCS}"
   "${MICROTBX_PORT_SRCS}"
-  "${MICROTBX_THIRDPARTY_SRCS}"
 )
 
 # Add program sources

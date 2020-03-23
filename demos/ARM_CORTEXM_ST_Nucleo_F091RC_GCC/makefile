@@ -58,9 +58,6 @@ PROJ_FILES  = $(call rwildcard, , *.c *.h *.s)
 # Collect MicroTBX sources
 PROJ_FILES += $(wildcard ../../source/*.c)
 PROJ_FILES += $(wildcard ../../source/*.h)
-# Collect MiroTBX third party sources
-PROJ_FILES += $(wildcard ../../source/third_party/aes256/*.c)
-PROJ_FILES += $(wildcard ../../source/third_party/aes256/*.h)
 # Collect MicroTBX port and compiler specific sources
 PROJ_FILES += $(wildcard ../../source/port/ARM_CORTEXM/*.c)
 PROJ_FILES += $(wildcard ../../source/port/ARM_CORTEXM/*.h)

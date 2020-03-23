@@ -18,7 +18,7 @@
 *   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #include <stdint.h>                         /* for standard integer types              */
-#include "aes256.h"
+#include "tbxaes256.h"
 
 static uint8_t rj_sbox(uint8_t x);
 static uint8_t rj_sbox_inv(uint8_t x);

@@ -35,7 +35,7 @@
 * Include files
 ****************************************************************************************/
 #include "microtbx.h"                            /* MicroTBX global header             */
-#include "aes256.h"                              /* AES256 cryptography                */
+#include "tbxaes256.h"                           /* AES256 cryptography                */
 
 
 /****************************************************************************************

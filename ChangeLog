@@ -1,4 +1,16 @@
 -----------------------------------------------------------------------------------------
+2020-03-23 Frank Voorburg <voorburg@feaser.com>
+
+* Moved aes256 sources to the main source directory.
+* Public release of version 0.9.2.
+
+-----------------------------------------------------------------------------------------
+2020-03-01 Frank Voorburg <voorburg@feaser.com>
+
+* Minor fixes and improvements.
+* Public release of version 0.9.1.
+
+-----------------------------------------------------------------------------------------
 2019-08-22 Frank Voorburg <voorburg@feaser.com>
 
 * Basic functionality implemented.
