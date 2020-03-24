@@ -30,19 +30,17 @@ MicroTBX was developed with [MISRA-C compliance](misra.md) in mind. This is a so
 
 Adding MicroTBX to your software project is a simple four step process:
 
-1. Copy all the files from the `source`, the `source\third_party`, and the
-   correct `source\port\XXX` port directory to your project.
-2. Configure your project such that the added `.c` files are compiled and linked during
-   a build.
+1. Copy all the files from the `source` and the correct `source\port\XXX` port directory to your project.
+2. Configure your project such that the added `.c` files are compiled and linked during a build.
 3. Add the directories that contain the `.h` files to your compiler's include path.
 4. Customize the MicroTBX configuraton in `tbx_conf.h`, if desired.
 
 # Usage
 
 1. Add the following line to each source-file, where you intend to make use of MicroTBX:
-    ```
-    #include "microtbx.h"
-    ```
+```c
+#include "microtbx.h"
+```
 
 # Licensing
 

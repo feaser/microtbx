@@ -2,6 +2,5 @@
 +libclass(angle)
 
 // project specific search directories
--ithird_party/aes256
 -iport/LINUX
 
