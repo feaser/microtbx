@@ -34,14 +34,15 @@
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
+#include "microtbx.h"                            /* MicroTBX library                   */
 #include <stdio.h>                               /* Standard I/O functions.            */
 #include <sys/time.h>                            /* Time definitions                   */
-#include "microtbx.h"                            /* MicroTBX library                   */
 
 
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
+size_t          main(size_t argc, char const * const argv[]);
 static void     CustomAssertionHandler(const char * const file, uint32_t line);
 static uint32_t CustomSeedInitHandler(void);
 
@@ -53,7 +54,7 @@ static uint32_t CustomSeedInitHandler(void);
 ** \return    Program exit code.
 **
 ****************************************************************************************/
-int main(int argc, char const * const argv[])
+size_t main(size_t argc, char const * const argv[])
 {
   uint32_t numbers[8];
   size_t   idx;
@@ -71,8 +72,8 @@ int main(int argc, char const * const argv[])
   {
     /* Get a new random number. */
     numbers[idx] = TbxRandomNumberGet();
-    /* Print the value. */
-    printf("Random number %u: %u.\n", (uint32_t)idx+1, (uint32_t)numbers[idx]);
+    /* Print the value. */ /*lint -e{586} */
+    printf("Random number %u: %u.\n", (uint32_t)idx+1U, (uint32_t)numbers[idx]);
   }
 
   /* Set program exit code. */
@@ -123,7 +124,7 @@ static uint32_t CustomSeedInitHandler(void)
 
   if (gettimeofday(&tv, NULL) == 0)
   {
-    result = (((uint32_t)tv.tv_sec * 1000ul) + ((uint32_t)tv.tv_usec / 1000ul));
+    result = (((uint32_t)tv.tv_sec * 1000U) + ((uint32_t)tv.tv_usec / 1000U));
   }
   
   /* Give the result back to the caller. */
@@ -131,4 +132,6 @@ static uint32_t CustomSeedInitHandler(void)
 } /*** end of CustomSeedInitHandler ***/
 
 
+/*lint -esym(9045, struct itimerval) */
+/*lint -esym(9045, struct timezone) */
 /*********************************** end of main.c *************************************/
