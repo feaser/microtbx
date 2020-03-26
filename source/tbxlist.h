@@ -37,8 +37,42 @@
 extern "C" {
 #endif
 /****************************************************************************************
+* Type definitions
+****************************************************************************************/
+/** \brief Layout of a linked list node, which forms the building block of a linked list
+ *         internally.
+ */
+typedef struct t_tbx_list_node
+{
+  /** \brief Pointer to the previous node in the list or NULL if it is the list start. */
+  struct t_tbx_list_node * prevNodePtr;
+  /** \brief Pointer to the next node in the list or NULL if it is the list end. */
+  struct t_tbx_list_node * nextNodePtr;
+  /** \brief Pointer to the actual item store in this node. */
+  void                   * itemPtr;
+} tTbxListNode;
+
+
+/** \brief Layout of a linked list. Its pointer serves as the handle to the linked list
+ *         which is obtained after creation of the list and which is needed in the other
+ *         functions of this module.
+ */
+typedef struct
+{
+  /** \brief Total number of nodes that are currently present in the linked list. */
+  size_t         nodeCount;
+  /** \brief Pointer to the first node of the linked list, also known as the head. */
+  tTbxListNode * firstNodePtr;
+  /** \brief Pointer to the last node of the linked list, also known as the tail. */
+  tTbxListNode * lastNodePtr;
+} tTbxList;
+
+
+/****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
+tTbxList * TbxListCreate(void);
+void       TbxListDelete(tTbxList * list);
 
 
 #ifdef __cplusplus

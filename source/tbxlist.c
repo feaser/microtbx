@@ -37,10 +37,58 @@
 #include "microtbx.h"                            /* MicroTBX global header             */
 
 
+/****************************************************************************************
+* Type definitions
+****************************************************************************************/
+/** \brief Linked list consisting of the linked lists created by the user. */
+typedef tTbxList (* tTbxListList);
+
+
+/****************************************************************************************
+* Local data declarations
+****************************************************************************************/
+/** \brief Linked list that holds the linked lists created by the user. */
+static tTbxListList tbxListList = NULL;
+
+
 /************************************************************************************//**
-** \brief     ...
+** \brief     Creates a new and empty linked list and returns its pointer. Make sure to
+**            store the pointer because it serves as a handle to the linked list, which
+**            is needed when calling the other functions in this module.
+** \return    The pointer to the created linked list.
 **
 ****************************************************************************************/
+tTbxList * TbxListCreate(void)
+{
+  tTbxList * result = NULL;
+
+  /* TODO Implement TbxListCreate(). */
+
+  /* Return the result to the caller. */
+  return result;
+} /*** end of TbxListCreate ***/
+
+
+/************************************************************************************//**
+** \brief     Deletes a previously created linked list. Afterwards, the pointer to the
+**            linked list is no longer valid and should not be used anymore.
+** \param     list Pointer to a previously created linked list to operate on.
+**
+****************************************************************************************/
+void TbxListDelete(tTbxList * list)
+{
+  TBX_UNUSED_ARG(list);
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+
+  /* Only continue if the parameter is valid. */
+  if (list != NULL)
+  {
+    /* TODO Implement TbxListDelete(). */
+  }
+
+} /*** end of TbxListDelete ***/
 
 
 /*********************************** end of tbxlist.c **********************************/
