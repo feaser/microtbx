@@ -40,7 +40,8 @@ extern "C" {
 * Type definitions
 ****************************************************************************************/
 /** \brief Layout of a linked list node, which forms the building block of a linked list
- *         internally.
+ *         internally. Note that its elements should be considered private and only be
+ *         accessed internally by this linked list module.
  */
 typedef struct t_tbx_list_node
 {
@@ -52,10 +53,10 @@ typedef struct t_tbx_list_node
   struct t_tbx_list_node * nextNodePtr;
 } tTbxListNode;
 
-
 /** \brief Layout of a linked list. Its pointer serves as the handle to the linked list
  *         which is obtained after creation of the list and which is needed in the other
- *         functions of this module.
+ *         functions of this module. Note that its elements should be considered private
+ *         and only be accessed internally by this linked list module.
  */
 typedef struct
 {
