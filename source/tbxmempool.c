@@ -835,10 +835,10 @@ static void TbxMemPoolBlockListInsert(tBlockList * listPtr, tBlockNode * nodePtr
       /* There is no next node. */
       nodePtr->nextNodePtr = NULL;
     }
-    /* Linked list it not empty. */
+    /* Linked list is not empty. */
     else
     {
-      /* The next node will be the current head of the list. */
+      /* The new node will be the current head of the list. */
       nodePtr->nextNodePtr = *listPtr;
     }
     /* Insert the new node at the start of the list. */

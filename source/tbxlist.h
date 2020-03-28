@@ -44,12 +44,12 @@ extern "C" {
  */
 typedef struct t_tbx_list_node
 {
+  /** \brief Pointer to the actual item stored in this node. */
+  void                   * itemPtr;
   /** \brief Pointer to the previous node in the list or NULL if it is the list start. */
   struct t_tbx_list_node * prevNodePtr;
   /** \brief Pointer to the next node in the list or NULL if it is the list end. */
   struct t_tbx_list_node * nextNodePtr;
-  /** \brief Pointer to the actual item store in this node. */
-  void                   * itemPtr;
 } tTbxListNode;
 
 
@@ -63,8 +63,6 @@ typedef struct
   size_t         nodeCount;
   /** \brief Pointer to the first node of the linked list, also known as the head. */
   tTbxListNode * firstNodePtr;
-  /** \brief Pointer to the last node of the linked list, also known as the tail. */
-  tTbxListNode * lastNodePtr;
 } tTbxList;
 
 
@@ -73,6 +71,8 @@ typedef struct
 ****************************************************************************************/
 tTbxList * TbxListCreate(void);
 void       TbxListDelete(tTbxList * list);
+void       TbxListClear(tTbxList * list);
+size_t     TbxListGetSize(tTbxList const * list);
 
 
 #ifdef __cplusplus
