@@ -72,16 +72,16 @@ static tTbxListList tbxListList = NULL;
 tTbxList * TbxListCreate(void)
 {
   tTbxList         * result = NULL;
+  static uint8_t     memPoolsCreated = TBX_FALSE;
   uint8_t            errorDetected = TBX_FALSE;
   tTbxListListNode * newListListNodePtr;
   tTbxList         * newListPtr;
 
-  /* Check if this is the first time that this function is called. In this case the
-   * pointer to the linked list that should hold the created lists still has a NULL
-   * value.
-   */
-  if (tbxListList == NULL)
+  /* Check if this is the first time that this function is called. */
+  if (memPoolsCreated == TBX_FALSE)
   {
+    /* Invert flag because this part only needs to run one time. */
+    memPoolsCreated = TBX_TRUE;
     /* This module manages its own linked list of tTbxListListNode. Each tTbxListListNode
      * holds information about a tTbxList that was created with this function. A tTbxList
      * in turn is a linked list of tTbxListNode. Each tTbxListNode holds the actual
@@ -117,10 +117,14 @@ tTbxList * TbxListCreate(void)
      * another block to the memory pool. This works as long as there is enough heap
      * configured.
      */
-    if (TbxMemPoolCreate(1, sizeof(tTbxListListNode)) == TBX_OK)
+    if (newListListNodePtr == NULL)
     {
-      /* Second attempt of the block allocation. */
-      newListListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListListNode));
+      /* Try to add another block to the memory pool. */
+      if (TbxMemPoolCreate(1, sizeof(tTbxListListNode)) == TBX_OK)
+      {
+        /* Second attempt of the block allocation. */
+        newListListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListListNode));
+      }
     }
 
     /* Attempt to allocate a block for the actual list that the node should hold. */
@@ -129,10 +133,14 @@ tTbxList * TbxListCreate(void)
      * another block to the memory pool. This works as long as there is enough heap
      * configured.
      */
-    if (TbxMemPoolCreate(1, sizeof(tTbxList)) == TBX_OK)
+    if (newListPtr == NULL)
     {
-      /* Second attempt of the block allocation. */
-      newListPtr = TbxMemPoolAllocate(sizeof(tTbxList));
+      /* Try to add another block to the memory pool. */
+      if (TbxMemPoolCreate(1, sizeof(tTbxList)) == TBX_OK)
+      {
+        /* Second attempt of the block allocation. */
+        newListPtr = TbxMemPoolAllocate(sizeof(tTbxList));
+      }
     }
 
     /* Only continue if the allocations were successful. */
