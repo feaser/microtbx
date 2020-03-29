@@ -113,7 +113,7 @@ tTbxList * TbxListCreate(void)
     }
   }
 
-  /* Return the result to the caller. */
+  /* Give the result back to the caller. */
   return result;
 } /*** end of TbxListCreate ***/
 
@@ -292,6 +292,7 @@ uint8_t TbxListInsertItem(tTbxList * list, void * item)
       result = TBX_OK;
     }
   }
+  
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxListInsertItem ***/
@@ -493,41 +494,22 @@ static tTbxListNode * TbxListFindListNode(tTbxList const * list, void const * it
   {
     /* Obtain mutual exclusive access to the list. */
     TbxCriticalSectionEnter();
-    /* Quite often the first or the last item will be searched for. Look for these
-     * first, because it can be done without iterating over all the items in the list and
-     * will therefore be faster. Start by checking if it is the first item in the list.
-     */
-    if (list->firstNodePtr->itemPtr == item)
+    /* Get the pointer to the node at the head of the internal linked list. */
+    currentListNodePtr = list->firstNodePtr;
+    /* Loop through the nodes to find the node that the item belongs to. */
+    while (currentListNodePtr != NULL)
     {
-      result = list->firstNodePtr;
-    }
-    /* If not the first item, is it the last item in the list? */
-    if (list->lastNodePtr->itemPtr == item)
-    {
-      result = list->lastNodePtr;
-    }
-    /* Not the first nor the last item in the list. In this case the entire list must
-     * be searched.
-     */
-    else
-    {
-      /* Get the pointer to the node at the head of the internal linked list. */
-      currentListNodePtr = list->firstNodePtr;
-      /* Loop through the nodes to find the node that the item belongs to. */
-      while (currentListNodePtr != NULL)
+      /* Is this the node we are looking for? */
+      if (currentListNodePtr->itemPtr == item)
       {
-        /* Is this the node we are looking for? */
-        if (currentListNodePtr->itemPtr == item)
-        {
-          /* Found the node. Update the result and stop looping. */
-          result = currentListNodePtr;
-          break;
-        }
-        /* Update the node pointer to continue with the next node in the following loop
-         * iteration.
-         */
-        currentListNodePtr = currentListNodePtr->nextNodePtr;
+        /* Found the node. Update the result and stop looping. */
+        result = currentListNodePtr;
+        break;
       }
+      /* Update the node pointer to continue with the next node in the following loop
+       * iteration.
+       */
+      currentListNodePtr = currentListNodePtr->nextNodePtr;
     }
     /* Release mutual exclusive access of the list. */
     TbxCriticalSectionExit();
