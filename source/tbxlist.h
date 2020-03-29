@@ -79,7 +79,8 @@ size_t     TbxListGetSize(tTbxList const * list);
 uint8_t    TbxListInsertItem(tTbxList * list, void * item);
 uint8_t    TbxListInsertItemFront(tTbxList * list, void * item);
 void       TbxListRemoveItem(tTbxList * list, void const * item);
-
+void     * TbxListGetFirstItem(tTbxList const * list);
+void     * TbxListGetLastItem(tTbxList const * list);
 
 #ifdef __cplusplus
 }

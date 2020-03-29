@@ -473,6 +473,66 @@ void TbxListRemoveItem(tTbxList * list, void const * item)
 
 
 /************************************************************************************//**
+** \brief     Obtains the item that is located at the start of the list. Note that the
+**            item is just read, not removed.
+** \param     list Pointer to a previously created linked list to operate on.
+** \return    The item at the start of the list or NULL if the list is empty.
+**
+****************************************************************************************/
+void * TbxListGetFirstItem(tTbxList const * list)
+{
+  tTbxListNode * result = NULL;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if (list != NULL)
+  {
+    /* Obtain mutual exclusive access to the list. */
+    TbxCriticalSectionEnter();
+    /* Get the first item in the list. */
+    result = list->firstNodePtr->itemPtr;
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListGetFirstItem ***/
+
+
+/************************************************************************************//**
+** \brief     Obtains the item that is located at the end of the list. Note that the
+**            item is just read, not removed.
+** \param     list Pointer to a previously created linked list to operate on.
+** \return    The item at the end of the list or NULL if the list is empty.
+**
+****************************************************************************************/
+void * TbxListGetLastItem(tTbxList const * list)
+{
+  tTbxListNode * result = NULL;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if (list != NULL)
+  {
+    /* Obtain mutual exclusive access to the list. */
+    TbxCriticalSectionEnter();
+    /* Get the last item in the list. */
+    result = list->lastNodePtr->itemPtr;
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListGetLastItem ***/
+
+
+/************************************************************************************//**
 ** \brief     Helper function to get the node that a specific item in the list belongs
 **            to.
 ** \param     list Pointer to a previously created linked list to operate on.
