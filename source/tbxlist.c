@@ -38,34 +38,9 @@
 
 
 /****************************************************************************************
-* Type definitions
-****************************************************************************************/
-/** \brief Layout of a linked list of lists. */
-typedef struct t_tbx_list_list_node
-{
-  /** \brief Pointer to the actual list stored in this node. */
-  tTbxList                    * listPtr;
-  /** \brief Pointer to the previous node in the list or NULL if it is the list start. */
-  struct t_tbx_list_list_node * prevNodePtr;
-  /** \brief Pointer to the next node in the list or NULL if it is the list end. */
-  struct t_tbx_list_list_node * nextNodePtr;
-} tTbxListListNode;
-
-/** \brief Linked list consisting of the linked lists created by the user. */
-typedef tTbxListListNode (* tTbxListList);
-
-
-/****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
 static tTbxListNode * TbxListFindListNode(tTbxList const * list, void const * item);
-
-
-/****************************************************************************************
-* Local data declarations
-****************************************************************************************/
-/** \brief Linked list that holds the linked lists created by the user. */
-static tTbxListList tbxListList = NULL;
 
 
 /************************************************************************************//**
@@ -80,7 +55,6 @@ tTbxList * TbxListCreate(void)
   tTbxList         * result = NULL;
   static uint8_t     memPoolsCreated = TBX_FALSE;
   uint8_t            errorDetected = TBX_FALSE;
-  tTbxListListNode * newListListNodePtr;
   tTbxList         * newListPtr;
 
   /* Check if this is the first time that this function is called. */
@@ -88,20 +62,11 @@ tTbxList * TbxListCreate(void)
   {
     /* Invert flag because this part only needs to run one time. */
     memPoolsCreated = TBX_TRUE;
-    /* This module manages its own linked list of tTbxListListNode. Each tTbxListListNode
-     * holds information about a tTbxList that was created with this function. A tTbxList
-     * in turn is a linked list of tTbxListNode. Each tTbxListNode holds the actual
-     * user create item pointer.
-     * All these three items (tTbxListListNode, tTbxList and tTbxListNode) should support
-     * dynamic allocation. Therefore three memory pools need to be created. An initial
-     * size of 1 is sufficient. The plan is to expand the memory pools whenever more
-     * blocks are needed.
+    /* This module allows the dynamic creation and deletion of a linked list and its
+     * nodes. For both these times (tTbxList and tTbxListNode) a memory pool needs to be
+     * created. An initial size of 1 is sufficient, because the plan is to expand each
+     * memory pool whenever more blocks need to be allocated from it.
      */
-    if (TbxMemPoolCreate(1, sizeof(tTbxListListNode)) == TBX_ERROR)
-    {
-      /* Flag the error. */
-      errorDetected = TBX_TRUE;
-    }
     if (TbxMemPoolCreate(1, sizeof(tTbxList)) == TBX_ERROR)
     {
       /* Flag the error. */
@@ -117,23 +82,7 @@ tTbxList * TbxListCreate(void)
   /* Only continue if no error was detected so far. */
   if (errorDetected == TBX_FALSE)
   {
-    /* Attempt to allocate a block for a node in the internal linked list. */
-    newListListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListListNode));
-    /* In case the allocation failed, the memory pool could be exhausted. Try to add
-     * another block to the memory pool. This works as long as there is enough heap
-     * configured.
-     */
-    if (newListListNodePtr == NULL)
-    {
-      /* Try to add another block to the memory pool. */
-      if (TbxMemPoolCreate(1, sizeof(tTbxListListNode)) == TBX_OK)
-      {
-        /* Second attempt of the block allocation. */
-        newListListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListListNode));
-      }
-    }
-
-    /* Attempt to allocate a block for the actual list that the node should hold. */
+    /* Attempt to allocate a block for the new list. */
     newListPtr = TbxMemPoolAllocate(sizeof(tTbxList));
     /* In case the allocation failed, the memory pool could be exhausted. Try to add
      * another block to the memory pool. This works as long as there is enough heap
@@ -149,38 +98,16 @@ tTbxList * TbxListCreate(void)
       }
     }
 
-    /* Only continue if the allocations were successful. */
-    if ( (newListListNodePtr != NULL) && (newListPtr != NULL) )
+    /* Only continue if the allocation was successful. */
+    if (newListPtr != NULL)
     {
       /* By default the created list is empty. */
       newListPtr->firstNodePtr = NULL;
       newListPtr->lastNodePtr = NULL;
       newListPtr->nodeCount = 0U;
-      /* Initialize the node for the internal linked list. */
-      newListListNodePtr->listPtr = newListPtr;
-      newListListNodePtr->prevNodePtr = NULL;
-      newListListNodePtr->nextNodePtr = NULL;
-
-      /* Obtain mutual exclusive access to tbxListList. */
-      TbxCriticalSectionEnter();
-      /* Check if the internal linked list is not empty. */
-      if (tbxListList != NULL)
-      {
-        /* The new node that is to be inserted will be added at the start and the current
-         * start of the list should be moved down.
-         */
-        newListListNodePtr->nextNodePtr = tbxListList;
-        newListListNodePtr->nextNodePtr->prevNodePtr = newListListNodePtr;
-      }
-      /* Insert the new node at the start of the list. */
-      tbxListList = newListListNodePtr;
-      /* Release mutual exclusive access of tbxListList. */
-      TbxCriticalSectionEnter();
-      /* The list was successfully created and stored in a node that was inserted into
-       * the internal linked list. The only thing left to do is update the result
-       * to give the pointer to the newly created list back to the caller. This pointer
-       * serves as the handle to the list and is needed when calling API function of
-       * this module.
+      /* The list was successfully created so update the result to give the pointer to
+       * the newly created list back to the caller. This pointer serves as the handle to
+       * the list and is needed when calling API function of this module.
        */
       result = newListPtr;
     }
@@ -199,82 +126,20 @@ tTbxList * TbxListCreate(void)
 ****************************************************************************************/
 void TbxListDelete(tTbxList * list)
 {
-  tTbxListListNode * currentListListNodePtr;
-
   /* Verify parameters. */
   TBX_ASSERT(list != NULL);
 
   /* Only continue if the parameter is valid. */
   if (list != NULL)
   {
-    /* Obtain mutual exclusive access to tbxListList. */
+    /* Obtain mutual exclusive access to the list. */
     TbxCriticalSectionEnter();
-    /* Get the pointer to the node at the head of the internal linked list. */
-    currentListListNodePtr = tbxListList;
-    /* Loop through the nodes to find the location of the list that is to be deleted. */
-    while (currentListListNodePtr != NULL)
-    {
-      /* Does this node hold the list that is to be deleted? */
-      if (currentListListNodePtr->listPtr == list)
-      {
-        /* Remove the node from the list. First check if it is the only node in the
-         * list.
-         */
-        if ( (currentListListNodePtr->prevNodePtr == NULL) && \
-             (currentListListNodePtr->nextNodePtr == NULL) )
-        {
-          /* Sanity check. This should also be the start of the list. */
-          TBX_ASSERT(currentListListNodePtr == tbxListList);
-          /* Set the internal linked list to empty. */
-          tbxListList = NULL;
-        }
-        /* Check if it is at the start of the list. */
-        else if (currentListListNodePtr->prevNodePtr == NULL)
-        {
-          /* Sanity check. This should be the start of the list. */
-          TBX_ASSERT(currentListListNodePtr == tbxListList);
-          /* Sanity check. There should be a next node. */
-          TBX_ASSERT(currentListListNodePtr->nextNodePtr != NULL);
-          /* Make the next node the new start of the list. */
-          tbxListList = currentListListNodePtr->nextNodePtr;
-        }
-        /* Check if it is at the end of the list. */
-        else if (currentListListNodePtr->nextNodePtr == NULL)
-        {
-          /* Sanity check. There should be a previous node. */
-          TBX_ASSERT(currentListListNodePtr->prevNodePtr != NULL);
-          /* Make the previous node the end of the list. */
-          currentListListNodePtr->prevNodePtr->nextNodePtr = NULL;
-        }
-        /* If it is not the only node in the list, not at the start and not at the end,
-         * then the list must have at least three nodes and the current node is somewhere
-         * in the middle.
-         */
-        else
-        {
-          /* Sanity check. There should be a previous node. */
-          TBX_ASSERT(currentListListNodePtr->prevNodePtr != NULL);
-          /* Sanity check. There should be a next node. */
-          TBX_ASSERT(currentListListNodePtr->nextNodePtr != NULL);
-          /* Remove ourselves from the list. */
-          currentListListNodePtr->prevNodePtr->nextNodePtr = currentListListNodePtr->nextNodePtr;
-          currentListListNodePtr->nextNodePtr->prevNodePtr = currentListListNodePtr->prevNodePtr;
-        }
-
-        /* Clear the list. */
-        TbxListClear(list);
-        /* Release memory of the list. */
-        TbxMemPoolRelease(list);
-        /* Release memory of the list list node. */
-        TbxMemPoolRelease(currentListListNodePtr);
-        /* List deleted so there is no need to continue the loop. */
-        break;
-      }
-      /* Continue with the next node in the following loop iteration. */
-      currentListListNodePtr = currentListListNodePtr->nextNodePtr;
-    }
-    /* Release mutual exclusive access of tbxListList. */
-    TbxCriticalSectionEnter();
+    /* Clear the list. */
+    TbxListClear(list);
+    /* Release memory of the list. */
+    TbxMemPoolRelease(list);
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
   }
 } /*** end of TbxListDelete ***/
 
@@ -320,7 +185,7 @@ void TbxListClear(tTbxList * list)
     list->lastNodePtr = NULL;
     list->nodeCount = 0U;
     /* Release mutual exclusive access of the list. */
-    TbxCriticalSectionEnter();
+    TbxCriticalSectionExit();
   }
 } /*** end of TbxListClear ***/
 
@@ -346,7 +211,7 @@ size_t TbxListGetSize(tTbxList const * list)
     /* Store the current number of items in the list in the result variable. */
     result = list->nodeCount;
     /* Release mutual exclusive access of the list. */
-    TbxCriticalSectionEnter();
+    TbxCriticalSectionExit();
   }
 
   /* Give the result back to the caller. */
@@ -422,7 +287,7 @@ uint8_t TbxListInsertItem(tTbxList * list, void * item)
       /* Increment the node counter. */
       list->nodeCount++;
       /* Release mutual exclusive access for the list. */
-      TbxCriticalSectionEnter();
+      TbxCriticalSectionExit();
       /* Update the result for success. */
       result = TBX_OK;
     }
@@ -500,7 +365,7 @@ uint8_t TbxListInsertItemFront(tTbxList * list, void * item)
       /* Increment the node counter. */
       list->nodeCount++;
       /* Release mutual exclusive access for the list. */
-      TbxCriticalSectionEnter();
+      TbxCriticalSectionExit();
       /* Update the result for success. */
       result = TBX_OK;
     }
@@ -598,7 +463,7 @@ void TbxListRemoveItem(tTbxList * list, void const * item)
       /* Decrement the node counter. */
       list->nodeCount--;
       /* Release mutual exclusive access of the list. */
-      TbxCriticalSectionEnter();
+      TbxCriticalSectionExit();
       /* Give the node back to the memory pool. */
       TbxMemPoolRelease(listNodePtr);
     }
@@ -665,7 +530,7 @@ static tTbxListNode * TbxListFindListNode(tTbxList const * list, void const * it
       }
     }
     /* Release mutual exclusive access of the list. */
-    TbxCriticalSectionEnter();
+    TbxCriticalSectionExit();
   }
 
   /* Give the result back to the caller. */
