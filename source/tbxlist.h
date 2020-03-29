@@ -64,6 +64,8 @@ typedef struct
   size_t         nodeCount;
   /** \brief Pointer to the first node of the linked list, also known as the head. */
   tTbxListNode * firstNodePtr;
+  /** \brief Pointer to the last node of the linked list, also known as the tail. */
+  tTbxListNode * lastNodePtr;
 } tTbxList;
 
 
@@ -74,6 +76,9 @@ tTbxList * TbxListCreate(void);
 void       TbxListDelete(tTbxList * list);
 void       TbxListClear(tTbxList * list);
 size_t     TbxListGetSize(tTbxList const * list);
+uint8_t    TbxListInsertItem(tTbxList * list, void * item);
+uint8_t    TbxListInsertItemEnd(tTbxList * list, void * item);
+void       TbxListRemoveItem(tTbxList * list, void const * item);
 
 
 #ifdef __cplusplus
