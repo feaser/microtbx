@@ -481,7 +481,7 @@ void TbxListRemoveItem(tTbxList * list, void const * item)
 ****************************************************************************************/
 void * TbxListGetFirstItem(tTbxList const * list)
 {
-  tTbxListNode * result = NULL;
+  void * result = NULL;
 
   /* Verify parameters. */
   TBX_ASSERT(list != NULL);
@@ -511,7 +511,7 @@ void * TbxListGetFirstItem(tTbxList const * list)
 ****************************************************************************************/
 void * TbxListGetLastItem(tTbxList const * list)
 {
-  tTbxListNode * result = NULL;
+  void * result = NULL;
 
   /* Verify parameters. */
   TBX_ASSERT(list != NULL);
@@ -530,6 +530,141 @@ void * TbxListGetLastItem(tTbxList const * list)
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxListGetLastItem ***/
+
+
+/************************************************************************************//**
+** \brief     Obtains the item that is located one position further down in the list,
+**            relative to the item given in the parameter. Note that the item is just
+**            read, not removed.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     item The item that is the previous one in the list relative to the one
+**            this function should return.
+** \return    The item one position further down in the list or NULL if there are no
+**            more items in the list after the item given in the parameter.
+**
+****************************************************************************************/
+void * TbxListGetNextItem(tTbxList const * list, void const * item)
+{
+  void               * result = NULL;
+  tTbxListNode const * listNodePtr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(item != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (item != NULL) )
+  {
+    /* Obtain mutual exclusive access to the list. */
+    TbxCriticalSectionEnter();
+    /* Obtain the node of the item specified in the parameter. */
+    listNodePtr = TbxListFindListNode(list, item);
+    /* Only continue if the node could be found. */
+    if (listNodePtr != NULL)
+    {
+      /* Get the pointer to the next node. */
+      listNodePtr = listNodePtr->nextNodePtr;
+      /* Only continue if there is actually a node here. */
+      if (listNodePtr != NULL)
+      {
+        /* Set the result to the item of the next node. */
+        result = listNodePtr->itemPtr;
+      }
+    }
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListGetNextItem ***/
+
+
+/************************************************************************************//**
+** \brief     Obtains the item that is located one position before in the list,
+**            relative to the item given in the parameter. Note that the item is just
+**            read, not removed.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     item The item that is the next one in the list relative to the one
+**            this function should return.
+** \return    The item one position before in the list or NULL if there are no
+**            more items in the list before the item given in the parameter.
+**
+****************************************************************************************/
+void * TbxListGetPreviousItem(tTbxList const * list, void const * item)
+{
+  void               * result = NULL;
+  tTbxListNode const * listNodePtr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(item != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (item != NULL) )
+  {
+    /* Obtain mutual exclusive access to the list. */
+    TbxCriticalSectionEnter();
+    /* Obtain the node of the item specified in the parameter. */
+    listNodePtr = TbxListFindListNode(list, item);
+    /* Only continue if the node could be found. */
+    if (listNodePtr != NULL)
+    {
+      /* Get the pointer to the previous node. */
+      listNodePtr = listNodePtr->prevNodePtr;
+      /* Only continue if there is actually a node here. */
+      if (listNodePtr != NULL)
+      {
+        /* Set the result to the item of the next node. */
+        result = listNodePtr->itemPtr;
+      }
+    }
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListGetPreviousItem ***/
+
+
+/************************************************************************************//**
+** \brief     Swaps the specified list items around.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     item1 The first item for the swap operation.
+** \param     item2 The second item for the swap operation.
+**
+****************************************************************************************/
+void TbxListSwapItems(tTbxList const * list, void * item1, void * item2)
+{
+  tTbxListNode * listNode1Ptr;
+  tTbxListNode * listNode2Ptr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(item1 != NULL);
+  TBX_ASSERT(item2 != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (item1 != NULL) && (item2 != NULL) )
+  {
+    /* Obtain mutual exclusive access to the list. */
+    TbxCriticalSectionEnter();
+    /* Obtain the node pointers of the items that need to be swapped. */
+    listNode1Ptr = TbxListFindListNode(list, item1);
+    listNode2Ptr = TbxListFindListNode(list, item2);
+
+    /* Only continue if the nodes actually exist in the list. */
+    if ( (listNode1Ptr != NULL) && (listNode2Ptr != NULL) )
+    {
+      /* Perform the swap operation. */
+      listNode1Ptr->itemPtr = item2;
+      listNode2Ptr->itemPtr = item1;
+    }
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
+  }
+} /*** end of TbxListSwapItems ***/
 
 
 /************************************************************************************//**
