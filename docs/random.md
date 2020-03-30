@@ -16,7 +16,7 @@ numbers will always be the same each time your program is restarted:
 | 2375684060   | 2375684060   | 2375684060   |
 | 3691277220   | 3691277220   | 3691277220   |
 | 3596136368   | 3596136368   | 3596136368   |
-
+  
 For some applications, this behavior is acceptable. However, most applications
 require different random numbers to be generated each time the software program
 is started. This is achieved by calling `TbxRandomSetSeedInitHandler()` to

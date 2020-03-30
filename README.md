@@ -8,6 +8,7 @@ MicroTBX is an open source Microcontroller ToolBoX consisting of software compon
 * Critical Sections - For mutual exclusive access to shared resources.
 * Heap - For static memory pre-allocation on the heap.
 * Memory Pools - For pool based dynamic memory allocation on the heap.
+* Linked Lists - For dynamically sized lists of data items.
 * Random Numbers - For generating random numbers.
 * Checksums - For calculating data checksums.
 * Cryptography - For data encryption and decryption.
