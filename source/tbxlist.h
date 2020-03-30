@@ -68,6 +68,12 @@ typedef struct
   tTbxListNode * lastNodePtr;
 } tTbxList;
 
+/** \brief Callback function to compare items. It is called during list sorting. The
+ *         return value of the callback function has the following meaning: TBX_TRUE if
+ *         item1's data is greater than item2's data, TBX_FALSE otherwise.
+ */
+typedef uint8_t (* tTbxListCompareItems)(void const * item1, void const * item2);
+
 
 /****************************************************************************************
 * Function prototypes
@@ -84,6 +90,8 @@ void     * TbxListGetLastItem(tTbxList const * list);
 void     * TbxListGetNextItem(tTbxList const * list, void const * item);
 void     * TbxListGetPreviousItem(tTbxList const * list, void const * item);
 void       TbxListSwapItems(tTbxList const * list, void * item1, void * item2);
+void       TbxListSortItems(tTbxList const * list, tTbxListCompareItems compareItemsFcn);
+
 
 #ifdef __cplusplus
 }

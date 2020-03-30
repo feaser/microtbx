@@ -668,6 +668,68 @@ void TbxListSwapItems(tTbxList const * list, void * item1, void * item2)
 
 
 /************************************************************************************//**
+** \brief     Sorts the items in the list. While sorting, it calls the specified callback
+**            function which should do the actual comparison of the items.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     compareItemsFcn Callback function that does the item comparison.
+**
+****************************************************************************************/
+void TbxListSortItems(tTbxList const * list, tTbxListCompareItems compareItemsFcn)
+{
+  tTbxListNode * currentNode;
+  tTbxListNode * idxNode;
+  void         * tempItemPtr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(compareItemsFcn != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (compareItemsFcn != NULL) )
+  {
+    /* Obtain mutual exclusive access to the list. */
+    TbxCriticalSectionEnter();
+    /* To accomplish the sort, we maintain two pointers: current and index. Initially,
+     * current points to head node and index will point to node next to current.
+     * Traverse through the list till current's next node points to NULL, by comparing
+     * current's data with index's data. If the current's data is greater than the
+     * index's data, then swap data between them. Continue this process till the entire
+     * list is sorted in ascending order. It is a basic bubble sort algorithm.
+     */
+    currentNode = list->firstNodePtr;
+    /* Traverse through the entire list. Note that sorting is only done if there are
+     * at least two nodes in the list.
+     */
+    while (currentNode->nextNodePtr != NULL)
+    {
+      /* Point index to the node next to current. */
+      idxNode = currentNode->nextNodePtr;
+      /* Keep looping while the index node is valid. */
+      while (idxNode != NULL)
+      {
+        /* If current's data is greater than index's data, swap the data of current and
+         * index.
+         */
+        if (compareItemsFcn(currentNode->itemPtr, idxNode->itemPtr) == TBX_TRUE)
+        {
+          /* Perform the swap. */
+          tempItemPtr = currentNode->itemPtr;
+          currentNode->itemPtr = idxNode->itemPtr;
+          idxNode->itemPtr = tempItemPtr;
+        }
+        /* Move the index node one forward and continue there the next loop. */
+        idxNode = idxNode->nextNodePtr;
+      }
+      /* Move the current node one forward and continue there the next loop. */
+      currentNode = currentNode->nextNodePtr;
+    }
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
+  }
+} /*** end of TbxListSortItems ***/
+
+
+/************************************************************************************//**
 ** \brief     Helper function to get the node that a specific item in the list belongs
 **            to.
 ** \param     list Pointer to a previously created linked list to operate on.
