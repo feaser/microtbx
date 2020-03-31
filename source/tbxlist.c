@@ -220,85 +220,6 @@ size_t TbxListGetSize(tTbxList const * list)
 
 
 /************************************************************************************//**
-** \brief     Inserts an item into the list. The item will be added at the end of the
-**            list.
-** \param     list Pointer to a previously created linked list to operate on.
-** \param     item Pointer to the item to insert.
-** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
-**
-****************************************************************************************/
-uint8_t TbxListInsertItem(tTbxList * list, void * item)
-{
-  uint8_t        result = TBX_ERROR;
-  tTbxListNode * newListNodePtr;
-
-  /* Verify parameters. */
-  TBX_ASSERT(list != NULL);
-  TBX_ASSERT(item != NULL);
-
-  /* Only continue if the parameters are valid. */
-  if ( (list != NULL) && (item != NULL) )
-  {
-    /* Attempt to allocate a block for a node in the list. */
-    newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
-    /* In case the allocation failed, the memory pool could be exhausted. Try to add
-     * another block to the memory pool. This works as long as there is enough heap
-     * configured.
-     */
-    if (newListNodePtr == NULL)
-    {
-      /* Try to add another block to the memory pool. */
-      if (TbxMemPoolCreate(1, sizeof(tTbxListNode)) == TBX_OK)
-      {
-        /* Second attempt of the block allocation. */
-        newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
-      }
-    }
-    /* Only continue if the allocation was successful. */
-    if (newListNodePtr != NULL)
-    {
-      /* Initialize the node for the list. */
-      newListNodePtr->itemPtr = item;
-      newListNodePtr->prevNodePtr = NULL;
-      newListNodePtr->nextNodePtr = NULL;
-      /* Obtain mutual exclusive access to the list. */
-      TbxCriticalSectionEnter();
-      /* Check if the list is not empty. */
-      if (list->firstNodePtr != NULL)
-      {
-        /* Sanity check. An non-empty list should have at least one node. */
-        TBX_ASSERT(list->nodeCount > 0U);
-        /* The new node that is to be inserted will be added at the end and the current
-         * end of the list should be moved up.
-         */
-        newListNodePtr->prevNodePtr = list->lastNodePtr;
-        newListNodePtr->prevNodePtr->nextNodePtr = newListNodePtr;
-      }
-      /* The list is currently empty. */
-      else
-      {
-        /* The to be added node will be the only node, so it is not only the last node
-         * but also the first node.
-         */
-        list->firstNodePtr = newListNodePtr;
-      }
-      /* Insert the new node at the end of the list. */
-      list->lastNodePtr = newListNodePtr;
-      /* Increment the node counter. */
-      list->nodeCount++;
-      /* Release mutual exclusive access for the list. */
-      TbxCriticalSectionExit();
-      /* Update the result for success. */
-      result = TBX_OK;
-    }
-  }
-  
-  /* Give the result back to the caller. */
-  return result;
-} /*** end of TbxListInsertItem ***/
-
-
-/************************************************************************************//**
 ** \brief     Inserts an item into the list. The item will be added at the start of the
 **            list.
 ** \param     list Pointer to a previously created linked list to operate on.
@@ -375,6 +296,261 @@ uint8_t TbxListInsertItemFront(tTbxList * list, void * item)
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxListInsertItemFront ***/
+
+
+/************************************************************************************//**
+** \brief     Inserts an item into the list. The item will be added at the end of the
+**            list.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     item Pointer to the item to insert.
+** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
+**
+****************************************************************************************/
+uint8_t TbxListInsertItemBack(tTbxList * list, void * item)
+{
+  uint8_t        result = TBX_ERROR;
+  tTbxListNode * newListNodePtr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(item != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (item != NULL) )
+  {
+    /* Attempt to allocate a block for a node in the list. */
+    newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
+    /* In case the allocation failed, the memory pool could be exhausted. Try to add
+     * another block to the memory pool. This works as long as there is enough heap
+     * configured.
+     */
+    if (newListNodePtr == NULL)
+    {
+      /* Try to add another block to the memory pool. */
+      if (TbxMemPoolCreate(1, sizeof(tTbxListNode)) == TBX_OK)
+      {
+        /* Second attempt of the block allocation. */
+        newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
+      }
+    }
+    /* Only continue if the allocation was successful. */
+    if (newListNodePtr != NULL)
+    {
+      /* Initialize the node for the list. */
+      newListNodePtr->itemPtr = item;
+      newListNodePtr->prevNodePtr = NULL;
+      newListNodePtr->nextNodePtr = NULL;
+      /* Obtain mutual exclusive access to the list. */
+      TbxCriticalSectionEnter();
+      /* Check if the list is not empty. */
+      if (list->firstNodePtr != NULL)
+      {
+        /* Sanity check. An non-empty list should have at least one node. */
+        TBX_ASSERT(list->nodeCount > 0U);
+        /* The new node that is to be inserted will be added at the end and the current
+         * end of the list should be moved up.
+         */
+        newListNodePtr->prevNodePtr = list->lastNodePtr;
+        newListNodePtr->prevNodePtr->nextNodePtr = newListNodePtr;
+      }
+      /* The list is currently empty. */
+      else
+      {
+        /* The to be added node will be the only node, so it is not only the last node
+         * but also the first node.
+         */
+        list->firstNodePtr = newListNodePtr;
+      }
+      /* Insert the new node at the end of the list. */
+      list->lastNodePtr = newListNodePtr;
+      /* Increment the node counter. */
+      list->nodeCount++;
+      /* Release mutual exclusive access for the list. */
+      TbxCriticalSectionExit();
+      /* Update the result for success. */
+      result = TBX_OK;
+    }
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListInsertItemBack ***/
+
+
+/************************************************************************************//**
+** \brief     Inserts an item into the list. The item will be added before the reference
+**            item.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     item Pointer to the item to insert.
+** \param     itemRef Reference item before which the new item should be inserted.
+** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
+**
+****************************************************************************************/
+uint8_t TbxListInsertItemBefore(tTbxList * list, void * item, void const * itemRef)
+{
+  uint8_t        result = TBX_ERROR;
+  tTbxListNode * newListNodePtr;
+  tTbxListNode * refListNodePtr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(item != NULL);
+  TBX_ASSERT(itemRef != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (item != NULL) && (itemRef != NULL) )
+  {
+    /* Try to get pointer to the reference node. */
+    refListNodePtr = TbxListFindListNode(list, itemRef);
+    /* Only continue if the refeernce node exists. */
+    if (refListNodePtr != NULL)
+    {
+      /* Attempt to allocate a block for a node in the list. */
+      newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
+      /* In case the allocation failed, the memory pool could be exhausted. Try to add
+       * another block to the memory pool. This works as long as there is enough heap
+       * configured.
+       */
+      if (newListNodePtr == NULL)
+      {
+        /* Try to add another block to the memory pool. */
+        if (TbxMemPoolCreate(1, sizeof(tTbxListNode)) == TBX_OK)
+        {
+          /* Second attempt of the block allocation. */
+          newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
+        }
+      }
+      /* Only continue if the allocation was successful. */
+      if (newListNodePtr != NULL)
+      {
+        /* Initialize the node for the list. */
+        newListNodePtr->itemPtr = item;
+        newListNodePtr->prevNodePtr = NULL;
+        newListNodePtr->nextNodePtr = NULL;
+        /* Obtain mutual exclusive access to the list. */
+        TbxCriticalSectionEnter();
+        /* Is the reference item the first (or only) one in the list? */
+        if (refListNodePtr == list->firstNodePtr)
+        {
+          /* Add the item at the start of the list. */
+          newListNodePtr->nextNodePtr = list->firstNodePtr;
+          newListNodePtr->nextNodePtr->prevNodePtr = newListNodePtr;
+          list->firstNodePtr = newListNodePtr;
+        }
+        /* The reference item is not the first one. This also means that there are at
+         * least two items in the list. Sqeeze the new item in before the reference item.
+         */
+        else
+        {
+          /* Sanity check. The reference node must have a previous node. */
+          TBX_ASSERT(refListNodePtr->prevNodePtr != NULL);
+          newListNodePtr->prevNodePtr = refListNodePtr->prevNodePtr;
+          newListNodePtr->nextNodePtr = refListNodePtr;
+          newListNodePtr->prevNodePtr->nextNodePtr = newListNodePtr;
+          newListNodePtr->nextNodePtr->prevNodePtr = newListNodePtr;
+        }
+        /* Increment the node counter. */
+        list->nodeCount++;
+        /* Release mutual exclusive access for the list. */
+        TbxCriticalSectionExit();
+        /* Update the result for success. */
+        result = TBX_OK;
+      }
+    }
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListInsertItemBefore ***/
+
+
+/************************************************************************************//**
+** \brief     Inserts an item into the list. The item will be added after the reference
+**            item.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     item Pointer to the item to insert.
+** \param     itemRef Reference item after which the new item should be inserted.
+** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
+**
+****************************************************************************************/
+uint8_t TbxListInsertItemAfter(tTbxList * list, void * item, void const * itemRef)
+{
+  uint8_t        result = TBX_ERROR;
+  tTbxListNode * newListNodePtr;
+  tTbxListNode * refListNodePtr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(item != NULL);
+  TBX_ASSERT(itemRef != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (item != NULL) && (itemRef != NULL) )
+  {
+    /* Try to get pointer to the reference node. */
+    refListNodePtr = TbxListFindListNode(list, itemRef);
+    /* Only continue if the refeernce node exists. */
+    if (refListNodePtr != NULL)
+    {
+      /* Attempt to allocate a block for a node in the list. */
+      newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
+      /* In case the allocation failed, the memory pool could be exhausted. Try to add
+       * another block to the memory pool. This works as long as there is enough heap
+       * configured.
+       */
+      if (newListNodePtr == NULL)
+      {
+        /* Try to add another block to the memory pool. */
+        if (TbxMemPoolCreate(1, sizeof(tTbxListNode)) == TBX_OK)
+        {
+          /* Second attempt of the block allocation. */
+          newListNodePtr = TbxMemPoolAllocate(sizeof(tTbxListNode));
+        }
+      }
+      /* Only continue if the allocation was successful. */
+      if (newListNodePtr != NULL)
+      {
+        /* Initialize the node for the list. */
+        newListNodePtr->itemPtr = item;
+        newListNodePtr->prevNodePtr = NULL;
+        newListNodePtr->nextNodePtr = NULL;
+        /* Obtain mutual exclusive access to the list. */
+        TbxCriticalSectionEnter();
+
+
+        /* Is the reference item the last (or only) one in the list? */
+        if (refListNodePtr == list->lastNodePtr)
+        {
+          /* Add the item at the end of the list. */
+          newListNodePtr->prevNodePtr = list->lastNodePtr;
+          newListNodePtr->prevNodePtr->nextNodePtr = newListNodePtr;
+          list->lastNodePtr = newListNodePtr;
+        }
+        /* The reference item is not the last one. This also means that there are at
+         * least two items in the list. Sqeeze the new item in after the reference item.
+         */
+        else
+        {
+          /* Sanity check. The reference node must have a next node. */
+          TBX_ASSERT(refListNodePtr->nextNodePtr != NULL);
+          newListNodePtr->prevNodePtr = refListNodePtr;
+          newListNodePtr->nextNodePtr = refListNodePtr->nextNodePtr;
+          newListNodePtr->prevNodePtr->nextNodePtr = newListNodePtr;
+          newListNodePtr->nextNodePtr->prevNodePtr = newListNodePtr;
+        }
+        /* Increment the node counter. */
+        list->nodeCount++;
+        /* Release mutual exclusive access for the list. */
+        TbxCriticalSectionExit();
+        /* Update the result for success. */
+        result = TBX_OK;
+      }
+    }
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListInsertItemAfter ***/
 
 
 /************************************************************************************//**
@@ -533,80 +709,32 @@ void * TbxListGetLastItem(tTbxList const * list)
 
 
 /************************************************************************************//**
-** \brief     Obtains the item that is located one position further down in the list,
-**            relative to the item given in the parameter. Note that the item is just
-**            read, not removed.
-** \param     list Pointer to a previously created linked list to operate on.
-** \param     item The item that is the previous one in the list relative to the one
-**            this function should return.
-** \return    The item one position further down in the list or NULL if there are no
-**            more items in the list after the item given in the parameter.
-**
-****************************************************************************************/
-void * TbxListGetNextItem(tTbxList const * list, void const * item)
-{
-  void               * result = NULL;
-  tTbxListNode const * listNodePtr;
-
-  /* Verify parameters. */
-  TBX_ASSERT(list != NULL);
-  TBX_ASSERT(item != NULL);
-
-  /* Only continue if the parameters are valid. */
-  if ( (list != NULL) && (item != NULL) )
-  {
-    /* Obtain mutual exclusive access to the list. */
-    TbxCriticalSectionEnter();
-    /* Obtain the node of the item specified in the parameter. */
-    listNodePtr = TbxListFindListNode(list, item);
-    /* Only continue if the node could be found. */
-    if (listNodePtr != NULL)
-    {
-      /* Get the pointer to the next node. */
-      listNodePtr = listNodePtr->nextNodePtr;
-      /* Only continue if there is actually a node here. */
-      if (listNodePtr != NULL)
-      {
-        /* Set the result to the item of the next node. */
-        result = listNodePtr->itemPtr;
-      }
-    }
-    /* Release mutual exclusive access of the list. */
-    TbxCriticalSectionExit();
-  }
-
-  /* Give the result back to the caller. */
-  return result;
-} /*** end of TbxListGetNextItem ***/
-
-
-/************************************************************************************//**
 ** \brief     Obtains the item that is located one position before in the list,
 **            relative to the item given in the parameter. Note that the item is just
 **            read, not removed.
 ** \param     list Pointer to a previously created linked list to operate on.
-** \param     item The item that is the next one in the list relative to the one
+** \param     itemRef The item that is the next one in the list relative to the one
 **            this function should return.
 ** \return    The item one position before in the list or NULL if there are no
 **            more items in the list before the item given in the parameter.
 **
 ****************************************************************************************/
-void * TbxListGetPreviousItem(tTbxList const * list, void const * item)
+void * TbxListGetPreviousItem(tTbxList const * list, void const * itemRef)
 {
   void               * result = NULL;
   tTbxListNode const * listNodePtr;
 
   /* Verify parameters. */
   TBX_ASSERT(list != NULL);
-  TBX_ASSERT(item != NULL);
+  TBX_ASSERT(itemRef != NULL);
 
   /* Only continue if the parameters are valid. */
-  if ( (list != NULL) && (item != NULL) )
+  if ( (list != NULL) && (itemRef != NULL) )
   {
     /* Obtain mutual exclusive access to the list. */
     TbxCriticalSectionEnter();
     /* Obtain the node of the item specified in the parameter. */
-    listNodePtr = TbxListFindListNode(list, item);
+    listNodePtr = TbxListFindListNode(list, itemRef);
     /* Only continue if the node could be found. */
     if (listNodePtr != NULL)
     {
@@ -626,6 +754,54 @@ void * TbxListGetPreviousItem(tTbxList const * list, void const * item)
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxListGetPreviousItem ***/
+
+
+/************************************************************************************//**
+** \brief     Obtains the item that is located one position further down in the list,
+**            relative to the item given in the parameter. Note that the item is just
+**            read, not removed.
+** \param     list Pointer to a previously created linked list to operate on.
+** \param     itemRef The item that is the previous one in the list relative to the one
+**            this function should return.
+** \return    The item one position further down in the list or NULL if there are no
+**            more items in the list after the item given in the parameter.
+**
+****************************************************************************************/
+void * TbxListGetNextItem(tTbxList const * list, void const * itemRef)
+{
+  void               * result = NULL;
+  tTbxListNode const * listNodePtr;
+
+  /* Verify parameters. */
+  TBX_ASSERT(list != NULL);
+  TBX_ASSERT(itemRef != NULL);
+
+  /* Only continue if the parameters are valid. */
+  if ( (list != NULL) && (itemRef != NULL) )
+  {
+    /* Obtain mutual exclusive access to the list. */
+    TbxCriticalSectionEnter();
+    /* Obtain the node of the item specified in the parameter. */
+    listNodePtr = TbxListFindListNode(list, itemRef);
+    /* Only continue if the node could be found. */
+    if (listNodePtr != NULL)
+    {
+      /* Get the pointer to the next node. */
+      listNodePtr = listNodePtr->nextNodePtr;
+      /* Only continue if there is actually a node here. */
+      if (listNodePtr != NULL)
+      {
+        /* Set the result to the item of the next node. */
+        result = listNodePtr->itemPtr;
+      }
+    }
+    /* Release mutual exclusive access of the list. */
+    TbxCriticalSectionExit();
+  }
+
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxListGetNextItem ***/
 
 
 /************************************************************************************//**
