@@ -11,6 +11,7 @@ nav:
   - Critical Sections: 'critsect.md'
   - Heap: 'heap.md'
   - Memory Pools: 'mempools.md'
+  - Linked Lists: 'lists.md'
   - Random Numbers: 'random.md'
   - Checksums: 'checksum.md'
   - Cryptography: 'crypto.md'

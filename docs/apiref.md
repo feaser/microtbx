@@ -53,6 +53,26 @@ More information regarding this software component is found [here](mempools.md).
 | `TbxMemPoolAllocate()`            | Dynamically allocates memory from a memory pool. |
 | `TbxMemPoolRelease()`             | Frees memory that was previously allocated from a memory pool. |
 
+# Linked Lists
+
+More information regarding this software component is found [here](lists.md).
+
+| Function                          | Description |
+| :-------------------------------- | :---------- |
+| `TbxListCreate()`                 | Create a new an empty linked list. |
+| `TbxListDelete()`                 | Delete a previously created linked list. |
+| `TbxListClear()`                  | Remove all items from the linked list. |
+| `TbxListGetSize()`                | Obtain the number of items stored in the linked list. |
+| `TbxListInsertItem()`             | Add a new item at the end of the linked list. |
+| `TbxListInsertItemFront()`        | Add a new item at the start of the linked list. |
+| `TbxListRemoveItem()`             | Remove an item from the linked list. |
+| `TbxListGetFirstItem()`           | Read the item at the start of the linked list. |
+| `TbxListGetLastItem()`            | Read the item at the end of the linked list. |
+| `TbxListGetNextItem()`            | Read the subsequent item from the linked list. |
+| `TbxListGetPreviousItem()`        | Read the preceding item from the linked list. |
+| `TbxListSwapItems()`              | Exchange two items in the linked list. |
+| `TbxListSortItems()`              | Sort the items in the linked list. |
+
 # Random Numbers
 
 More information regarding this software component is found [here](random.md).

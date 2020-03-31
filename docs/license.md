@@ -11,7 +11,7 @@ MicroTBX is released under the MIT license. This permissive license enables you 
 | Do I have to document that my product uses MicroTBX?                | no          |
 | Can I redistribute MicroTBX in source code format?                  | yes         |
 | Can I receive professional technical support on a commercial basis? | yes         |
-
+  
 The actual license text is as follows:
 
 ```c

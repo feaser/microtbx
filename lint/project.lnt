@@ -2,6 +2,7 @@
 tbxassert.c
 tbxcritsect.c
 tbxheap.c
+tbxlist.c
 tbxmempool.c
 tbxrandom.c
 tbxchecksum.c

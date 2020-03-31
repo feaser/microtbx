@@ -4,3 +4,4 @@ Static code analysis was performed to verify compliance with MISRA-C 2012. The f
 | :-------: | :------: | :-------- |
 | 4.9       | advisory | Function-like macros can provide clarity and allow easy to understand compile time configurations. |
 | 11.5      | advisory | Conversions from pointer to void to pointer to other type. This is needed after allocating memory from the heap and then initialising a pointer to point to this allocated memory. Used for example when allocating memory to build a linked list. |
+  

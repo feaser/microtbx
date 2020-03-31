@@ -18,10 +18,11 @@ The following table presents an overview of the currently supported software com
 | [Critical Sections](critsect.md)      | For mutual exclusive access to shared resources. |
 | [Heap](heap.md)                       | For static memory pre-allocation on the heap. |
 | [Memory Pools](mempools.md)           | For pool based dynamic memory allocation on the heap. |
+| [Linked Lists](lists.md)              | For dynamically sized lists of data items. |
 | [Random Numbers](random.md)           | For generating random numbers. |
 | [Checksums](checksum.md)              | For calculating data checksums. |
 | [Cryptography](crypto.md)             | For data encryption and decryption. |
-
+  
 # MISRA
 
 MicroTBX was developed with [MISRA-C compliance](misra.md) in mind. This is a software development standard to facilitate best practices for programming safety-critical software in road vehicles and other embedded systems.

@@ -121,7 +121,9 @@ static tPoolList tbxPoolList = NULL;
 **            purpose to prevent memory fragmentation.
 **            When this function is called to create a memory pool with a size that was
 **            already created before, the already existing memory pool is extended
-**            instead of creating a new memory pool.
+**            instead of creating a new memory pool. This is an important feature because
+**            it makes it possible to automatically expand the memory pool if more
+**            blocks are needed.
 ** \param     numBlocks The number of blocks to statically preallocate on the heap for
 **            this memory pool.
 ** \param     blockSize The size of each block in bytes.
@@ -280,8 +282,10 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
 **              uint8_t * myMem = TbxMemPoolAllocate(9);
 **            Then the memory will be allocated from the memory pool with block size 16,
 **            so the second memory pool that was created. If there are no more blocks
-**            available in that memory pool, then the memory pool with one block size
-**            larger is used, so the one with block size 32, etc.
+**            available in that memory pool, then NULL is return. So note that this
+**            function does NOT move on to the memory pool with one block size
+**            larger. Such a feature would be easy to realize but this design decision
+**            was made on purpose.
 ** \param     size The number of bytes to allocate in a memory pool.
 ** \return    Pointer to the start of the newly allocated memory if successful, NULL
 **            otherwise.
@@ -470,11 +474,18 @@ static tPoolNode * TbxMemPoolListFind(size_t blockSize)
 
 
 /************************************************************************************//**
-** \brief     Searches through the linked list with memory pools to find a pool that was:
-**            (a) created to hold blocks that are of the greater or equal size as
-**            specified by the parameter, and (b) still have a free block available.
-**            Note that this function relies on the fact that the memory pools in the
-**            list are sorted by ascending block size.
+** \brief     Searches through the linked list with memory pools to find a pool that was
+**            created to hold blocks that are of equal size or slightly greater. If the
+**            found memory pool has no more free blocks available the search
+**            is NOT continued for a memory pool of the next size up. Although this
+**            sounds like a nice feature to have, this was not implemented on purpose.
+**            The reason for this is that it is now possible to expand an existing memory
+**            pool when it is full. Assume a situation where all blocks in the memory
+**            pool are already allocated. The next call to TbxMemPoolAllocate() therefore
+**            fails. You can now call TbxMemPoolCreate() again for the same block size
+**            and the original memory pool is expanded automatically. Note that this
+**            function relies on the fact that the memory pools in the list are sorted
+**            by ascending block size.
 ** \param     blockSize Size of the block to fit.
 ** \return    Pointer to the found memory pool node if successful, NULL otherwise.
 **
@@ -498,15 +509,17 @@ static tPoolNode * TbxMemPoolListFindBestFit(size_t blockSize)
       /* Does this memory pool hold blocks that would fit the specified block size? */
       if (poolNodePtr->poolPtr->blockSize >= blockSize)
       {
-        /* Does this memory pool have free blocks available? */
+        /* A fit is found. Now check if this memory pool has free blocks available. */
         if (TbxMemPoolBlockListIsEmpty(poolNodePtr->poolPtr->freeBlockListPtr) \
             == TBX_FALSE)
         {
           /* Found a match so update the result value. */
           result = poolNodePtr;
-          /* Match found so no need to continue looping. */
-          break;
         }
+        /* Best fit is found, so no need to continue searching even if the memory pool
+         * does not have any free blocks available.
+         */
+        break;
       }
       /* Continue with the next pool node in the list. */
       poolNodePtr = poolNodePtr->nextNodePtr;
@@ -822,10 +835,10 @@ static void TbxMemPoolBlockListInsert(tBlockList * listPtr, tBlockNode * nodePtr
       /* There is no next node. */
       nodePtr->nextNodePtr = NULL;
     }
-    /* Linked list it not empty. */
+    /* Linked list is not empty. */
     else
     {
-      /* The next node will be the current head of the list. */
+      /* The new node will be the current head of the list. */
       nodePtr->nextNodePtr = *listPtr;
     }
     /* Insert the new node at the start of the list. */
