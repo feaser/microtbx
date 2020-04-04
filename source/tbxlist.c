@@ -667,8 +667,11 @@ void * TbxListGetFirstItem(tTbxList const * list)
   {
     /* Obtain mutual exclusive access to the list. */
     TbxCriticalSectionEnter();
-    /* Get the first item in the list. */
-    result = list->firstNodePtr->itemPtr;
+    /* Get the first item in the list if there is one. */
+    if (list->firstNodePtr != NULL)
+    {
+      result = list->firstNodePtr->itemPtr;
+    }
     /* Release mutual exclusive access of the list. */
     TbxCriticalSectionExit();
   }
@@ -697,8 +700,11 @@ void * TbxListGetLastItem(tTbxList const * list)
   {
     /* Obtain mutual exclusive access to the list. */
     TbxCriticalSectionEnter();
-    /* Get the last item in the list. */
-    result = list->lastNodePtr->itemPtr;
+    /* Get the last item in the list if there is one. */
+    if (list->lastNodePtr != NULL)
+    {
+      result = list->lastNodePtr->itemPtr;
+    }
     /* Release mutual exclusive access of the list. */
     TbxCriticalSectionExit();
   }
