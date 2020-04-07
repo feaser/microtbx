@@ -1,6 +1,4 @@
---i/usr/lib/gcc/x86_64-linux-gnu/8/include
---i/usr/local/include
---i/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed
---i/usr/include/x86_64-linux-gnu
---i/usr/include
+--i/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/../lib/gcc/arm-none-eabi/8.2.1/include
+--i/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/../lib/gcc/arm-none-eabi/8.2.1/include-fixed
+--i/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/include
 
