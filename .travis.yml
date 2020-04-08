@@ -5,12 +5,14 @@ python: 3.6
 branches: master
 
 before_install:
-  - sudo apt-get install -y build-essential
+  - sudo apt-get install -y build-essential gcc-arm-none-eabi libnewlib-arm-none-eabi
   
 install:
   - pip install mkdocs  
 
 script: 
+  - "cd ${TRAVIS_BUILD_DIR}/demos/ARM_CORTEXM_ST_Nucleo_F091RC_GCC"
+  - make TOOL_PATH= clean all
   - "cd ${TRAVIS_BUILD_DIR}"
 
 before_deploy:
