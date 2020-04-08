@@ -1,4 +1,11 @@
 -----------------------------------------------------------------------------------------
+2020-04-09 Frank Voorburg <voorburg@feaser.com>
+
+* Added linked list module.
+* Removed Windows and Linux ports and demos.
+* Public release of version 0.9.3.
+
+-----------------------------------------------------------------------------------------
 2020-03-23 Frank Voorburg <voorburg@feaser.com>
 
 * Moved aes256 sources to the main source directory.
