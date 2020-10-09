@@ -1,5 +1,5 @@
 language: python
-dist: bionic
+dist: focal
 sudo: true
 python: 3.6
 branches: master
