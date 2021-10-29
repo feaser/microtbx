@@ -1,4 +1,10 @@
 -----------------------------------------------------------------------------------------
+2021-10-29 Frank Voorburg <voorburg@feaser.com>
+
+* Moved demos to a separate git repository.
+* Moved tbx_conf.h to the "template" subdirectory.
+* Public release of version 0.9.4.
+-----------------------------------------------------------------------------------------
 2020-04-09 Frank Voorburg <voorburg@feaser.com>
 
 * Added linked list module.
