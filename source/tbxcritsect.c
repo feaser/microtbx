@@ -68,7 +68,7 @@ void TbxCriticalSectionEnter(void)
   tTbxPortCpuSR cpuSR;
 
   /* Disable the interrupts and store the CPU status register value in a local variable.
-   * Note that it should not written directly to tbxCritSectCpuSR yet, because the
+   * Note that it should not write directly to tbxCritSectCpuSR yet, because the
    * tbxCritSectCpuSR variable is a shared resource and should only be accessed with
    * interrupts disabled.
    */

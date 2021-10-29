@@ -2,5 +2,6 @@
 +libclass(angle)
 
 // project specific search directories
+-itemplate
 -iport/ARM_CORTEXM
 

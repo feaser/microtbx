@@ -22,19 +22,20 @@ The following table presents an overview of the currently supported software com
 | [Random Numbers](random.md)           | For generating random numbers. |
 | [Checksums](checksum.md)              | For calculating data checksums. |
 | [Cryptography](crypto.md)             | For data encryption and decryption. |
-  
+
 # MISRA
 
 MicroTBX was developed with [MISRA-C compliance](misra.md) in mind. This is a software development standard to facilitate best practices for programming safety-critical software in road vehicles and other embedded systems.
 
 # Integration
 
-Adding MicroTBX to your software project is a simple four step process:
+Adding MicroTBX to your software project is a simple five step process:
 
 1. Copy all the files from the `source` and the correct `source\port\XXX` port directory to your project.
-2. Configure your project such that the added `.c` files are compiled and linked during a build.
-3. Add the directories that contain the `.h` files to your compiler's include path.
-4. Customize the MicroTBX configuraton in `tbx_conf.h`, if desired.
+2. Copy the `source\template\tbx_conf.h` template configuration file to your project
+3. Configure your project such that the added `.c` files are compiled and linked during a build.
+4. Add the directories that contain the `.h` files to your compiler's include path.
+5. Customize the MicroTBX configuraton in `tbx_conf.h`, if desired.
 
 # Usage
 
