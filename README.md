@@ -25,6 +25,10 @@ If you do not feel like reinventing the wheel, consider using MicroTBX. Ideally,
 
 To get started with MicroTBX, it is recommended to download the latest stable release from the [releases](https://github.com/feaser/microtbx/releases/) page. Next, follow the integration steps outlined on the first page of the [user manual](https://feaser.github.io/microtbx).
 
+Additionally, an assortment of demo programs is available in a separate Git repository: 
+
+* https://github.com/feaser/microtbx-demos
+
 # User manual
 
 The online user manual is located at the following location:
