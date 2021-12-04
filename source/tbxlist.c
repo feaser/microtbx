@@ -559,7 +559,6 @@ uint8_t TbxListInsertItemAfter(tTbxList * list, void * item, void const * itemRe
 **            removed from the list, before calling this function.
 ** \param     list Pointer to a previously created linked list to operate on.
 ** \param     item Pointer to the item to remove.
-** \return    TBX_OK if the item could be removed, TBX_ERROR otherwise.
 **
 ****************************************************************************************/
 void TbxListRemoveItem(tTbxList * list, void const * item)
