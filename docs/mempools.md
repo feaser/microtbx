@@ -1,3 +1,5 @@
+# Memory pools
+
 Dynamic memory allocation with the help of a memory pool is required for data that has a lifetime longer than just one function, yet shorter than the run-time of the entire software program. This is typically the case in event driven software.
 
 Take for example an embedded software program that communicates via CAN. When a CAN message reception interrupt triggers, the contents of the newly received CAN message are typically stored somewhere for later processing at task level. In this case data storage for the CAN message can be dynamically allocated and freed when it is no longer needed.
@@ -9,10 +11,10 @@ Note that if dynamic memory allocation is needed, where the lifetime of the allo
 
 Each memory pool consists of a run-time configurable amount of fixed-sized data blocks. The software program has full control over how many memory pools it creates and how many bytes the data blocks.
 
-# Usage
+## Usage
 
 A prerequisite to performing dynamic memory allocation, is that the software program first
-creates one or more memory pools. Function `TbxMemPoolCreate()` creates a memory pool. Through the function parameters you can specify the number of bytes for each data block inside the pool and how many data blocks it should hold.
+creates one or more memory pools. Function [`TbxMemPoolCreate()`](apiref.md#tbxmempoolcreate) creates a memory pool. Through the function parameters you can specify the number of bytes for each data block inside the pool and how many data blocks it should hold.
 
 It is recommended to create the memory pools during the software program initialization, before the infinite program loop is entered. However, it is safe to create memory pools at any point in the software program. Note that if you attempt to create a memory pool with a data block size that already exists, the memory pools software component is smart enough to
 extend the already existing memory pool, instead of creating a new one.
@@ -20,9 +22,9 @@ extend the already existing memory pool, instead of creating a new one.
 
 The trick is to tune the memory pools to your specific software program needs. When unsure about the what memory pools to create, it is a good starting point to create memory pools with sizes that are powers of two. For example, 8, 16, 32, 64, 128, etc.
 
-Once the memory pools are created, memory allocation with the memory pool software component is actually quite similar to calling the C standard library functions. To allocate memory, call `TbxMemPoolAllocate()` instead of `malloc()`. The best fitting memory pool for the data size requested, is automatically selected. Once the allocated data is no longer needed, call `TbxMemPoolRelease()`, instead of `free()`.
+Once the memory pools are created, memory allocation with the memory pool software component is actually quite similar to calling the C standard library functions. To allocate memory, call [`TbxMemPoolAllocate()`](apiref.md#tbxmempoolallocate) instead of `malloc()`. The best fitting memory pool for the data size requested, is automatically selected. Once the allocated data is no longer needed, call [`TbxMemPoolRelease()`](apiref.md#tbxmempoolrelease), instead of `free()`.
 
-# Examples
+## Examples
 
 The following example program demonstrates how memory pools are created and proves that data from the memory pools can be dynamically allocated and released over and over again. It it also an example of how you can expand and
 existing memory pool at a later point in time.
@@ -112,10 +114,10 @@ void main(void)
 }
 ```
 
-# Configuration
+## Configuration
 
 The memory pool software component itself does not have to be configured. However, when
-creating memory pools with function `TbxMemPoolCreate()`, the data blocks are statically preallocated on the heap with the help of the [heap](heap.md) module. In case the memory pool creation fails, it is likely that the heap size needs to be increased using the macro `TBX_CONF_HEAP_SIZE`:
+creating memory pools with function [`TbxMemPoolCreate()`](apiref.md#tbxmempoolcreate), the data blocks are statically preallocated on the heap with the help of the [heap](heap.md) module. In case the memory pool creation fails, it is likely that the heap size needs to be increased using the macro [`TBX_CONF_HEAP_SIZE`](apiref.md#configuration):
 
 ```c
 /** \brief Configure the size of the heap in bytes. */

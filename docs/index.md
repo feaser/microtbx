@@ -1,3 +1,5 @@
+# Introduction to MicroTBX
+
 MicroTBX is an open source Microcontroller ToolBoX consisting of software components commonly needed in embedded software applications. Think of it as a Swiss army knife for your firmware.
 
 MicroTBX is written in the C programming language (C99). It currently supports all microcontrollers based on an ARM Cortex-M core, for example: ST STM32, Infineon XMC, and NXP S32K. There is little effort involved with porting MicroTBX to different microcontroller families.
@@ -8,7 +10,7 @@ If you do not feel like reinventing the wheel, consider using MicroTBX. Ideally,
 
 ![alt text](images/software_architecture.png "Software architecture with MicroTBX")
 
-# Components
+## Components
 
 The following table presents an overview of the currently supported software components inside MicroTBX:
 
@@ -23,11 +25,11 @@ The following table presents an overview of the currently supported software com
 | [Checksums](checksum.md)              | For calculating data checksums. |
 | [Cryptography](crypto.md)             | For data encryption and decryption. |
 
-# MISRA
+## MISRA
 
 MicroTBX was developed with [MISRA-C compliance](misra.md) in mind. This is a software development standard to facilitate best practices for programming safety-critical software in road vehicles and other embedded systems.
 
-# Integration
+## Integration
 
 Adding MicroTBX to your software project is a simple five step process:
 
@@ -37,13 +39,13 @@ Adding MicroTBX to your software project is a simple five step process:
 4. Add the directories that contain the `.h` files to your compiler's include path.
 5. Customize the MicroTBX configuraton in `tbx_conf.h`, if desired.
 
-# Usage
+## Usage
 
 1. Add the following line to each source-file, where you intend to make use of MicroTBX:
 ```c
-#include "microtbx.h"
+#include <microtbx.h>
 ```
 
-# Licensing
+## Licensing
 
 MicroTBX is licensed under the [MIT license](license.md). This permissive license enables you to include and distribute MicroTBX with your firmware, even if it is proprietary. The only requirements are that you include a copy of the MIT license and do not change the copyright notice, when you distribute MicroTBX.

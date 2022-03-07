@@ -1,3 +1,5 @@
+# Checksums
+
 A checksum is an integer value that can verify the contents of a data block. In
 embedded software programs, the common purposes of a checksum are: to validate
 the contents of a data bock, and to detect accidental changes in a data block.
@@ -15,16 +17,16 @@ the receiver recalculates the checksum and compares the calculated value with
 the value that was added by the sender. The communication data is deemed valid
 if both values match.
 
-# Usage
+## Usage
 
 MicroTBX includes functionality to calculate both 16-bit and 32-bit checksum
 values over a fixed length byte array, using a cyclic redundancy check (CRC)
 algorithm.
 
-To calculate the 16-bit checksum value over a number of bytes, function `TbxChecksumCrc16Calculate()` is available. In case a 32-bit checksum value
-is preferred, function `TbxChecksumCrc32Calculate()` can be called.
+To calculate the 16-bit checksum value over a number of bytes, function [`TbxChecksumCrc16Calculate()`](apiref.md#tbxchecksumcrc16calculate) is available. In case a 32-bit checksum value
+is preferred, function [`TbxChecksumCrc32Calculate()`](apiref.md#tbxchecksumcrc32calculate) can be called.
 
-# Examples
+## Examples
 
 The following example declares a data block with communication data, consisting
 of 32 bytes (8 * 4). Function `CalculateChecksum()` demonstrates how a 32-bit
@@ -74,7 +76,7 @@ uint8_t VerifyChecksum(uint32_t checksum)
 }
 ```
 
-# Configuration
+## Configuration
 
 The 16-bit and 32-bit CRC algorithms uses a specific polynomial value and are
 seeded with an initial value. The default configuration of these values work

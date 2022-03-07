@@ -1,3 +1,5 @@
+# Heap
+
 In an embedded software program, memory can be dynamically allocated. The heap is
 available for this, which is a part of RAM specifically reserved for dynamically
 allocated memory.
@@ -24,23 +26,23 @@ component described in this section covers solution (1) with static memory
 preallocation. The [memory pools](mempools.md) software component covers
 solution (2).
 
-# Usage
+## Usage
 
-The heap software component offers the function `TbxHeapAllocate()` for performing
+The heap software component offers the function [`TbxHeapAllocate()`](apiref.md#tbxheapallocate) for performing
 memory allocation on the heap. Because it is meant for static memory preallocation
 only, there is no function for free-ing the allocated memory. The idea is that
-function `TbxHeapAllocate()` is only called during the initialization of the
+function [`TbxHeapAllocate()`](apiref.md#tbxheapallocate) is only called during the initialization of the
 software program, so before the infinite program loop is entered. It is basically
 its own implementation of `malloc()`, without `free()`.
 
 To find out how many bytes of memory are still available on the heap, function
-`TbxHeapGetFree()` can be called.
+[`TbxHeapGetFree()`](apiref.md#tbxheapgetfree) can be called.
 
 If a software program has a need to allocate and release memory during the
 infinite program loop, the memory allocation should be performed with the
 functionality present in the [memory pools](mempools.md) software component.
 
-# Examples
+## Examples
 
 The following example demonstrates how to call the functions of the heap software
 component. Memory for a FIFO buffer is preallocated during the software program
@@ -71,9 +73,9 @@ for (fifoIdx = 0; fifoIdx < fifoMaxSize; fifoIdx++)
 }
 ```
 
-# Configuration
+## Configuration
 
-The maximum size of the heap is configured with macro `TBX_CONF_HEAP_SIZE`:
+The maximum size of the heap is configured with macro [`TBX_CONF_HEAP_SIZE`](apiref.md#configuration):
 
 ```c
 /** \brief Configure the size of the heap in bytes. */

@@ -1,3 +1,5 @@
+# MISRA compliance
+
 Static code analysis was performed to verify compliance with MISRA-C 2012. The following table lists the compliance exceptions:
 
 | Directive |   Type   | Rationale                                                    |

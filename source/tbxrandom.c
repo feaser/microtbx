@@ -108,9 +108,6 @@ uint32_t TbxRandomNumberGet(void)
 **            every time the software program runs, so after each reset event.
 ** \details   Here are a few different approaches that could be implemented to realize
 **            an seed value that is different each time the software program runs:
-**            analog input. Such a floating analog input will pick up noise, so the
-**            analog to digital conversion results always vary slightly. Other options
-**            would be to:
 **            1. Keep one of the analog inputs on your microcontroller unconnected. Such
 **               a floating analog input picks up noise from the surrounding environment
 **               and readings will therefore always vary slightly. Configure your ADC

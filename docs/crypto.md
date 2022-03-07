@@ -1,3 +1,5 @@
+# Cryptography
+
 The cryptography software component contains functionality to encrypt and
 decrypt data blocks. Encryption essentially changes the data contents such
 that its contents can no longer be interpreted by unwanted third parties. Only
@@ -19,7 +21,7 @@ multiple of 16 bytes in size. If this is not the case, the data needs to be
 aligned to a multiple of 16 bytes prior to performing the encryption/decryption
 operation.
 
-# Usage
+## Usage
 
 The first step is to define your 256-bit cryptography key. This is nothing more
 than an array of 32 bytes. You can decide on the contents yourself. The only
@@ -42,11 +44,11 @@ const uint8_t cryptoKey[32] =
 Note that you can use an [encryption key generator](https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx) to
 assist with getting unique contents for your cryptography key.
 
-To encrypt a 16-byte aligned data block, the function `TbxCryptoAes256Encrypt()`
+To encrypt a 16-byte aligned data block, the function [`TbxCryptoAes256Encrypt()`](apiref.md#tbxcryptoaes256encrypt)
 is available. To decrypt the data block back to its original state, the function
-`TbxCryptoAes256Decrypt()` can be called.
+[`TbxCryptoAes256Decrypt()`](apiref.md#tbxcryptoaes256decrypt) can be called.
 
-# Examples
+## Examples
 
 The following code example first encrypts the contents of a data buffer.
 Afterwards, the encrypted data is decrypted again. Followed by a verification

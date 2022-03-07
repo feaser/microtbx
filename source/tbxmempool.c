@@ -112,7 +112,7 @@ static tPoolList tbxPoolList = NULL;
 **            block has the size as specified by the second function parameter. The
 **            required memory is statically preallocated on the heap. This function is
 **            typically called one or more times during software program initialization,
-**            before the infinite program loop is entered. Once one ore more memory pools
+**            before the infinite program loop is entered. Once one or more memory pools
 **            were created, the functions TbxMemPoolAllocate() and TbxMemPoolRelease()
 **            can be called to perform dynamic memory allocation. A well designed memory
 **            pool approach makes dynamic memory allocation possible on RAM constrained
@@ -282,7 +282,7 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
 **              uint8_t * myMem = TbxMemPoolAllocate(9);
 **            Then the memory will be allocated from the memory pool with block size 16,
 **            so the second memory pool that was created. If there are no more blocks
-**            available in that memory pool, then NULL is return. So note that this
+**            available in that memory pool, then NULL is returned. So note that this
 **            function does NOT move on to the memory pool with one block size
 **            larger. Such a feature would be easy to realize but this design decision
 **            was made on purpose.

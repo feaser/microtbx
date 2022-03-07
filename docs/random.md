@@ -1,13 +1,15 @@
+# Random numbers
+
 The random number generator software component offers functionality for
 generating 32-bit random numbers. The generator algorithm is based on the linear
 feedback shift register approach ([LFSR](https://en.wikipedia.org/wiki/Linear-feedback_shift_register)), specifically the one presented in [application note 4400](https://www.maximintegrated.com/en/app-notes/index.mvp/id/4400) from Maxim Integrated.
 
-# Usage
+## Usage
 
-Whenever a random number is to be obtained, call function `TbxRandomNumberGet()`.
+Whenever a random number is to be obtained, call function [`TbxRandomNumberGet()`](apiref.md#tbxrandomnumberget).
 The internal generator algorithm needs to be properly seeded. By default, the
 same constant value is assigned to the seed. This means that each time function
-`TbxRandomNumberGet()` is called, you get a different number, but the consecutive
+[`TbxRandomNumberGet()`](apiref.md#tbxrandomnumberget) is called, you get a different number, but the consecutive
 numbers will always be the same each time your program is restarted:
 
 | Reset #1     | Reset #2     | Reset #3     |
@@ -16,10 +18,10 @@ numbers will always be the same each time your program is restarted:
 | 2375684060   | 2375684060   | 2375684060   |
 | 3691277220   | 3691277220   | 3691277220   |
 | 3596136368   | 3596136368   | 3596136368   |
-  
+
 For some applications, this behavior is acceptable. However, most applications
 require different random numbers to be generated each time the software program
-is started. This is achieved by calling `TbxRandomSetSeedInitHandler()` to
+is started. This is achieved by calling [`TbxRandomSetSeedInitHandler()`](apiref.md#tbxrandomsetseedinithandler) to
 register your own seed initialization function.
 
 The ideal implementation of your seed initialization function is such that it
@@ -57,9 +59,9 @@ floating analog input to seed the generator algorithm:
 |  793839531   |  296055939   | 3318979929   |
 
 
-# Examples
+## Examples
 
-To generate a new random number, call the function `RandomNumberGet()` and it
+To generate a new random number, call the function [`TbxRandomNumberGet()`](apiref.md#tbxrandomnumberget) and it
 will return a new 32-bit random number. Example:
 
 ```c
