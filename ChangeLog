@@ -1,4 +1,11 @@
 -----------------------------------------------------------------------------------------
+2022-03-09 Frank Voorburg <voorburg@feaser.com>
+
+* Added complete API reference to the documentation.
+* Added extra functionality for usinig MicroTBX in combination with FreeRTOS.
+* Configured GitHub actions for building and publishing the documentation.
+* Public release of version 0.9.5.
+-----------------------------------------------------------------------------------------
 2021-10-29 Frank Voorburg <voorburg@feaser.com>
 
 * Moved demos to a separate git repository.
