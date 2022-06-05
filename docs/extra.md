@@ -18,7 +18,7 @@ FreeRTOS ships with a few different examples for heap management. Some allow jus
 
 The file `tbxfreertos.c` offers an alternative heap management implementation, using MicroTBX's memory pools. This allows you to dynamically allocate and release memory on the heap, for your application's FreeRTOS objects.
 
-To use this solution heap management solution, you just need to remove the `heap_x.c` source file from your project and compile and link `tbxfreertos.c` instead.
+To use this heap management solution, you just need to remove the `heap_x.c` source file from your project and compile and link `tbxfreertos.c` instead.
 
 ### Assertions
 
