@@ -31,7 +31,6 @@
 * \endinternal
 ****************************************************************************************/
 
-
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
@@ -73,24 +72,18 @@ static pthread_mutex_t critSectMutex = PTHREAD_MUTEX_INITIALIZER;
 tTbxPortCpuSR TbxPortInterruptsDisable(void)
 {
   tTbxPortCpuSR result = 0U;
-  bool disabledFlagPrev;
 
   /* Disable the simulated global interrupts by setting its flag to true, and store its
-   * previous flag value.
-   */ 
-  disabledFlagPrev = atomic_flag_test_and_set(&interruptsDisabledFlag);
-
-  /* Were the simulated global interrupts actually enabled, before we just disabled 
-   * them? 
+   * previous flag value. Were the simulated global interrupts actually enabled, before
+   * we just disabled them? 
    */
-  if (disabledFlagPrev == false)
+  if (atomic_flag_test_and_set(&interruptsDisabledFlag) == false)
   {
     /* Simulate disabling the global interrupts by locking out other threads. */
     (void)pthread_mutex_trylock(&critSectMutex);
     /* Update the result accordingly. */
     result = TBX_PORT_CPU_SR_IRQ_EN;
   }
-
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxPortInterruptsDisable ***/
@@ -111,13 +104,8 @@ void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
   /* Should the simulated global interrupts be restored to the enabled state? */
   if (prev_cpu_sr == TBX_PORT_CPU_SR_IRQ_EN)
   {
-    /* Simulate enabling the global interrupts by no longer locking out other threads. 
-     * Note the this generates a lint warning because a thread mutex is being unlocked, 
-     * without being first locked in this function. This is not a problem because this
-     * function will only be called after TbxPortInterruptsDisable() is first caleld, 
-     * which does the actual thread mutex locking.
-     */
-    (void)pthread_mutex_unlock(&critSectMutex); /*lint !e455 */  
+    /* Simulate enabling the global interrupts by no longer locking out other threads. */
+    (void)pthread_mutex_unlock(&critSectMutex);
     /* Enable the simulated global interrupts by setting its flag to false. */
     atomic_flag_clear(&interruptsDisabledFlag);
   }
