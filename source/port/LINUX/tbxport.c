@@ -37,21 +37,29 @@
 ****************************************************************************************/
 #include "microtbx.h"                            /* MicroTBX global header             */
 #include <pthread.h>                             /* Posix thread utilities             */
+#include <stdbool.h>                             /* Boolean definitions                */
+#include <stdatomic.h>                           /* Atomic operations                  */
+
+
+/****************************************************************************************
+* Macro definitions
+****************************************************************************************/
+/** \brief Value that indicates the the global interrupts are enabled in the simulated
+ *         CPU status register.
+ */
+#define TBX_PORT_CPU_SR_IRQ_EN    (1U)
 
 
 /****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
-/** \brief Flag to determine if the critical section object was already initialized. */
-static uint8_t criticalSectionInitialized = TBX_FALSE;
-
-/** \brief Critical section object. Note that it was wrapped in a structure for MISRA
- *         19.2 compliance about not using unions.
+/** \brief Flag that simulates the global interrupt enabled/disabled state. Assume
+ *         enabled by default.
  */
-static struct
-{
-  pthread_mutex_t u;
-} mtxCritSect;
+static atomic_bool interruptsDisabledFlag = ATOMIC_VAR_INIT(false);
+
+/** \brief Critial section mutex. */
+static pthread_mutex_t critSectMutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 /************************************************************************************//**
@@ -64,25 +72,25 @@ static struct
 ****************************************************************************************/
 tTbxPortCpuSR TbxPortInterruptsDisable(void)
 {
-  tTbxPortCpuSR result;
+  tTbxPortCpuSR result = 0U;
+  bool disabledFlagPrev;
 
-  /* Initialize the result. Note that this value is don't care for this port, as under
-   * Linux, the already available PThread Mutex API is used.
+  /* Disable the simulated global interrupts by setting its flag to true, and store its
+   * previous flag value.
+   */ 
+  disabledFlagPrev = atomic_flag_test_and_set(&interruptsDisabledFlag);
+
+  /* Were the simulated global interrupts actually enabled, before we just disabled 
+   * them? 
    */
-  result = 0;
-  
-  /* Make sure the critical section object is initialized. */
-  if (criticalSectionInitialized == TBX_FALSE)
+  if (disabledFlagPrev == false)
   {
-    /* Initialize the critical section object. */
-    (void)pthread_mutex_init(&(mtxCritSect.u), NULL);
-    /* Set initialized flag. */
-    criticalSectionInitialized = TBX_TRUE;
+    /* Simulate disabling the global interrupts by locking out other threads. */
+    (void)pthread_mutex_trylock(&critSectMutex);
+    /* Update the result accordingly. */
+    result = TBX_PORT_CPU_SR_IRQ_EN;
   }
 
-  /* Enter the critical section, if not yet entered. */
-  (void)pthread_mutex_trylock(&(mtxCritSect.u));
-  
   /* Give the result back to the caller. */
   return result;
 } /*** end of TbxPortInterruptsDisable ***/
@@ -100,21 +108,19 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
 ****************************************************************************************/
 void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
 {
-  /* The parameter is not used for this port, because under Linux, the already
-   * available PThread Mutex API is used. 
-   */
-  TBX_UNUSED_ARG(prev_cpu_sr);
-
-  /* Make sure the critical section object was initialized. */
-  TBX_ASSERT(criticalSectionInitialized == TBX_TRUE);
-
-  /* Leave the critical section. Note the this generates a lint warning because a thread
-   * mutex is being unlocked, without being first locked in this function. This is not
-   * a problem because this function will only be called after TbxPortInterruptsDisable()
-   * is first caleld, which does the actual thread mutex locking.
-   */
-  (void)pthread_mutex_unlock(&(mtxCritSect.u)); /*lint !e455 */
-
+  /* Should the simulated global interrupts be restored to the enabled state? */
+  if (prev_cpu_sr == TBX_PORT_CPU_SR_IRQ_EN)
+  {
+    /* Simulate enabling the global interrupts by no longer locking out other threads. 
+     * Note the this generates a lint warning because a thread mutex is being unlocked, 
+     * without being first locked in this function. This is not a problem because this
+     * function will only be called after TbxPortInterruptsDisable() is first caleld, 
+     * which does the actual thread mutex locking.
+     */
+    (void)pthread_mutex_unlock(&critSectMutex); /*lint !e455 */  
+    /* Enable the simulated global interrupts by setting its flag to false. */
+    atomic_flag_clear(&interruptsDisabledFlag);
+  }
 } /*** end of TbxPortInterruptsRestore ***/
 
 
