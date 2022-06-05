@@ -80,7 +80,7 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
   if (atomic_flag_test_and_set(&interruptsDisabledFlag) == false)
   {
     /* Simulate disabling the global interrupts by locking out other threads. */
-    (void)pthread_mutex_trylock(&critSectMutex);
+    (void)pthread_mutex_lock(&critSectMutex);
     /* Update the result accordingly. */
     result = TBX_PORT_CPU_SR_IRQ_EN;
   }
