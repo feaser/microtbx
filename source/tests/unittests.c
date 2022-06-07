@@ -37,12 +37,49 @@
 #include "microtbx.h"                            /* MicroTBX global header             */
 #include "unity.h"                               /* Unity unit test framework          */
 #include "unittests.h"                           /* Unit tests header                  */
+#include <sys/time.h>                            /* Time definitions                   */
+
 
 /****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
 /** \brief Keeps track of how often an assertion got triggered. */
 uint32_t assertionCnt = 0;
+
+
+/************************************************************************************//**
+** \brief     Handles the run-time assertions. 
+** \param     file The filename of the source file where the assertion occurred in.
+** \param     line The line number inside the file where the assertion occurred.
+**
+****************************************************************************************/
+void handleTbxAssertion(const char * const file, uint32_t line)
+{
+  /* Increment the assertion counter. */
+  assertionCnt++;
+} /*** end of handleTbxAssertion ***/
+
+
+/************************************************************************************//**
+** \brief     Handler function that gets called by the random number generator. This
+**            module requires a seed, which this function should obtain. 
+** \details   This example implementation set the seed based on the value of system time.
+** \return    The 32-bit value that the random number generator module uses as a seed to
+**            initialize itself.
+**
+****************************************************************************************/
+uint32_t seedInitHandler(void)
+{
+  uint32_t result = 0;
+  struct timeval tv;
+
+  if (gettimeofday(&tv, NULL) == 0)
+  {
+    result = (((uint32_t)tv.tv_sec * 1000U) + ((uint32_t)tv.tv_usec / 1000U));
+  }
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of seedInitHandler ***/
 
 
 /************************************************************************************//**
@@ -76,6 +113,35 @@ void test_TbxAssertTrigger_ShouldTriggerAssertion(void)
   /* Make sure an assertion was triggered. */
   TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
 } /*** end of test_TbxAssertTrigger_ShouldTriggerAssertion ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that an assertion triggerss if you attempt to exit a critical section
+**            before first entering one.
+**
+****************************************************************************************/
+void test_TbxCriticalSectionExit_ShouldTriggerAssertionIfNotInCritSect(void)
+{
+  /* Exit a critical section, which hasn't actually been entered yet. */
+  TbxCriticalSectionExit();
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of test_TbxCriticalSectionExit_ShouldTriggerAssertionIfNotInCritSect ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that an assertion triggerss if you attempt to exit a critical section
+**            before first entering one.
+**
+****************************************************************************************/
+void test_TbxCriticalSectionEnter_ShouldNotAssertUponCritSectExit(void)
+{
+  /* Enter and exit a critical section. */
+  TbxCriticalSectionEnter();
+  TbxCriticalSectionExit();
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxCriticalSectionEnter_ShouldNotAssertUponCritSectExit ***/
 
 
 /************************************************************************************//**
@@ -214,37 +280,80 @@ void test_TbxHeapAllocate_ShouldAlignToAddressSize(void)
 
 
 /************************************************************************************//**
+** \brief     Tests that an assertion is triggered if you try to set an invalid seed
+**            initialization handler.
+**
+****************************************************************************************/
+void test_TbxRandomSetSeedInitHandler_ShouldTriggerAssertionIfParamNull(void)
+{
+  /* Attempt to configure an invalid custom seed initialization handler. */
+  TbxRandomSetSeedInitHandler(NULL);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of test_TbxRandomSetSeedInitHandler_ShouldTriggerAssertionIfParamNull ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the setting of a seed initialization handler works.
+**
+****************************************************************************************/
+void test_TbxRandomSetSeedInitHandler_ShouldWork(void)
+{
+  /* Attempt to configure an valid custom seed initialization handler. */
+  TbxRandomSetSeedInitHandler(seedInitHandler);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxRandomSetSeedInitHandler_ShouldWork ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the randon numbers are actually created.
+**
+****************************************************************************************/
+void test_TbxRandomNumberGet_ShouldReturnRandomNumbers(void)
+{
+  uint32_t randomNumber1;
+  uint32_t randomNumber2;
+
+  /* Attempt to obtain two random numbers. */
+  randomNumber1 = TbxRandomNumberGet();
+  randomNumber2 = TbxRandomNumberGet();
+  /* Make sure the numbers are not equal. */
+  TEST_ASSERT_NOT_EQUAL_UINT32(randomNumber1, randomNumber2);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxRandomNumberGet_ShouldReturnRandomNumbers ***/
+
+
+/************************************************************************************//**
 ** \brief     Handles the running of the unit tests.
 ** \return    Test results.
 **
 ****************************************************************************************/
 int runTests(void)
 {
+  /* Inform the framework that unit testing is about to start. */
   UNITY_BEGIN();
   /* Tests for the assertion module. */
   RUN_TEST(test_TbxAssertSetHandler_ShouldTriggerAssertionIfParamNull);
   RUN_TEST(test_TbxAssertTrigger_ShouldTriggerAssertion);
+  /* Tests for the critical section module. */
+  RUN_TEST(test_TbxCriticalSectionExit_ShouldTriggerAssertionIfNotInCritSect);
+  RUN_TEST(test_TbxCriticalSectionEnter_ShouldNotAssertUponCritSectExit);
   /* Tests for the heap module. */
   RUN_TEST(test_TbxHeapGetFree_ShouldReturnActualFreeSize);
   RUN_TEST(test_TbxHeapAllocate_ShouldReturnNotNull);
   RUN_TEST(test_TbxHeapAllocate_ShouldReturnNullIfZeroSizeAllocated);
   RUN_TEST(test_TbxHeapAllocate_ShouldReturnNullIfTooMuchAllocated);
   RUN_TEST(test_TbxHeapAllocate_ShouldAlignToAddressSize);
+  /* Tests for the random number module. */
+  RUN_TEST(test_TbxRandomSetSeedInitHandler_ShouldTriggerAssertionIfParamNull);
+  RUN_TEST(test_TbxRandomSetSeedInitHandler_ShouldWork);
+  RUN_TEST(test_TbxRandomNumberGet_ShouldReturnRandomNumbers);
+  /* Inform the framework that unit testing is done and return the result. */
   return UNITY_END();
 } /*** end of runUnittests ***/
 
-
-/************************************************************************************//**
-** \brief     Handles the run-time assertions. 
-** \param     file The filename of the source file where the assertion occurred in.
-** \param     line The line number inside the file where the assertion occurred.
-**
-****************************************************************************************/
-void handleTbxAssertion(const char * const file, uint32_t line)
-{
-  /* Increment the assertion counter. */
-  assertionCnt++;
-} /*** end of handleTbxAssertion ***/
 
 /************************************************************************************//**
 ** \brief     Initialization before running the unit tests.
