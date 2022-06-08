@@ -831,6 +831,77 @@ void test_TbxCryptoAes256Decrypt_ShouldDecrypt(void)
 
 
 /************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns TBX_ERROR.
+**
+****************************************************************************************/
+void test_TbxMemPoolCreate_ShouldAssertOnInvalidParams(void)
+{
+  uint8_t result;
+  size_t  heapFreeBefore;
+  size_t  heapFreeAfter;
+
+  /* It should not be possible to create a memory pool with zero blocks. */
+  heapFreeBefore = TbxHeapGetFree();
+  result = TbxMemPoolCreate(0, 16);
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Make sure an error was returned. */
+  TEST_ASSERT_EQUAL(TBX_ERROR, result);
+  /* Make sure no heap memory was allocated. */
+  TEST_ASSERT_EQUAL(heapFreeBefore, heapFreeAfter);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* It should not be possible to create a memory pool of zero sized blocks. */
+  heapFreeBefore = TbxHeapGetFree();
+  result = TbxMemPoolCreate(1, 0);
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Make sure an error was returned. */
+  TEST_ASSERT_EQUAL(TBX_ERROR, result);
+  /* Make sure no heap memory was allocated. */
+  TEST_ASSERT_EQUAL(heapFreeBefore, heapFreeAfter);
+} /*** end of test_TbxMemPoolCreate_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that it cannot create memory pools that require more memory than
+**            currently available on the heap. It should also returns TBX_ERROR.
+**
+****************************************************************************************/
+void test_TbxMemPoolCreate_CannotAllocateMoreThanFreeHeap(void)
+{
+  uint8_t result;
+  size_t  heapFree;
+
+  /* Try to create a memory pool with just one block, but a block size larger than what
+   * is free on the heap at this point.
+   */
+  heapFree = TbxHeapGetFree();
+  result = TbxMemPoolCreate(1, heapFree + 1);
+  /* Make sure an error was returned. */
+  TEST_ASSERT_EQUAL(TBX_ERROR, result);
+} /*** end of test_TbxMemPoolCreate_CannotAllocateMoreThanFreeHeap ***/
+
+
+/* TODO Implement these unit tests:
+ * - test_TbxMemPoolCreate_CanCreatePool
+ * - test_TbxMemPoolAllocate_ShouldAssertOnInvalidParams
+ * - test_TbxMemPoolAllocate_CanAllocateSameSize
+ * - test_TbxMemPoolAllocate_CanAllocateSmallerSize
+ * - test_TbxMemPoolAllocate_CannotAllocateLargerSize
+ * - test_TbxMemPoolAllocate_CannotAllocateWhenFull
+ * - test_TbxMemPoolCreate_CanIncreasePoolSize
+ * - test_TbxMemPoolRelease_ShouldAssertOnInvalidParams
+ * - test_TbxMemPoolRelease_CanReleaseBlocks
+ * - test_TbxMemPoolAllocate_CanReallocate (check heap free size not changed!)
+ * 
+ * NOTE Might need globals for storing the mem pool allocated pointers and such.
+ */
+
+/************************************************************************************//**
 ** \brief     Handles the running of the unit tests.
 ** \return    Test results.
 **
@@ -869,6 +940,9 @@ int runTests(void)
   RUN_TEST(test_TbxCryptoAes256Encrypt_ShouldEncrypt);
   RUN_TEST(test_TbxCryptoAes256Decrypt_ShouldAssertOnInvalidParams);
   RUN_TEST(test_TbxCryptoAes256Decrypt_ShouldDecrypt);
+  /* Tests for the memory pool module. */
+  RUN_TEST(test_TbxMemPoolCreate_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxMemPoolCreate_CannotAllocateMoreThanFreeHeap);
   /* Inform the framework that unit testing is done and return the result. */
   return UNITY_END();
 } /*** end of runUnittests ***/
