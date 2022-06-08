@@ -83,6 +83,74 @@ uint32_t seedInitHandler(void)
 
 
 /************************************************************************************//**
+** \brief     Tests that verifies that the version macros are present.
+**
+****************************************************************************************/
+void test_TbxGeneric_VersionMacrosShouldBePresent(void)
+{
+  /* Check presence of the main version macro. */
+  #ifndef TBX_VERSION_MAIN
+  TEST_FAIL();
+  #endif
+  /* Check presence of the minor version macro. */
+  #ifndef TBX_VERSION_MINOR
+  TEST_FAIL();
+  #endif
+  /* Check presence of the patch version macro. */
+  #ifndef TBX_VERSION_PATCH
+  TEST_FAIL();
+  #endif
+} /*** end of test_TbxGeneric_VersionMacrosShouldBePresent ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that verifies the presence and correct values of the boolean type
+**            macros.
+**
+****************************************************************************************/
+void test_TbxGeneric_BooleanMacrosShouldBePresent(void)
+{
+  /* Check TBX_TRUE macro. */
+  #ifndef TBX_TRUE
+  TEST_FAIL();
+  #else
+  TEST_ASSERT_EQUAL(1, TBX_TRUE);
+  #endif
+  /* Check TBX_FALSE macro. */
+  #ifndef TBX_FALSE
+  TEST_FAIL();
+  #else
+  TEST_ASSERT_EQUAL(0, TBX_FALSE);
+  #endif
+  /* Check TBX_OK macro. */
+  #ifndef TBX_OK
+  TEST_FAIL();
+  #else
+  TEST_ASSERT_EQUAL(1, TBX_OK);
+  #endif
+  /* Check TBX_ERROR macro. */
+  #ifndef TBX_ERROR
+  TEST_FAIL();
+  #else
+  TEST_ASSERT_EQUAL(0, TBX_ERROR);
+  #endif
+} /*** end of test_TbxGeneric_BooleanMacrosShouldBePresent ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that verifies that the unused argument macro is present.
+**
+****************************************************************************************/
+void test_TbxGeneric_UnusedArgMacroShouldBePresent(void)
+{
+  /* Check presence of the unused argument macro. */
+  #ifndef TBX_UNUSED_ARG
+  TEST_FAIL();
+  #endif
+} /*** end of test_TbxGeneric_UnusedArgMacroShouldBePresent ***/
+
+
+/************************************************************************************//**
 ** \brief     Tests that an assertion triggers if you specify NULL when configuring a
 **            custom assertion handler.
 **
@@ -450,6 +518,319 @@ void test_TbxChecksumCrc32Calculate_ShouldReturnValidCrc32(void)
 
 
 /************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and do not perform the
+**            actual encryption.
+**
+****************************************************************************************/
+void test_TbxCryptoAes256Encrypt_ShouldAssertOnInvalidParams(void)
+{
+  const uint8_t cryptoKey[] =
+  {
+    0x32, 0x72, 0x35, 0x75, 0x38, 0x78, 0x21, 0x41,
+    0x25, 0x44, 0x2A, 0x47, 0x2D, 0x4B, 0x61, 0x50,
+    0x64, 0x53, 0x67, 0x56, 0x6B, 0x59, 0x70, 0x33,
+    0x73, 0x36, 0x76, 0x39, 0x79, 0x24, 0x42, 0x3F
+  };
+  uint8_t sourceData[] = 
+  {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
+  };
+  uint8_t tmpBuffer[sizeof(sourceData)/sizeof(sourceData[0])];
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+  uint8_t idx;
+  uint8_t dataChanged;
+
+  /* Pass a NULL pointer for the data byte array. */
+  TbxCryptoAes256Encrypt(NULL, sourceLen, cryptoKey);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Pass a size of zero. */
+  TbxCryptoAes256Encrypt(tmpBuffer, 0, cryptoKey);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that no encryption was attempted. */
+  dataChanged = TBX_FALSE;
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != sourceData[idx])
+    {
+      dataChanged = TBX_TRUE;
+      break;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_FALSE, dataChanged);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Pass a size that is not aligned to the AES256 block size. */
+  TbxCryptoAes256Encrypt(tmpBuffer, 15, cryptoKey);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that no encryption was attempted. */
+  dataChanged = TBX_FALSE;
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != sourceData[idx])
+    {
+      dataChanged = TBX_TRUE;
+      break;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_FALSE, dataChanged);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Pass a NULL pointer for the key. */
+  TbxCryptoAes256Encrypt(tmpBuffer, sourceLen, NULL);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that no encryption was attempted. */
+  dataChanged = TBX_FALSE;
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != sourceData[idx])
+    {
+      dataChanged = TBX_TRUE;
+      break;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_FALSE, dataChanged);
+} /*** end of test_TbxCryptoAes256Encrypt_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that data is properly encrypted.
+**
+****************************************************************************************/
+void test_TbxCryptoAes256Encrypt_ShouldEncrypt(void)
+{
+  const uint8_t cryptoKey[] =
+  {
+    0x32, 0x72, 0x35, 0x75, 0x38, 0x78, 0x21, 0x41,
+    0x25, 0x44, 0x2A, 0x47, 0x2D, 0x4B, 0x61, 0x50,
+    0x64, 0x53, 0x67, 0x56, 0x6B, 0x59, 0x70, 0x33,
+    0x73, 0x36, 0x76, 0x39, 0x79, 0x24, 0x42, 0x3F
+  };
+  uint8_t sourceData[] = 
+  {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
+  };
+  /* Obtained using an online AES calculator using a 256 bit key and ECB:
+   * http://aes.online-domain-tools.com/
+   */
+  const uint8_t expectedData[] = 
+  {
+    0xC1, 0x2A, 0x81, 0xC0, 0x6C, 0xC3, 0xDB, 0x9F,
+    0x70, 0x54, 0x74, 0xB4, 0xB9, 0x3E, 0xA3, 0x1B,
+    0xF7, 0xA2, 0xEC, 0xAF, 0x39, 0x0F, 0x9D, 0x43,
+    0x00, 0x0F, 0x82, 0xF8, 0xBC, 0xFE, 0x23, 0x1A
+  };
+  uint8_t tmpBuffer[sizeof(sourceData)/sizeof(sourceData[0])];
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+  uint8_t idx;
+  uint8_t dataOkay = TBX_TRUE;
+
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Perform the encryption. */
+  TbxCryptoAes256Encrypt(tmpBuffer, sourceLen, cryptoKey);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+  /* Verify that the encrypted data is as expected. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != expectedData[idx])
+    {
+      dataOkay = TBX_FALSE;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, dataOkay);
+} /*** end of test_TbxCryptoAes256Encrypt_ShouldEncrypt ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and do not perform the
+**            actual decryption.
+**
+****************************************************************************************/
+void test_TbxCryptoAes256Decrypt_ShouldAssertOnInvalidParams(void)
+{
+  const uint8_t cryptoKey[] =
+  {
+    0x32, 0x72, 0x35, 0x75, 0x38, 0x78, 0x21, 0x41,
+    0x25, 0x44, 0x2A, 0x47, 0x2D, 0x4B, 0x61, 0x50,
+    0x64, 0x53, 0x67, 0x56, 0x6B, 0x59, 0x70, 0x33,
+    0x73, 0x36, 0x76, 0x39, 0x79, 0x24, 0x42, 0x3F
+  };
+  uint8_t sourceData[] = 
+  {
+    0xC1, 0x2A, 0x81, 0xC0, 0x6C, 0xC3, 0xDB, 0x9F,
+    0x70, 0x54, 0x74, 0xB4, 0xB9, 0x3E, 0xA3, 0x1B,
+    0xF7, 0xA2, 0xEC, 0xAF, 0x39, 0x0F, 0x9D, 0x43,
+    0x00, 0x0F, 0x82, 0xF8, 0xBC, 0xFE, 0x23, 0x1A
+  };
+  uint8_t tmpBuffer[sizeof(sourceData)/sizeof(sourceData[0])];
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+  uint8_t idx;
+  uint8_t dataChanged;
+
+  /* Pass a NULL pointer for the data byte array. */
+  TbxCryptoAes256Decrypt(NULL, sourceLen, cryptoKey);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Pass a size of zero. */
+  TbxCryptoAes256Decrypt(tmpBuffer, 0, cryptoKey);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that no decryption was attempted. */
+  dataChanged = TBX_FALSE;
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != sourceData[idx])
+    {
+      dataChanged = TBX_TRUE;
+      break;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_FALSE, dataChanged);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Pass a size that is not aligned to the AES256 block size. */
+  TbxCryptoAes256Decrypt(tmpBuffer, 15, cryptoKey);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that no decryption was attempted. */
+  dataChanged = TBX_FALSE;
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != sourceData[idx])
+    {
+      dataChanged = TBX_TRUE;
+      break;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_FALSE, dataChanged);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Pass a NULL pointer for the key. */
+  TbxCryptoAes256Decrypt(tmpBuffer, sourceLen, NULL);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that no decryption was attempted. */
+  dataChanged = TBX_FALSE;
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != sourceData[idx])
+    {
+      dataChanged = TBX_TRUE;
+      break;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_FALSE, dataChanged);
+} /*** end of test_TbxCryptoAes256Decrypt_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that data is properly decrypted.
+**
+****************************************************************************************/
+void test_TbxCryptoAes256Decrypt_ShouldDecrypt(void)
+{
+  const uint8_t cryptoKey[] =
+  {
+    0x32, 0x72, 0x35, 0x75, 0x38, 0x78, 0x21, 0x41,
+    0x25, 0x44, 0x2A, 0x47, 0x2D, 0x4B, 0x61, 0x50,
+    0x64, 0x53, 0x67, 0x56, 0x6B, 0x59, 0x70, 0x33,
+    0x73, 0x36, 0x76, 0x39, 0x79, 0x24, 0x42, 0x3F
+  };
+  uint8_t sourceData[] = 
+  {
+    0xC1, 0x2A, 0x81, 0xC0, 0x6C, 0xC3, 0xDB, 0x9F,
+    0x70, 0x54, 0x74, 0xB4, 0xB9, 0x3E, 0xA3, 0x1B,
+    0xF7, 0xA2, 0xEC, 0xAF, 0x39, 0x0F, 0x9D, 0x43,
+    0x00, 0x0F, 0x82, 0xF8, 0xBC, 0xFE, 0x23, 0x1A
+  };
+  const uint8_t expectedData[] = 
+  {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
+  };
+  uint8_t tmpBuffer[sizeof(sourceData)/sizeof(sourceData[0])];
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+  uint8_t idx;
+  uint8_t dataOkay = TBX_TRUE;
+
+  /* Copy the source data to the temp buffer. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    tmpBuffer[idx] = sourceData[idx];
+  }
+  /* Perform the decryption. */
+  TbxCryptoAes256Decrypt(tmpBuffer, sourceLen, cryptoKey);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+  /* Verify that the decrypted data is as expected. */
+  for (idx = 0; idx < sourceLen; idx++)
+  {
+    if (tmpBuffer[idx] != expectedData[idx])
+    {
+      dataOkay = TBX_FALSE;
+    }
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, dataOkay);
+} /*** end of test_TbxCryptoAes256Decrypt_ShouldDecrypt ***/
+
+
+/************************************************************************************//**
 ** \brief     Handles the running of the unit tests.
 ** \return    Test results.
 **
@@ -458,6 +839,10 @@ int runTests(void)
 {
   /* Inform the framework that unit testing is about to start. */
   UNITY_BEGIN();
+  /* Tests the are generic and not module specific. */
+  RUN_TEST(test_TbxGeneric_VersionMacrosShouldBePresent);
+  RUN_TEST(test_TbxGeneric_BooleanMacrosShouldBePresent);
+  RUN_TEST(test_TbxGeneric_UnusedArgMacroShouldBePresent);
   /* Tests for the assertion module. */
   RUN_TEST(test_TbxAssertSetHandler_ShouldTriggerAssertionIfParamNull);
   RUN_TEST(test_TbxAssertTrigger_ShouldTriggerAssertion);
@@ -479,6 +864,11 @@ int runTests(void)
   RUN_TEST(test_TbxChecksumCrc16Calculate_ShouldReturnValidCrc16);
   RUN_TEST(test_TbxChecksumCrc32Calculate_ShouldAssertOnInvalidParams);
   RUN_TEST(test_TbxChecksumCrc32Calculate_ShouldReturnValidCrc32);
+  /* Tests for the cryptography module. */
+  RUN_TEST(test_TbxCryptoAes256Encrypt_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxCryptoAes256Encrypt_ShouldEncrypt);
+  RUN_TEST(test_TbxCryptoAes256Decrypt_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxCryptoAes256Decrypt_ShouldDecrypt);
   /* Inform the framework that unit testing is done and return the result. */
   return UNITY_END();
 } /*** end of runUnittests ***/
