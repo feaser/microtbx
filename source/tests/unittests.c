@@ -41,10 +41,55 @@
 
 
 /****************************************************************************************
+* Type definitions
+****************************************************************************************/
+/** \brief Layout of a message used for testing the linked list module. */
+typedef struct
+{
+  uint32_t id;
+  uint8_t  len;
+  uint8_t  data[8];
+} tListTestMsg;
+
+
+/****************************************************************************************
 * Local data declarations
 ****************************************************************************************/
 /** \brief Keeps track of how often an assertion got triggered. */
 uint32_t assertionCnt = 0;
+
+/** \brief Number of blocks for the test memory pool. */
+const size_t memPoolNumBlocks = 2;
+
+/** \brief Size of the blocks for the test memory pool. */
+const size_t memPoolBlockSize = 16;
+
+/** \brief Array with block pointers allocated from the test memory pool. */
+void * memPoolAllocatedBlocks[3];
+
+/** \brief Test message A for the linked list module. */
+static tListTestMsg listTestMsgA = 
+{
+  .id = 123,
+  .len = 8,
+  .data = { 0, 1, 2, 3, 4, 5, 7 }
+};
+
+/** \brief Test message B for the linked list module. */
+static tListTestMsg listTestMsgB = 
+{
+  .id = 456,
+  .len = 4,
+  .data = { 8, 9, 10, 11 }
+};
+
+/** \brief Test message C for the linked list module. */
+static tListTestMsg listTestMsgC = 
+{
+  .id = 789,
+  .len = 2,
+  .data = { 12, 13 }
+};
 
 
 /************************************************************************************//**
@@ -80,6 +125,27 @@ uint32_t seedInitHandler(void)
   /* Give the result back to the caller. */
   return result;
 } /*** end of seedInitHandler ***/
+
+
+/************************************************************************************//**
+** \brief     Message comparison function used for sorting the linked lists.
+** \param     item1 First item for the comparison.
+** \param     item2 Seconds item for the comparison.
+** \return    TBX_TRUE if item1's data is greater than item2's data, TBX_FALSE otherwise.
+**
+****************************************************************************************/
+uint8_t compareListMsg(void const * item1, void const * item2)
+{
+  uint8_t result = TBX_FALSE;
+  tListTestMsg const * msg1 = item1;
+  tListTestMsg const * msg2 = item2;
+
+  if (msg1->id > msg2->id)
+  {
+    result = TBX_TRUE;
+  }
+  return result;
+} /*** end of compareListMsg ***/
 
 
 /************************************************************************************//**
@@ -394,7 +460,7 @@ void test_TbxRandomNumberGet_ShouldReturnRandomNumbers(void)
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion and returns zero.
+** \brief     Tests that invalid parameters trigger an assertion and returns zero.
 **
 ****************************************************************************************/
 void test_TbxChecksumCrc16Calculate_ShouldAssertOnInvalidParams(void)
@@ -456,7 +522,7 @@ void test_TbxChecksumCrc16Calculate_ShouldReturnValidCrc16(void)
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion and returns zero.
+** \brief     Tests that invalid parameters trigger an assertion and returns zero.
 **
 ****************************************************************************************/
 void test_TbxChecksumCrc32Calculate_ShouldAssertOnInvalidParams(void)
@@ -830,14 +896,6 @@ void test_TbxCryptoAes256Decrypt_ShouldDecrypt(void)
 } /*** end of test_TbxCryptoAes256Decrypt_ShouldDecrypt ***/
 
 
-/****************************************************************************************
-* Local data declarations
-****************************************************************************************/
-const size_t memPoolNumBlocks = 2;
-const size_t memPoolBlockSize = 16;
-void * memPoolAllocatedBlocks[3];
-
-
 /************************************************************************************//**
 ** \brief     Tests that invalid parameters trigger an assertion and returns TBX_ERROR.
 **
@@ -920,7 +978,7 @@ void test_TbxMemPoolCreate_CanCreatePool(void)
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion and returns NULL.
+** \brief     Tests that invalid parameters trigger an assertion and returns NULL.
 **
 ****************************************************************************************/
 void test_TbxMemPoolAllocate_ShouldAssertOnInvalidParams(void)
@@ -1057,7 +1115,7 @@ void test_TbxMemPoolCreate_CanIncreasePoolSize(void)
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion.
+** \brief     Tests that invalid parameters trigger an assertion.
 **
 ****************************************************************************************/
 void test_TbxMemPoolRelease_ShouldAssertOnInvalidParams(void)
@@ -1156,58 +1214,64 @@ void test_TbxMemPoolAllocate_CanReallocate(void)
 } /*** end of test_TbxMemPoolAllocate_CanReallocate ***/
 
 
-/****************************************************************************************
-* Type definitions
-****************************************************************************************/
-typedef struct
-{
-  uint32_t id;
-  uint8_t  len;
-  uint8_t  data[8];
-} tListTestMsg;
-
-
-/****************************************************************************************
-* Local data declarations
-****************************************************************************************/
-static tTbxList * listTestList;
-static tListTestMsg listTestMsgA = 
-{
-  .id = 123,
-  .len = 8,
-  .data = { 0, 1, 2, 3, 4, 5, 7 }
-};
-static tListTestMsg listTestMsgB = 
-{
-  .id = 456,
-  .len = 4,
-  .data = { 8, 9, 10, 11 }
-};
-static tListTestMsg listTestMsgC = 
-{
-  .id = 789,
-  .len = 2,
-  .data = { 12, 13 }
-};
-
-
 /************************************************************************************//**
 ** \brief     Tests that a new list can be created.
 **
 ****************************************************************************************/
 void test_TbxListCreate_ReturnsValidListPointer(void)
 {
+  tTbxList * myList;
+
   /* Attempt to create a new linked list. */
-  listTestList = TbxListCreate();
+  myList = TbxListCreate();
   /* Make sure a valid pointer was returned. */
-  TEST_ASSERT_NOT_NULL(listTestList);
+  TEST_ASSERT_NOT_NULL(myList);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
   /* Make sure no assertion was triggered. */
   TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
 } /*** end of test_TbxListCreate_ReturnsValidListPointer ***/
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion.
+** \brief     Tests that a recreated list can reuse previously used memory.
+**
+****************************************************************************************/
+void test_TbxListCreate_CanReuseMemory(void)
+{
+  tTbxList * myList;
+  size_t freeHeapBefore2ndCreate;
+  size_t freeHeapAfter2ndDelete;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add three items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgB);
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+  /* Delete it. */
+  TbxListDelete(myList);  
+  /* Get the current amount of free heap. */
+  freeHeapBefore2ndCreate = TbxHeapGetFree();
+  /* Create another linked list. */
+  myList = TbxListCreate();
+  /* Add three items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+  (void)TbxListInsertItemBack(myList, &listTestMsgB);
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  /* Delete it again. */
+  TbxListDelete(myList);  
+  /* Get the current amount of free heap. */
+  freeHeapAfter2ndDelete = TbxHeapGetFree();
+  /* Make sure no new heap memory was allocated for the 2nd list. */
+  TEST_ASSERT_EQUAL(freeHeapBefore2ndCreate, freeHeapAfter2ndDelete);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListCreate_CanReuseMemory ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion.
 **
 ****************************************************************************************/
 void test_TbxListDelete_ShouldAssertOnInvalidParams(void)
@@ -1225,15 +1289,21 @@ void test_TbxListDelete_ShouldAssertOnInvalidParams(void)
 ****************************************************************************************/
 void test_TbxListDelete_CanDelete(void)
 {
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Make sure a valid pointer was returned. */
+  TEST_ASSERT_NOT_NULL(myList);
   /* Delete the previously created linked list. */
-  TbxListDelete(listTestList);  
+  TbxListDelete(myList);  
   /* Make sure no assertion was triggered. */
   TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
 } /*** end of test_TbxListDelete_CanDelete ***/
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion and returns 0.
+** \brief     Tests that invalid parameters trigger an assertion.
 **
 ****************************************************************************************/
 void test_TbxListClear_ShouldAssertOnInvalidParams(void)
@@ -1281,7 +1351,7 @@ void test_TbxListClear_CanEmptyList(void)
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion and returns 0.
+** \brief     Tests that invalid parameters trigger an assertion and returns 0.
 **
 ****************************************************************************************/
 void test_TbxListGetSize_ShouldAssertOnInvalidParams(void)
@@ -1325,7 +1395,7 @@ void test_TbxListGetSize_ReturnsActualSize(void)
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion and returns TBX_ERROR.
+** \brief     Tests that invalid parameters trigger an assertion and returns TBX_ERROR.
 **
 ****************************************************************************************/
 void test_TbxListInsertItemFront_ShouldAssertOnInvalidParams(void)
@@ -1343,7 +1413,7 @@ void test_TbxListInsertItemFront_ShouldAssertOnInvalidParams(void)
   TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
   /* Reset the assertion counter. */
   assertionCnt = 0;
-  /* Pass on a NULL pointer for the time, which should not work. */
+  /* Pass on a NULL pointer for the item, which should not work. */
   result = TbxListInsertItemFront(myList, NULL);
   /* Make sure it returns an error. */
   TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
@@ -1371,19 +1441,23 @@ void test_TbxListInsertItemFront_InsertsAtCorrectLocation(void)
   /* Make sure listTestMsgA is in the front of the list. */
   myMsg = TbxListGetFirstItem(myList);
   sameMsg = TBX_FALSE;
+  TEST_ASSERT_NOT_NULL(myMsg);
   if ((myMsg->id == listTestMsgA.id) && (myMsg == &listTestMsgA))
   {
     sameMsg = TBX_TRUE;
   }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
   /* Add another item. */
   (void)TbxListInsertItemFront(myList, &listTestMsgB);
   /* Make sure listTestMsgB is in the front of the list. */
   myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
   sameMsg = TBX_FALSE;
   if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
   {
     sameMsg = TBX_TRUE;
   }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
   /* Delete the list as cleanup. */
   TbxListDelete(myList);
   /* Make sure no assertion was triggered. */
@@ -1392,7 +1466,7 @@ void test_TbxListInsertItemFront_InsertsAtCorrectLocation(void)
 
 
 /************************************************************************************//**
-** \brief     Tests that invalid parameters trigger and assertion and returns TBX_ERROR.
+** \brief     Tests that invalid parameters trigger an assertion and returns TBX_ERROR.
 **
 ****************************************************************************************/
 void test_TbxListInsertItemBack_ShouldAssertOnInvalidParams(void)
@@ -1410,7 +1484,7 @@ void test_TbxListInsertItemBack_ShouldAssertOnInvalidParams(void)
   TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
   /* Reset the assertion counter. */
   assertionCnt = 0;
-  /* Pass on a NULL pointer for the time, which should not work. */
+  /* Pass on a NULL pointer for the item, which should not work. */
   result = TbxListInsertItemBack(myList, NULL);
   /* Make sure it returns an error. */
   TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
@@ -1437,20 +1511,24 @@ void test_TbxListInsertItemBack_InsertsAtCorrectLocation(void)
   (void)TbxListInsertItemBack(myList, &listTestMsgA);
   /* Make sure listTestMsgA is in the back of the list. */
   myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
   sameMsg = TBX_FALSE;
   if ((myMsg->id == listTestMsgA.id) && (myMsg == &listTestMsgA))
   {
     sameMsg = TBX_TRUE;
   }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
   /* Add another item. */
   (void)TbxListInsertItemBack(myList, &listTestMsgB);
   /* Make sure listTestMsgB is in the front of the list. */
   myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
   sameMsg = TBX_FALSE;
   if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
   {
     sameMsg = TBX_TRUE;
   }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
   /* Delete the list as cleanup. */
   TbxListDelete(myList);
   /* Make sure no assertion was triggered. */
@@ -1458,7 +1536,658 @@ void test_TbxListInsertItemBack_InsertsAtCorrectLocation(void)
 } /*** end of test_TbxListInsertItemBack_InsertsAtCorrectLocation ***/
 
 
-/* TODO Continue with TbxListInsertItemBefore. */
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns TBX_ERROR.
+**
+****************************************************************************************/
+void test_TbxListInsertItemBefore_ShouldAssertOnInvalidParams(void)
+{
+  uint8_t result;
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Pass on a NULL pointer for the list, which should not work. */
+  result = TbxListInsertItemBefore(NULL, &listTestMsgA, &listTestMsgB);
+  /* Make sure it returns an error. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the item, which should not work. */
+  result = TbxListInsertItemBefore(myList, NULL, &listTestMsgB);
+  /* Make sure it returns an error. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the itemRef, which should not work. */
+  result = TbxListInsertItemBefore(myList, &listTestMsgA, NULL);
+  /* Make sure it returns an error. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+} /*** end of test_TbxListInsertItemBefore_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that an item is inserted at the expected location in the list.
+**
+****************************************************************************************/
+void test_TbxListInsertItemBefore_InsertsAtCorrectLocation(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add two items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+  /* Add another item in the middle. */
+  result = TbxListInsertItemBefore(myList, &listTestMsgB, &listTestMsgC);
+  /* Verify the result value. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_OK, result);
+  /* Read back the item, which should be at the second spot in the list. */
+  myMsg = TbxListGetNextItem(myList, &listTestMsgA);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Remove the middle item. */
+  TbxListRemoveItem(myList, &listTestMsgB);
+  /* Now add the item before the first one. */
+  result = TbxListInsertItemBefore(myList, &listTestMsgB, &listTestMsgA);
+  /* Verify the result value. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_OK, result);
+  /* Read back the item, which should be at the start in the list. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListInsertItemBefore_InsertsAtCorrectLocation ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns TBX_ERROR.
+**
+****************************************************************************************/
+void test_TbxListInsertItemAfter_ShouldAssertOnInvalidParams(void)
+{
+  uint8_t result;
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Pass on a NULL pointer for the list, which should not work. */
+  result = TbxListInsertItemAfter(NULL, &listTestMsgA, &listTestMsgB);
+  /* Make sure it returns an error. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the item, which should not work. */
+  result = TbxListInsertItemAfter(myList, NULL, &listTestMsgB);
+  /* Make sure it returns an error. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the itemRef, which should not work. */
+  result = TbxListInsertItemAfter(myList, &listTestMsgA, NULL);
+  /* Make sure it returns an error. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_ERROR, result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+} /*** end of test_TbxListInsertItemAfter_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that an item is inserted at the expected location in the list.
+**
+****************************************************************************************/
+void test_TbxListInsertItemAfter_InsertsAtCorrectLocation(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add two items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+  /* Add another item in the middle. */
+  result = TbxListInsertItemAfter(myList, &listTestMsgB, &listTestMsgA);
+  /* Verify the result value. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_OK, result);
+  /* Read back the item, which should be at the second spot in the list. */
+  myMsg = TbxListGetPreviousItem(myList, &listTestMsgC);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Remove the middle item. */
+  TbxListRemoveItem(myList, &listTestMsgB);
+  /* Now add the item after the last one. */
+  result = TbxListInsertItemAfter(myList, &listTestMsgB, &listTestMsgC);
+  /* Verify the result value. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_OK, result);
+  /* Read back the item, which should be at the third spot in the list. */
+  myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListInsertItemAfter_InsertsAtCorrectLocation ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion.
+**
+****************************************************************************************/
+void test_TbxListRemoveItem_ShouldAssertOnInvalidParams(void)
+{
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Pass on a NULL pointer for the list, which should not work. */
+  TbxListRemoveItem(NULL, &listTestMsgA);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the item, which should not work. */
+  TbxListRemoveItem(myList, NULL);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+} /*** end of test_TbxListRemoveItem_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that items can be removed from the list.
+**
+****************************************************************************************/
+void test_TbxListRemoveItem_ShouldRemoveItem(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add two items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+  /* Remove the last item. */
+  TbxListRemoveItem(myList, &listTestMsgC);
+  /* Read back the last item, which should return the first one in the list. */
+  myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgA.id) && (myMsg == &listTestMsgA))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Remove the first item. */
+  TbxListRemoveItem(myList, &listTestMsgA);
+  /* Read back the first item, which should return NULL because the list is now empty. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_NULL(myMsg);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListRemoveItem_ShouldRemoveItem ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns NULL.
+**
+****************************************************************************************/
+void test_TbxListGetFirstItem_ShouldAssertOnInvalidParams(void)
+{
+  void * result;
+
+  /* Pass on a NULL pointer, which should not work. */
+  result = TbxListGetFirstItem(NULL);
+  /* Make sure it returned NULL. */
+  TEST_ASSERT_NULL(result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of TbxListGetFirstItem_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the first item of the list can be retrieved.
+**
+****************************************************************************************/
+void test_TbxListGetFirstItem_ShouldReturnFirstItem(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add three items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgB);
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+
+  /* Read back the first item in the list, which should be listTestMsgA. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgA.id) && (myMsg == &listTestMsgA))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Clear the list. */
+  TbxListClear(myList);
+  /* Read back the first item in the list, which should be NULL. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_NULL(myMsg);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListGetFirstItem_ShouldReturnFirstItem ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns NULL.
+**
+****************************************************************************************/
+void test_TbxListGetLastItem_ShouldAssertOnInvalidParams(void)
+{
+  void * result;
+
+  /* Pass on a NULL pointer, which should not work. */
+  result = TbxListGetLastItem(NULL);
+  /* Make sure it returned NULL. */
+  TEST_ASSERT_NULL(result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of TbxListGetLastItem_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the last item of the list can be retrieved.
+**
+****************************************************************************************/
+void test_TbxListGetLastItem_ShouldReturnLastItem(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add three items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgB);
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+
+  /* Read back the last item in the list, which should be listTestMsgC. */
+  myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgC.id) && (myMsg == &listTestMsgC))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Clear the list. */
+  TbxListClear(myList);
+  /* Read back the last item in the list, which should be NULL. */
+  myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_NULL(myMsg);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListGetLastItem_ShouldReturnLastItem ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns NULL.
+**
+****************************************************************************************/
+void test_TbxListGetPreviousItem_ShouldAssertOnInvalidParams(void)
+{
+  void * result;
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Pass on a NULL pointer for the list, which should not work. */
+  result = TbxListGetPreviousItem(NULL, &listTestMsgA);
+  /* Make sure it returns NULL. */
+  TEST_ASSERT_NULL(result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the item, which should not work. */
+  result = TbxListGetPreviousItem(myList, NULL);
+  /* Make sure it returns NULL. */
+  TEST_ASSERT_NULL(result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+} /*** end of test_TbxListGetPreviousItem_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the previous item of the list can be retrieved.
+**
+****************************************************************************************/
+void test_TbxListGetPreviousItem_ShouldReturnPreviousItem(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add two items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgB);
+  /* Read back the one before the last item in the list, which should be listTestMsgA. */
+  myMsg = TbxListGetPreviousItem(myList, &listTestMsgB);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgA.id) && (myMsg == &listTestMsgA))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Read back the one before the first item in the list, which should return NULL. */
+  myMsg = TbxListGetPreviousItem(myList, TbxListGetFirstItem(myList));
+  TEST_ASSERT_NULL(myMsg);
+  /* Read back one before an item not currently in the list, which should return NULL. */
+  myMsg = TbxListGetPreviousItem(myList, &listTestMsgC);
+  TEST_ASSERT_NULL(myMsg);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListGetPreviousItem_ShouldReturnPreviousItem ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns NULL.
+**
+****************************************************************************************/
+void test_TbxListGetNextItem_ShouldAssertOnInvalidParams(void)
+{
+  void * result;
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Pass on a NULL pointer for the list, which should not work. */
+  result = TbxListGetNextItem(NULL, &listTestMsgA);
+  /* Make sure it returns NULL. */
+  TEST_ASSERT_NULL(result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the item, which should not work. */
+  result = TbxListGetNextItem(myList, NULL);
+  /* Make sure it returns NULL. */
+  TEST_ASSERT_NULL(result);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+} /*** end of test_TbxListGetNextItem_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the next item of the list can be retrieved.
+**
+****************************************************************************************/
+void test_TbxListGetNextItem_ShouldReturnNextItem(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add two items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgB);
+  /* Read back the one after the first item in the list, which should be listTestMsgB. */
+  myMsg = TbxListGetNextItem(myList, &listTestMsgA);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Read back the one after the item in the list, which should return NULL. */
+  myMsg = TbxListGetNextItem(myList, TbxListGetLastItem(myList));
+  TEST_ASSERT_NULL(myMsg);
+  /* Read back one after an item not currently in the list, which should return NULL. */
+  myMsg = TbxListGetNextItem(myList, &listTestMsgC);
+  TEST_ASSERT_NULL(myMsg);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListGetNextItem_ShouldReturnNextItem ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion.
+**
+****************************************************************************************/
+void test_TbxListSwapItems_ShouldAssertOnInvalidParams(void)
+{
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Pass on a NULL pointer for the list, which should not work. */
+  TbxListSwapItems(NULL, &listTestMsgA, &listTestMsgB);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for item1, which should not work. */
+  TbxListSwapItems(myList, NULL, &listTestMsgB);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for item2, which should not work. */
+  TbxListSwapItems(myList, &listTestMsgA, NULL);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+} /*** end of test_TbxListSwapItems_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the items in the list can be swapped.
+**
+****************************************************************************************/
+void test_TbxListSwapItems_ShouldSwapItems(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add three items. */
+  (void)TbxListInsertItemBack(myList, &listTestMsgA);
+  (void)TbxListInsertItemBack(myList, &listTestMsgB);
+  (void)TbxListInsertItemBack(myList, &listTestMsgC);
+
+  /* Swap the first and the last items. */
+  TbxListSwapItems(myList, TbxListGetFirstItem(myList), TbxListGetLastItem(myList));
+  /* Read back the first item in the list, which should be listTestMsgC. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgC.id) && (myMsg == &listTestMsgC))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Swap the first (C) and the second (B) one. */
+  TbxListSwapItems(myList, &listTestMsgC, &listTestMsgB);
+  /* Read back the first item in the list, which should be listTestMsgB. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgB.id) && (myMsg == &listTestMsgB))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* Read back the second item in the list, which should be listTestMsgC. */
+  myMsg = TbxListGetNextItem(myList, TbxListGetFirstItem(myList));
+  TEST_ASSERT_NOT_NULL(myMsg);
+  sameMsg = TBX_FALSE;
+  if ((myMsg->id == listTestMsgC.id) && (myMsg == &listTestMsgC))
+  {
+    sameMsg = TBX_TRUE;
+  }
+  TEST_ASSERT_EQUAL(TBX_TRUE, sameMsg);  
+  /* List now contains B -> C -> A. Remove the last one (A). */
+  TbxListRemoveItem(myList, &listTestMsgA);
+  /* Now try swapping B and A. Which shouldn't do anything because A is not in the list.
+   * Note that it also shouldn´t generate an assertion.
+   */
+  TbxListSwapItems(myList, &listTestMsgB, &listTestMsgA);
+  /* B should still be the first item. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_EQUAL(&listTestMsgB, myMsg);
+  /* C should still be the last item. */
+  myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_EQUAL(&listTestMsgC, myMsg);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListSwapItems_ShouldSwapItems ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion.
+**
+****************************************************************************************/
+void test_TbxListSortItems_ShouldAssertOnInvalidParams(void)
+{
+  uint8_t result;
+  tTbxList * myList;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Pass on a NULL pointer for the list, which should not work. */
+  TbxListSortItems(NULL, compareListMsg);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass on a NULL pointer for the compare function, which should not work. */
+  TbxListSortItems(myList, NULL);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+} /*** end of test_TbxListSortItems_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the items in the list can be sorted.
+**
+****************************************************************************************/
+void test_TbxListSortItems_ShouldSortItems(void)
+{
+  tTbxList * myList;
+  tListTestMsg * myMsg;
+  uint8_t sameMsg;
+  uint8_t result;
+
+  /* Create a new linked list. */
+  myList = TbxListCreate();
+  /* Add three items. */
+  (void)TbxListInsertItemFront(myList, &listTestMsgA);
+  (void)TbxListInsertItemFront(myList, &listTestMsgB);
+  (void)TbxListInsertItemFront(myList, &listTestMsgC);
+  /* List is now C (id=789) -> B (id=456) -> A (id=123). Next sort based on id. */
+  TbxListSortItems(myList, compareListMsg);
+  /* List should now be A (id=123) -> B (id=456) -> C (id=789). */
+  /* Check the first item. */
+  myMsg = TbxListGetFirstItem(myList);
+  TEST_ASSERT_EQUAL(&listTestMsgA, myMsg);
+  TEST_ASSERT_EQUAL_UINT32(123, myMsg->id);
+  /* Check the second item. */
+  myMsg = TbxListGetNextItem(myList, TbxListGetFirstItem(myList));
+  TEST_ASSERT_EQUAL(&listTestMsgB, myMsg);
+  TEST_ASSERT_EQUAL_UINT32(456, myMsg->id);
+  /* Check the last item. */
+  myMsg = TbxListGetLastItem(myList);
+  TEST_ASSERT_EQUAL(&listTestMsgC, myMsg);
+  TEST_ASSERT_EQUAL_UINT32(789, myMsg->id);
+  /* Delete the list as cleanup. */
+  TbxListDelete(myList);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxListSortItems_ShouldSortItems ***/
 
 
 /************************************************************************************//**
@@ -1515,6 +2244,7 @@ int runTests(void)
   RUN_TEST(test_TbxMemPoolAllocate_CanReallocate);
   /* Tests for the linked list module. */
   RUN_TEST(test_TbxListCreate_ReturnsValidListPointer);
+  RUN_TEST(test_TbxListCreate_CanReuseMemory);
   RUN_TEST(test_TbxListDelete_ShouldAssertOnInvalidParams);
   RUN_TEST(test_TbxListDelete_CanDelete);
   RUN_TEST(test_TbxListClear_ShouldAssertOnInvalidParams);
@@ -1525,6 +2255,24 @@ int runTests(void)
   RUN_TEST(test_TbxListInsertItemFront_InsertsAtCorrectLocation);
   RUN_TEST(test_TbxListInsertItemBack_ShouldAssertOnInvalidParams);
   RUN_TEST(test_TbxListInsertItemBack_InsertsAtCorrectLocation);
+  RUN_TEST(test_TbxListInsertItemBefore_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListInsertItemBefore_InsertsAtCorrectLocation);
+  RUN_TEST(test_TbxListInsertItemAfter_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListInsertItemAfter_InsertsAtCorrectLocation);
+  RUN_TEST(test_TbxListRemoveItem_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListRemoveItem_ShouldRemoveItem);
+  RUN_TEST(test_TbxListGetFirstItem_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListGetFirstItem_ShouldReturnFirstItem);
+  RUN_TEST(test_TbxListGetLastItem_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListGetLastItem_ShouldReturnLastItem);
+  RUN_TEST(test_TbxListGetPreviousItem_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListGetPreviousItem_ShouldReturnPreviousItem);
+  RUN_TEST(test_TbxListGetNextItem_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListGetNextItem_ShouldReturnNextItem);
+  RUN_TEST(test_TbxListSwapItems_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListSwapItems_ShouldSwapItems);
+  RUN_TEST(test_TbxListSortItems_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxListSortItems_ShouldSortItems);
   /* Inform the framework that unit testing is done and return the result. */
   return UNITY_END();
 } /*** end of runUnittests ***/
