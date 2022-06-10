@@ -4,10 +4,10 @@
 #
 
 # Go to the project base directory.
-cd ../source
+cd ../../source
 
 # Invoke PC-lint (install with Wine).
-lint-nt.exe -b -i../lint std.lnt -u project.lnt
+lint-nt.exe -b -i../lint -i../lint/ARM_CORTEXM_GCC std.lnt -u project.lnt
 
 # Go back to the initial directory.
-cd ../lint
+cd ../lint/ARM_CORTEXM_GCC
