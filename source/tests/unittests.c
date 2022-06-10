@@ -210,7 +210,7 @@ void test_TbxGeneric_BooleanMacrosShouldBePresent(void)
 void test_TbxGeneric_UnusedArgMacroShouldBePresent(void)
 {
   /* Check presence of the unused argument macro. */
-  #ifndef TBX_UNUSED_ARG2
+  #ifndef TBX_UNUSED_ARG
   TEST_FAIL();
   #endif
 } /*** end of test_TbxGeneric_UnusedArgMacroShouldBePresent ***/
