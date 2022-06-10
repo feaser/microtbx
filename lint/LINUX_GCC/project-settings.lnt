@@ -1,7 +1,0 @@
-// by default treat headers specified via angle brackets as library headers
-+libclass(angle)
-
-// project specific search directories
--itemplate
--iport/LINUX
-
