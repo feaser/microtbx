@@ -57,8 +57,8 @@
 ****************************************************************************************/
 void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
 {
-  aes256_context ctx;
-  size_t         idx;
+  tbx_aes256_context ctx;
+  size_t             idx;
 
   /* Verify parameters. */
   TBX_ASSERT(data != NULL);
@@ -71,14 +71,14 @@ void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
        ((len % TBX_CRYPTO_AES_BLOCK_SIZE) == 0U) )
   {
     /* Initialize the context. */
-    aes256_init(&ctx, key);
+    tbx_aes256_init(&ctx, key);
     /* Encrypt in blocks of 16 bytes. */
     for (idx = 0U; idx < (len / TBX_CRYPTO_AES_BLOCK_SIZE); idx++)
     {
-      aes256_encrypt_ecb(&ctx, &data[idx * TBX_CRYPTO_AES_BLOCK_SIZE]);
+      tbx_aes256_encrypt_ecb(&ctx, &data[idx * TBX_CRYPTO_AES_BLOCK_SIZE]);
     }
     /* Cleanup */
-    aes256_done(&ctx);
+    tbx_aes256_done(&ctx);
   }
 } /*** end of TbxCryptoAes256Encrypt ***/
 
@@ -95,8 +95,8 @@ void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
 ****************************************************************************************/
 void TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key)
 {
-  aes256_context ctx;
-  size_t         idx;
+  tbx_aes256_context ctx;
+  size_t             idx;
 
   /* Verify parameters. */
   TBX_ASSERT(data != NULL);
@@ -109,14 +109,14 @@ void TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key)
        ((len % TBX_CRYPTO_AES_BLOCK_SIZE) == 0U) )
   {
     /* Initialize the context. */
-    aes256_init(&ctx, key);
+    tbx_aes256_init(&ctx, key);
     /* Decrypt in blocks of 16 bytes. */
     for (idx = 0U; idx < (len / TBX_CRYPTO_AES_BLOCK_SIZE); idx++)
     {
-      aes256_decrypt_ecb(&ctx, &data[idx * TBX_CRYPTO_AES_BLOCK_SIZE]);
+      tbx_aes256_decrypt_ecb(&ctx, &data[idx * TBX_CRYPTO_AES_BLOCK_SIZE]);
     }
     /* Cleanup */
-    aes256_done(&ctx);
+    tbx_aes256_done(&ctx);
   }
 } /*** end of TbxCryptoAes256Decrypt ***/
 

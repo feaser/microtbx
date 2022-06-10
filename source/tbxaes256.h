@@ -26,13 +26,13 @@ extern "C" {
         uint8_t key[32]; 
         uint8_t enckey[32]; 
         uint8_t deckey[32];
-    } aes256_context; 
+    } tbx_aes256_context; 
 
 
-    void aes256_init(aes256_context *ctx, uint8_t const *k);
-    void aes256_done(aes256_context *ctx);
-    void aes256_encrypt_ecb(aes256_context *ctx, uint8_t *buf);
-    void aes256_decrypt_ecb(aes256_context *ctx, uint8_t *buf);
+    void tbx_aes256_init(tbx_aes256_context *ctx, uint8_t const *k);
+    void tbx_aes256_done(tbx_aes256_context *ctx);
+    void tbx_aes256_encrypt_ecb(tbx_aes256_context *ctx, uint8_t *buf);
+    void tbx_aes256_decrypt_ecb(tbx_aes256_context *ctx, uint8_t *buf);
 
 #ifdef __cplusplus
 }
