@@ -6,7 +6,7 @@ on:
       - master
       - main
 jobs:
-  collect:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout tests repository
@@ -18,20 +18,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: 'third_party'
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
       - name: Generate build environment
         working-directory: tests/base/LINUX_PC_GCC/build
         run: cmake ..
       - name: Build test application
         working-directory: tests/base/LINUX_PC_GCC/build
         run: make
-
-  run:
-    runs-on: ubuntu-latest
-    steps:
       - name: Run test application
         working-directory: tests/base/LINUX_PC_GCC/build
         run: microtbx_tests
