@@ -1,5 +1,5 @@
 # MicroTBX
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Actions Status](https://github.com/feaser/microtbx/workflows/Publish%20Docs/badge.svg)](https://github.com/feaser/microtbx/actions)
 
 MicroTBX is an open source Microcontroller ToolBoX consisting of software components commonly needed in embedded software applications. Think of it as a Swiss army knife for your firmware. The following software components are included in MicroTBX:
 
