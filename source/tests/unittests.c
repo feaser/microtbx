@@ -1,0 +1,263 @@
+/************************************************************************************//**
+* \file         unittests.c
+* \brief        Unit tests source file.
+* \internal
+*----------------------------------------------------------------------------------------
+*                          C O P Y R I G H T
+*----------------------------------------------------------------------------------------
+*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*
+*----------------------------------------------------------------------------------------
+*                            L I C E N S E
+*----------------------------------------------------------------------------------------
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*
+* \endinternal
+****************************************************************************************/
+
+/****************************************************************************************
+* Include files
+****************************************************************************************/
+#include "microtbx.h"                            /* MicroTBX global header             */
+#include "unity.h"                               /* Unity unit test framework          */
+#include "unittests.h"                           /* Unit tests header                  */
+
+/****************************************************************************************
+* Local data declarations
+****************************************************************************************/
+/** \brief Keeps track of how often an assertion got triggered. */
+uint32_t assertionCnt = 0;
+
+
+/************************************************************************************//**
+** \brief     Tests that the triggering of assertions work.
+**
+****************************************************************************************/
+void test_TbxAssertTrigger_ShouldTriggerOnAssertError(void)
+{
+  /* Perform an assertion that shouldn't trigger. */
+  TBX_ASSERT(TBX_TRUE);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+  /* Perform an assertion that shouldn trigger. */
+  TBX_ASSERT(TBX_FALSE);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of test_TbxAssertTrigger_ShouldTriggerOnAssertError ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that free heap size reporting works.
+** \attention Should run before any other tests that might allocated from the heap.
+**
+****************************************************************************************/
+void test_TbxHeapGetFree_ShouldReturnActualFreeSize(void)
+{
+  size_t initialFreeHeap;
+  size_t currentFreeHeap;
+  void * mem;
+  const size_t allocSize = 2;
+
+  /* Get the initial free heap size. */
+  initialFreeHeap = TbxHeapGetFree();
+  /* Heap should not be zero. */
+  TEST_ASSERT_GREATER_THAN(0, initialFreeHeap);
+  /* First time that anything gets allocated means that the full heap should be free. */
+  TEST_ASSERT_EQUAL(TBX_CONF_HEAP_SIZE, initialFreeHeap);
+  /* Allocate some memory from the heap. */
+  mem = TbxHeapAllocate(allocSize);
+  /* Get the current free heap size. */
+  currentFreeHeap = TbxHeapGetFree();
+  /* Free size after allocation should be less then before. */
+  TEST_ASSERT_LESS_THAN(initialFreeHeap, currentFreeHeap);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxHeapGetFree_ShouldReturnActualFreeSize ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that basic memory allocation from the heap works.
+**
+****************************************************************************************/
+void test_TbxHeapAllocate_ShouldReturnNotNull(void)
+{
+  void * mem;
+  const size_t allocSize = 2;
+
+  /* Allocate some memory from the heap. */
+  mem = TbxHeapAllocate(allocSize);
+  /* Make sure the allocation worked. */
+  TEST_ASSERT_NOT_NULL(mem);  
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxHeapAllocate_ShouldReturnNotNull ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that a zero size memory allocation does not work.
+**
+****************************************************************************************/
+void test_TbxHeapAllocate_ShouldReturnNullIfZeroSizeAllocated(void)
+{
+  size_t initialFreeHeap;
+  size_t currentFreeHeap;
+  void * mem;
+  const size_t allocSize = 0;
+
+  /* Get the initial free heap size. */
+  initialFreeHeap = TbxHeapGetFree();
+  /* Allocate zero memory from the heap. */
+  mem = TbxHeapAllocate(allocSize);
+  /* Make sure the allocation failed. */
+  TEST_ASSERT_NULL(mem);  
+  /* Get current free heap size. */
+  currentFreeHeap = TbxHeapGetFree();
+  /* Should still be the same as before, because nothing should have been allocated. */
+  TEST_ASSERT_EQUAL(initialFreeHeap, currentFreeHeap);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of test_TbxHeapAllocate_ShouldReturnNullIfZeroSizeAllocated ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that too much memory allocation does not work.
+**
+****************************************************************************************/
+void test_TbxHeapAllocate_ShouldReturnNullIfTooMuchAllocated(void)
+{
+  size_t initialFreeHeap;
+  size_t currentFreeHeap;
+  size_t allocSize;
+  void * mem;
+
+  /* Get the initial free heap size. */
+  initialFreeHeap = TbxHeapGetFree();
+  /* Allocate more memory from the heap than what is currently available. */
+  allocSize = initialFreeHeap + 1;
+  mem = TbxHeapAllocate(allocSize);
+  /* Make sure the allocation failed. */
+  TEST_ASSERT_NULL(mem);  
+  /* Get current free heap size. */
+  currentFreeHeap = TbxHeapGetFree();
+  /* Should still be the same as before, because nothing should have been allocated. */
+  TEST_ASSERT_EQUAL(initialFreeHeap, currentFreeHeap);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxHeapAllocate_ShouldReturnNullIfTooMuchAllocated ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the allocated size automatically aligns to the pointer size
+**            of the architecture. So for 32-bit memory addresses, the allocated size
+**            should always be aligned to 4 bytes.
+**
+****************************************************************************************/
+void test_TbxHeapAllocate_ShouldAlignToAddressSize(void)
+{
+  size_t initialFreeHeap;
+  size_t currentFreeHeap;
+  size_t delta;
+  size_t addressSize;
+  const size_t allocSize = 1;
+  void * mem;
+
+  /* Get the initial free heap size. */
+  initialFreeHeap = TbxHeapGetFree();
+  /* Allocate a single byte. */
+  mem = TbxHeapAllocate(allocSize);
+  /* Make sure the allocation worked. */
+  TEST_ASSERT_NOT_NULL(mem);  
+  /* Get current free heap size. */
+  currentFreeHeap = TbxHeapGetFree();
+  /* Calculate the delta. */
+  delta = initialFreeHeap - currentFreeHeap;
+  /* Determine architectures address size by looking at the width of a pointer. */
+  addressSize = sizeof(void *);
+  /* Make sure the allocated size was aligned to the address size automatically. */
+  /* Should still be the same as before, because nothing should have been allocated. */
+  TEST_ASSERT_EQUAL(addressSize, delta);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxHeapAllocate_ShouldAlignToAddressSize ***/
+
+
+/************************************************************************************//**
+** \brief     Handles the running of the unit tests.
+** \return    Test results.
+**
+****************************************************************************************/
+int runTests(void)
+{
+  UNITY_BEGIN();
+  /* Tests for the assertion module. */
+  RUN_TEST(test_TbxAssertTrigger_ShouldTriggerOnAssertError);
+  /* Tests for the heap module. */
+  RUN_TEST(test_TbxHeapGetFree_ShouldReturnActualFreeSize);
+  RUN_TEST(test_TbxHeapAllocate_ShouldReturnNotNull);
+  RUN_TEST(test_TbxHeapAllocate_ShouldReturnNullIfZeroSizeAllocated);
+  RUN_TEST(test_TbxHeapAllocate_ShouldReturnNullIfTooMuchAllocated);
+  RUN_TEST(test_TbxHeapAllocate_ShouldAlignToAddressSize);
+  return UNITY_END();
+} /*** end of runUnittests ***/
+
+
+/************************************************************************************//**
+** \brief     Handles the run-time assertions. 
+** \param     file The filename of the source file where the assertion occurred in.
+** \param     line The line number inside the file where the assertion occurred.
+**
+****************************************************************************************/
+void handleTbxAssertion(const char * const file, uint32_t line)
+{
+  /* Increment the assertion counter. */
+  assertionCnt++;
+} /*** end of handleTbxAssertion ***/
+
+/************************************************************************************//**
+** \brief     Initialization before running the unit tests.
+**
+****************************************************************************************/
+void initializeTests(void)
+{
+/* Register the application specific assertion handler. */
+  TbxAssertSetHandler(handleTbxAssertion);
+} /*** end of initializeTests ***/
+
+
+/************************************************************************************//**
+** \brief     Code to run before each test.
+**
+****************************************************************************************/
+void setUp(void)
+{
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+} /*** end of setUp ***/
+
+
+/************************************************************************************//**
+** \brief     Code to run after each test.
+**
+****************************************************************************************/
+void tearDown(void)
+{
+} /*** end of tearDown ***/
+
+
+/*********************************** end of unittests.c ********************************/
