@@ -326,6 +326,130 @@ void test_TbxRandomNumberGet_ShouldReturnRandomNumbers(void)
 
 
 /************************************************************************************//**
+** \brief     Tests that invalid parameters trigger and assertion and returns zero.
+**
+****************************************************************************************/
+void test_TbxChecksumCrc16Calculate_ShouldAssertOnInvalidParams(void)
+{
+  uint16_t checksum; 
+  const uint8_t sourceData[] = 
+  {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,    
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F    
+  };
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+
+  /* Pass a NULL pointer for the data byte array. */
+  checksum = TbxChecksumCrc16Calculate(NULL, sourceLen);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that it did not continue with the actual checksum calculation. */
+  TEST_ASSERT_EQUAL_UINT16(0, checksum);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass an invalid size. */
+  checksum = TbxChecksumCrc16Calculate(sourceData, 0);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that it did not continue with the actual checksum calculation. */
+  TEST_ASSERT_EQUAL_UINT16(0, checksum);
+} /*** end of test_TbxChecksumCrc16Calculate_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the calculated checksum is correct.
+**
+****************************************************************************************/
+void test_TbxChecksumCrc16Calculate_ShouldReturnValidCrc16(void)
+{
+  uint16_t checksum; 
+  const uint8_t sourceData[] = 
+  {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,    
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F    
+  };
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+  /* Obtained using an online CRC calculator using the CRC16_CCITT_FALSE algorithm:
+   * http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
+   */
+  const uint16_t correctChecksum = 0x23B3;
+
+  /* Calculate the checksum. */
+  checksum = TbxChecksumCrc16Calculate(sourceData, sourceLen);
+  /* Verify the correctness of the checksum calculation. */
+  TEST_ASSERT_EQUAL_UINT16(correctChecksum, checksum);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxChecksumCrc16Calculate_ShouldReturnValidCrc16 ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger and assertion and returns zero.
+**
+****************************************************************************************/
+void test_TbxChecksumCrc32Calculate_ShouldAssertOnInvalidParams(void)
+{
+  uint32_t checksum; 
+  const uint8_t sourceData[] = 
+  {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,    
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F    
+  };
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+
+  /* Pass a NULL pointer for the data byte array. */
+  checksum = TbxChecksumCrc32Calculate(NULL, sourceLen);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that it did not continue with the actual checksum calculation. */
+  TEST_ASSERT_EQUAL_UINT32(0, checksum);
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Pass an invalid size. */
+  checksum = TbxChecksumCrc32Calculate(sourceData, 0);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Verify that it did not continue with the actual checksum calculation. */
+  TEST_ASSERT_EQUAL_UINT32(0, checksum);
+} /*** end of test_TbxChecksumCrc32Calculate_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the calculated checksum is correct.
+**
+****************************************************************************************/
+void test_TbxChecksumCrc32Calculate_ShouldReturnValidCrc32(void)
+{
+  uint32_t checksum; 
+  const uint8_t sourceData[] = 
+  {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,    
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F    
+  };
+  const size_t sourceLen = sizeof(sourceData)/sizeof(sourceData[0]);
+  /* Obtained using an online CRC calculator using the CRC16_BUYPASS algorithm:
+   * http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
+   */
+  const uint32_t correctChecksum = 0x8F819950UL;
+
+  /* Calculate the checksum. */
+  checksum = TbxChecksumCrc32Calculate(sourceData, sourceLen);
+  /* Verify the correctness of the checksum calculation. */
+  TEST_ASSERT_EQUAL_UINT32(correctChecksum, checksum);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxChecksumCrc32Calculate_ShouldReturnValidCrc32 ***/
+
+
+/************************************************************************************//**
 ** \brief     Handles the running of the unit tests.
 ** \return    Test results.
 **
@@ -350,6 +474,11 @@ int runTests(void)
   RUN_TEST(test_TbxRandomSetSeedInitHandler_ShouldTriggerAssertionIfParamNull);
   RUN_TEST(test_TbxRandomSetSeedInitHandler_ShouldWork);
   RUN_TEST(test_TbxRandomNumberGet_ShouldReturnRandomNumbers);
+  /* Tests for the checksum module. */
+  RUN_TEST(test_TbxChecksumCrc16Calculate_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxChecksumCrc16Calculate_ShouldReturnValidCrc16);
+  RUN_TEST(test_TbxChecksumCrc32Calculate_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxChecksumCrc32Calculate_ShouldReturnValidCrc32);
   /* Inform the framework that unit testing is done and return the result. */
   return UNITY_END();
 } /*** end of runUnittests ***/
