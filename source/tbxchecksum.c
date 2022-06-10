@@ -47,15 +47,15 @@
 /** \brief Polynomial of the 16-bit CRC. Note that it is possible to override this value
  *         by adding this macro definition to the configuration header file.
  */
-#define TBX_CONF_CHECKSUM_CRC16_POLYNOM          (0x8005U)
+#define TBX_CONF_CHECKSUM_CRC16_POLYNOM          (0x1021U)
 #endif
 
 #ifndef TBX_CONF_CHECKSUM_CRC16_INITIAL
-/** \brief Initial value of the 6-bit CRC calculation. Note that it is possible to
+/** \brief Initial value of the 16-bit CRC calculation. Note that it is possible to
  *         override this value by adding this macro definition to the configuration
  *         header file.
  */
-#define TBX_CONF_CHECKSUM_CRC16_INITIAL          (0x0000U)
+#define TBX_CONF_CHECKSUM_CRC16_INITIAL          (0xFFFF)
 #endif
 
 #ifndef TBX_CONF_CHECKSUM_CRC32_POLYNOM
@@ -70,12 +70,18 @@
  *         override this value by adding this macro definition to the configuration
  *         header file.
  */
-#define TBX_CONF_CHECKSUM_CRC32_INITIAL          (0x00000000UL)
+#define TBX_CONF_CHECKSUM_CRC32_INITIAL          (0xFFFFFFFFUL)
 #endif
 
 
 /************************************************************************************//**
 ** \brief     Calculates a 16-bit CRC value over the specified data.
+** \details   It uses the CRC16_CCITT_FALSE algorithm:
+**            - Polynomal:        0x1021
+**            - Initial value:    0xFFFF
+**            - Final Xor value:  0x0000
+**            - Input reflected:  no
+**            - Result reflected: no
 ** \param     data Array with bytes over which the CRC16 should be calculated.
 ** \param     len Number of bytes in the data array.
 ** \return    The 16-bit CRC value.
@@ -88,8 +94,7 @@ uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, size_t len)
   uint8_t  bitIdx;
 
   /* Verify parameters. */
-  TBX_ASSERT(data != NULL);
-  TBX_ASSERT(len > 0U);
+  TBX_ASSERT((data != NULL) && (len > 0U));
 
   /* Only continue if the parameters are valid. */
   if ( (data != NULL) && (len > 0U) )
@@ -125,6 +130,12 @@ uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, size_t len)
 
 /************************************************************************************//**
 ** \brief     Calculates a 32-bit CRC value over the specified data.
+** \details   It uses the CRC32_MPEG2 algorithm:
+**            - Polynomal:        0x04C11DB7
+**            - Initial value:    0xFFFFFFFF
+**            - Final Xor value:  0x00000000
+**            - Input reflected:  no
+**            - Result reflected: no
 ** \param     data Array with bytes over which the CRC32 should be calculated.
 ** \param     len Number of bytes in the data array.
 ** \return    The 32-bit CRC value.
@@ -137,8 +148,7 @@ uint32_t TbxChecksumCrc32Calculate(uint8_t const * data, size_t len)
   uint8_t  bitIdx;
 
   /* Verify parameters. */
-  TBX_ASSERT(data != NULL);
-  TBX_ASSERT(len > 0U);
+  TBX_ASSERT((data != NULL) && (len > 0U));
 
   /* Only continue if the parameters are valid. */
   if ( (data != NULL) && (len > 0U) )
