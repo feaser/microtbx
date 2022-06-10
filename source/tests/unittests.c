@@ -46,10 +46,26 @@ uint32_t assertionCnt = 0;
 
 
 /************************************************************************************//**
+** \brief     Tests that an assertion triggers if you specify NULL when configuring a
+**            custom assertion handler.
+**
+****************************************************************************************/
+void test_TbxAssertSetHandler_ShouldTriggerAssertionIfParamNull(void)
+{
+  /* Attempt to configure an invalid custom assertion handler. */
+  TbxAssertSetHandler(NULL);
+  /* Make sure an assertion was triggered. Note that this also verifies that the 
+   * initially configured assertion handler still works.
+   */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of test_TbxAssertSetHandler_ShouldTriggerAssertionIfParamNull ***/
+
+
+/************************************************************************************//**
 ** \brief     Tests that the triggering of assertions work.
 **
 ****************************************************************************************/
-void test_TbxAssertTrigger_ShouldTriggerOnAssertError(void)
+void test_TbxAssertTrigger_ShouldTriggerAssertion(void)
 {
   /* Perform an assertion that shouldn't trigger. */
   TBX_ASSERT(TBX_TRUE);
@@ -59,7 +75,7 @@ void test_TbxAssertTrigger_ShouldTriggerOnAssertError(void)
   TBX_ASSERT(TBX_FALSE);
   /* Make sure an assertion was triggered. */
   TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
-} /*** end of test_TbxAssertTrigger_ShouldTriggerOnAssertError ***/
+} /*** end of test_TbxAssertTrigger_ShouldTriggerAssertion ***/
 
 
 /************************************************************************************//**
@@ -206,7 +222,8 @@ int runTests(void)
 {
   UNITY_BEGIN();
   /* Tests for the assertion module. */
-  RUN_TEST(test_TbxAssertTrigger_ShouldTriggerOnAssertError);
+  RUN_TEST(test_TbxAssertSetHandler_ShouldTriggerAssertionIfParamNull);
+  RUN_TEST(test_TbxAssertTrigger_ShouldTriggerAssertion);
   /* Tests for the heap module. */
   RUN_TEST(test_TbxHeapGetFree_ShouldReturnActualFreeSize);
   RUN_TEST(test_TbxHeapAllocate_ShouldReturnNotNull);
