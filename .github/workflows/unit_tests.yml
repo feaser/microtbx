@@ -26,4 +26,4 @@ jobs:
         run: make
       - name: Run test application
         working-directory: tests/base/LINUX_PC_GCC/build
-        run: microtbx_tests
+        run: ./microtbx_tests
