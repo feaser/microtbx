@@ -1,0 +1,43 @@
+/* Date Stamp */ -d"_lint_env_ecl_console_lnt=env-ecl-console.lnt modified 25-Apr-2007"
+/* To document usage use: -message( "Using " _lint_env_ecl_console_lnt ) */
+// ---------------------------------------------------------------------
+// This file is provided by Gimpel Software (www.gimpel.com) for use with
+// its products PC-lint and FlexeLint.
+//
+// Redistribution and use of this file, with or without modification, is
+// permitted provided that any such redistribution retains this notice.
+// ---------------------------------------------------------------------
+/*
+    env-ecl-console.lnt:  environment file for Eclipse IDE console output
+
+	This file explains how to set Lint as an external tool for use in
+    the Eclipse IDE.  Gimpel Software currently does not have a plug-in
+    to offer for the Eclipse IDE.  However, since many of our users have
+    requested an env-*.lnt file for the Eclipse IDE, Gimpel Software
+    offers this file as a temporary 'stop-gap' measure.
+
+    To establish Lint as an external tool for Linting a single module:
+        1.  Click 'Run' from the main toolbar.
+        2.  Select 'External Tools'|'External Tools...'.
+        3.  Click 'Program' from the list box on the left hand side.
+        4.  Click 'New'.
+        5.  Enter 'Lint the Current File' in the 'Name' window.
+        6.  Under 'Location:', click 'Browse Workspace' and select
+            your Lint binary.
+        7.  Under 'Working Directory:', enter '${project_loc}'.
+        8.  Enter '-b -i${project_loc}\Lint std.lnt -u ${resource_loc}' 
+            in the 'Arguments' window.
+        9.  Click 'Apply'.
+
+    To run Lint, you can then choose 'Lint the Current File' from the
+    'Run'|'External Tools' menu and Lint will Lint your currently
+    select source file.
+
+    To establish Lint as an external tool for Linting a project file:
+        1.  Follow steps 1-7 above (with 'Lint Project' in the 'Name'
+            window).
+        2.  Enter '-b -i${project_loc}\Lint std.lnt project.lnt' in 
+            the 'Arguments' window.
+        3.  Click 'Apply'.
+
+ */
