@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          path: 'third_party'
+          path: 'third_party/microtbx'
       - name: Generate build environment
         working-directory: tests/base/LINUX_PC_GCC/build
         run: cmake ..
