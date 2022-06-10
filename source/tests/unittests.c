@@ -830,6 +830,14 @@ void test_TbxCryptoAes256Decrypt_ShouldDecrypt(void)
 } /*** end of test_TbxCryptoAes256Decrypt_ShouldDecrypt ***/
 
 
+/****************************************************************************************
+* Local data declarations
+****************************************************************************************/
+const size_t memPoolNumBlocks = 2;
+const size_t memPoolBlockSize = 16;
+void * memPoolAllocatedBlocks[3];
+
+
 /************************************************************************************//**
 ** \brief     Tests that invalid parameters trigger an assertion and returns TBX_ERROR.
 **
@@ -886,20 +894,267 @@ void test_TbxMemPoolCreate_CannotAllocateMoreThanFreeHeap(void)
 } /*** end of test_TbxMemPoolCreate_CannotAllocateMoreThanFreeHeap ***/
 
 
-/* TODO Implement these unit tests:
- * - test_TbxMemPoolCreate_CanCreatePool
- * - test_TbxMemPoolAllocate_ShouldAssertOnInvalidParams
- * - test_TbxMemPoolAllocate_CanAllocateSameSize
- * - test_TbxMemPoolAllocate_CanAllocateSmallerSize
- * - test_TbxMemPoolAllocate_CannotAllocateLargerSize
- * - test_TbxMemPoolAllocate_CannotAllocateWhenFull
- * - test_TbxMemPoolCreate_CanIncreasePoolSize
- * - test_TbxMemPoolRelease_ShouldAssertOnInvalidParams
- * - test_TbxMemPoolRelease_CanReleaseBlocks
- * - test_TbxMemPoolAllocate_CanReallocate (check heap free size not changed!)
- * 
- * NOTE Might need globals for storing the mem pool allocated pointers and such.
- */
+/************************************************************************************//**
+** \brief     Tests that a memory pool can be created.
+**
+****************************************************************************************/
+void test_TbxMemPoolCreate_CanCreatePool(void)
+{
+  uint8_t result;
+  size_t heapFreeBefore;
+  size_t heapFreeAfter;
+
+  /* Try to create a memory pool with 2 blocks of 16 bytes. */
+  heapFreeBefore = TbxHeapGetFree();
+  result = TbxMemPoolCreate(memPoolNumBlocks, memPoolBlockSize);
+  heapFreeAfter = TbxHeapGetFree();
+
+  /* Make sure no error was returned. */
+  TEST_ASSERT_EQUAL(TBX_OK, result);
+  /* Make sure at least the data for the blocks was allocated from the heap. */
+  TEST_ASSERT_GREATER_OR_EQUAL(memPoolNumBlocks * memPoolBlockSize, 
+                               heapFreeBefore - heapFreeAfter);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolCreate_CanCreatePool ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger and assertion and returns NULL.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocate_ShouldAssertOnInvalidParams(void)
+{
+  void * result;
+
+  /* Attempt to allocate zero bytes, which is not a valid size. */
+  result = TbxMemPoolAllocate(0);
+
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Make sure a NULL pointer was returned. */
+  TEST_ASSERT_NULL(result);
+} /*** end of test_TbxMemPoolAllocate_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that a block can be allocated from the previously created memory
+**            pool. Use a block size exactly the same for which the memory pool was
+**            created.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocate_CanAllocateSameSize(void)
+{
+  /* Attempt to allocate a block inside the previously created memory pool. */
+  memPoolAllocatedBlocks[0] = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a valid pointer was returned. */
+  TEST_ASSERT_NOT_NULL(memPoolAllocatedBlocks[0]);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocate_CanAllocateSameSize ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that a block cannot be allocated from the previously created memory
+**            pool, when using a block size that is larger than for which the memory pool
+**            was created. It should automatically match it to the memory pool of the
+**            next size. This design decision was made, because you can then implement
+**            logic that automatically increases the size of a memory pool in this case.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocate_CannotAllocateLargerSize(void)
+{
+  void * result;
+
+  /* Attempt to allocate another block inside the previously created memory pool. This
+   * time with a block size slightly larger to test that it does not match it.
+   */
+  result = TbxMemPoolAllocate(memPoolBlockSize + 1);
+  /* Make sure a NULL pointer was returned. */
+  TEST_ASSERT_NULL(result);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocate_CannotAllocateLargerSize ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that a block can be allocated from the previously created memory
+**            pool. Use a block size that is a bit smaller than for which the memory pool
+**            was created. It should automatically match it to the memory pool of the
+**            next size.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocate_CanAllocateSmallerSize(void)
+{
+  /* Attempt to allocate another block inside the previously created memory pool. This
+   * time with a block size slightly smaller to test that it matched it to the memory
+   * pool of the next size.
+   */
+  memPoolAllocatedBlocks[1] = TbxMemPoolAllocate(memPoolBlockSize - 1);
+  /* Make sure a valid pointer was returned. */
+  TEST_ASSERT_NOT_NULL(memPoolAllocatedBlocks[1]);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocate_CanAllocateSmallerSize ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that a block cannot be allocated from the previously created memory
+**            pool, when all available blocks are already allocated.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocate_CannotAllocateWhenFull(void)
+{
+  void * result;
+
+  /* Attempt to allocate another block inside the previously created memory pool. Use
+   * a valid block size for the memory pool.
+   */
+  result = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a NULL pointer was returned, because the previous tests already allocated
+   * all blocks from this memory pool.
+   */
+  TEST_ASSERT_NULL(result);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocate_CannotAllocateWhenFull ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that a memory pool can be dynamically increased.
+**
+****************************************************************************************/
+void test_TbxMemPoolCreate_CanIncreasePoolSize(void)
+{
+  uint8_t increaseResult;
+  void * result;
+
+  /* First double-check that the memory pool no longer has free blocks. The previous 
+   * test should have caused this.
+   */
+  result = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a NULL pointer was returned, because the previous tests already allocated
+   * all blocks from this memory pool.
+   */
+  TEST_ASSERT_NULL(result);
+  
+  /* Now increase the memory pool by one. This is done by create a memory pool with the
+   * same size. Because a memory pool with the same size already exists, the existing
+   * one will simply be increased in size.
+   */
+  increaseResult = TbxMemPoolCreate(1, memPoolBlockSize);
+  /* Make sure no error was returned. */
+  TEST_ASSERT_EQUAL(TBX_OK, increaseResult);
+
+  /* Now one more free block should be available. Verify this by allocating it. */
+  memPoolAllocatedBlocks[2] = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a valid pointer was returned. */
+  TEST_ASSERT_NOT_NULL(memPoolAllocatedBlocks[2]);
+
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolCreate_CanIncreasePoolSize ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that invalid parameters trigger and assertion.
+**
+****************************************************************************************/
+void test_TbxMemPoolRelease_ShouldAssertOnInvalidParams(void)
+{
+  /* Pass on a NULL pointer, which should not work. */
+  TbxMemPoolRelease(NULL);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+
+  /* Next, pass a valid pointer but not one that belongs to a previously allocated
+   * block from any memory pool. Basically use the first allocated pointer and deduct
+   * a bunch of bytes to make sure it is outside of the memory pool range.
+   */
+  TbxMemPoolRelease(memPoolAllocatedBlocks[0] - 0x1000);
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolRelease_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that all previously allocated blocks can be released back to the
+**            memory pool.
+**
+****************************************************************************************/
+void test_TbxMemPoolRelease_CanReleaseBlocks(void)
+{
+  /* Release all previously allocated blocks. */
+  TbxMemPoolRelease(memPoolAllocatedBlocks[0]);
+  TbxMemPoolRelease(memPoolAllocatedBlocks[1]);
+  TbxMemPoolRelease(memPoolAllocatedBlocks[2]);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolRelease_CanReleaseBlocks ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that all previously released blocks can be reallocated.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocate_CanReallocate(void)
+{
+  void * result;
+  size_t heapFreeBefore;
+  size_t heapFreeAfter;
+
+  /* Get the current free heap size. */
+  heapFreeBefore = TbxHeapGetFree();
+
+  /* Attempt to allocate the first block. */
+  memPoolAllocatedBlocks[0] = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a valid pointer was returned. */
+  TEST_ASSERT_NOT_NULL(memPoolAllocatedBlocks[0]);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Attempt to allocate the second block. */
+  memPoolAllocatedBlocks[1] = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a valid pointer was returned. */
+  TEST_ASSERT_NOT_NULL(memPoolAllocatedBlocks[1]);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Attempt to allocate the third block. */
+  memPoolAllocatedBlocks[2] = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a valid pointer was returned. */
+  TEST_ASSERT_NOT_NULL(memPoolAllocatedBlocks[2]);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+
+  /* Reset the assertion counter. */
+  assertionCnt = 0;
+  /* Attempt to allocate one more block. It should fail because the memory pool is
+   * exhausted by now.
+   */
+  result = TbxMemPoolAllocate(memPoolBlockSize);
+  /* Make sure a NULL pointer was returned, because the previous tests already allocated
+   * all blocks from this memory pool.
+   */
+  TEST_ASSERT_NULL(result);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+
+  /* Get the current free heap size. */
+  heapFreeAfter = TbxHeapGetFree();
+  /* Verify that no new memory from the heap was needed. This proves that the memory
+   * pool was fully reused.
+   */
+  TEST_ASSERT_EQUAL(heapFreeBefore, heapFreeAfter);
+} /*** end of test_TbxMemPoolAllocate_CanReallocate ***/
+
 
 /************************************************************************************//**
 ** \brief     Handles the running of the unit tests.
@@ -943,6 +1198,16 @@ int runTests(void)
   /* Tests for the memory pool module. */
   RUN_TEST(test_TbxMemPoolCreate_ShouldAssertOnInvalidParams);
   RUN_TEST(test_TbxMemPoolCreate_CannotAllocateMoreThanFreeHeap);
+  RUN_TEST(test_TbxMemPoolCreate_CanCreatePool);
+  RUN_TEST(test_TbxMemPoolAllocate_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxMemPoolAllocate_CanAllocateSameSize);
+  RUN_TEST(test_TbxMemPoolAllocate_CannotAllocateLargerSize);
+  RUN_TEST(test_TbxMemPoolAllocate_CanAllocateSmallerSize);
+  RUN_TEST(test_TbxMemPoolAllocate_CannotAllocateWhenFull);
+  RUN_TEST(test_TbxMemPoolCreate_CanIncreasePoolSize);
+  RUN_TEST(test_TbxMemPoolRelease_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxMemPoolRelease_CanReleaseBlocks);
+  RUN_TEST(test_TbxMemPoolAllocate_CanReallocate);
   /* Inform the framework that unit testing is done and return the result. */
   return UNITY_END();
 } /*** end of runUnittests ***/
