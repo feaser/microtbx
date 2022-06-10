@@ -345,7 +345,7 @@ static void aes_expandDecKey(uint8_t *k, uint8_t *rc)
 
 
 /* -------------------------------------------------------------------------- */
-void aes256_init(aes256_context *ctx, uint8_t const *k)
+void tbx_aes256_init(tbx_aes256_context *ctx, uint8_t const *k)
 {
     uint8_t rcon = 1;
     register uint8_t i;
@@ -359,10 +359,10 @@ void aes256_init(aes256_context *ctx, uint8_t const *k)
     {
         aes_expandEncKey(ctx->deckey, &rcon);
     }
-} /* aes256_init */
+} /* tbx_aes256_init */
 
 /* -------------------------------------------------------------------------- */
-void aes256_done(aes256_context *ctx)
+void tbx_aes256_done(tbx_aes256_context *ctx)
 {
     register uint8_t i;
 
@@ -372,10 +372,10 @@ void aes256_done(aes256_context *ctx)
         ctx->enckey[i] = 0U;
         ctx->deckey[i] = 0U;
     }
-} /* aes256_done */
+} /* tbx_aes256_done */
 
 /* -------------------------------------------------------------------------- */
-void aes256_encrypt_ecb(aes256_context *ctx, uint8_t *buf)
+void tbx_aes256_encrypt_ecb(tbx_aes256_context *ctx, uint8_t *buf)
 {
     uint8_t i, rcon = 1U;
 
@@ -399,10 +399,10 @@ void aes256_encrypt_ecb(aes256_context *ctx, uint8_t *buf)
     aes_shiftRows(buf);
     aes_expandEncKey(ctx->key, &rcon);
     aes_addRoundKey(buf, ctx->key);
-} /* aes256_encrypt */
+} /* tbx_aes256_encrypt */
 
 /* -------------------------------------------------------------------------- */
-void aes256_decrypt_ecb(aes256_context *ctx, uint8_t *buf)
+void tbx_aes256_decrypt_ecb(tbx_aes256_context *ctx, uint8_t *buf)
 {
     uint8_t i, rcon = 0x80U;
 
@@ -426,4 +426,4 @@ void aes256_decrypt_ecb(aes256_context *ctx, uint8_t *buf)
         aes_subBytes_inv(buf);
     }
     aes_addRoundKey( buf, ctx->key);
-} /* aes256_decrypt */
+} /* tbx_aes256_decrypt */

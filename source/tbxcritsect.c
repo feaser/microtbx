@@ -84,7 +84,6 @@ void TbxCriticalSectionEnter(void)
      * critical section.
      */
     tbxCritSectCpuSR = cpuSR;
-
   }
   /* Increment the nesting counter. */
   tbxCritSectNestingCounter++;
@@ -104,23 +103,29 @@ void TbxCriticalSectionEnter(void)
 ****************************************************************************************/
 void TbxCriticalSectionExit(void)
 {
-  /* A call to this function must always be preceded by a call to
+  /* A call to this function must always be preceeded by a call to
    * TbxCriticalSectionEnter(). This means the tbxCritSectNestingCounter must be > 0.
    */
   TBX_ASSERT(tbxCritSectNestingCounter > 0U);
 
-  /* Decrement the nesting counter. */
-  tbxCritSectNestingCounter--;
-
-  /* Is this the final call meaning that it is time we exit the critical section by
-   * actually restoring the interrupt status again?
+  /* Only continue if this function call was preceeded by a call to 
+   * TbxCriticalSectionEnter().
    */
-  if (tbxCritSectNestingCounter == 0U)
+  if (tbxCritSectNestingCounter > 0U)
   {
-    /* Restore the interrupt status to the state it was right before the interrupts
-     * were all disabled upon the first time the critical section was entered.
+    /* Decrement the nesting counter. */
+    tbxCritSectNestingCounter--;
+
+    /* Is this the final call meaning that it is time we exit the critical section by
+     * actually restoring the interrupt status again?
      */
-    TbxPortInterruptsRestore(tbxCritSectCpuSR);
+    if (tbxCritSectNestingCounter == 0U)
+    {
+      /* Restore the interrupt status to the state it was right before the interrupts
+       * were all disabled upon the first time the critical section was entered.
+      */
+      TbxPortInterruptsRestore(tbxCritSectCpuSR);
+    }
   }
 } /*** end of TbxCriticalSectionExit ***/
 
