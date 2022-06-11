@@ -55,7 +55,7 @@
  *         override this value by adding this macro definition to the configuration
  *         header file.
  */
-#define TBX_CONF_CHECKSUM_CRC16_INITIAL          (0xFFFF)
+#define TBX_CONF_CHECKSUM_CRC16_INITIAL          (0xFFFFU)
 #endif
 
 #ifndef TBX_CONF_CHECKSUM_CRC32_POLYNOM

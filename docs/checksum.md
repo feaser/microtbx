@@ -20,8 +20,11 @@ if both values match.
 ## Usage
 
 MicroTBX includes functionality to calculate both 16-bit and 32-bit checksum
-values over a fixed length byte array, using a cyclic redundancy check (CRC)
-algorithm.
+values over a fixed length byte array, using the following cyclic redundancy check (CRC)
+algorithms:
+
+* CRC16-CCITT-FALSE
+* CRC32-MPEG2
 
 To calculate the 16-bit checksum value over a number of bytes, function [`TbxChecksumCrc16Calculate()`](apiref.md#tbxchecksumcrc16calculate) is available. In case a 32-bit checksum value
 is preferred, function [`TbxChecksumCrc32Calculate()`](apiref.md#tbxchecksumcrc32calculate) can be called.
@@ -89,14 +92,14 @@ the values you prefer:
 
 ```c
 /** \brief Polynomial of the 16-bit CRC. */
-#define TBX_CONF_CHECKSUM_CRC16_POLYNOM          (0x8005U)
+#define TBX_CONF_CHECKSUM_CRC16_POLYNOM          (0x1021U)
 
 /** \brief Initial value of the 6-bit CRC calculation. */
-#define TBX_CONF_CHECKSUM_CRC16_INITIAL          (0x0000U)
+#define TBX_CONF_CHECKSUM_CRC16_INITIAL          (0xFFFFU)
 
 /** \brief Polynomial of the 32-bit CRC. */
 #define TBX_CONF_CHECKSUM_CRC32_POLYNOM          (0x04C11DB7UL)
 
 /** \brief Initial value of the 32-bit CRC calculation. */
-#define TBX_CONF_CHECKSUM_CRC32_INITIAL          (0x00000000UL)
+#define TBX_CONF_CHECKSUM_CRC32_INITIAL          (0xFFFFFFFFUL)
 ```
