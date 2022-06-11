@@ -19,11 +19,11 @@ jobs:
         with:
           path: 'third_party/microtbx'
       - name: Generate build environment
-        working-directory: tests/base/LINUX_PC_GCC/build
+        working-directory: tests/base/LINUX_PC/build
         run: cmake ..
       - name: Build test application
-        working-directory: tests/base/LINUX_PC_GCC/build
+        working-directory: tests/base/LINUX_PC/build
         run: make
       - name: Run test application
-        working-directory: tests/base/LINUX_PC_GCC/build
+        working-directory: tests/base/LINUX_PC/build
         run: ./microtbx_tests
