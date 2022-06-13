@@ -72,7 +72,7 @@ static tListTestMsg listTestMsgA =
 {
   .id = 123,
   .len = 8,
-  .data = { 0, 1, 2, 3, 4, 5, 7 }
+  .data = { 0, 1, 2, 3, 4, 5, 6, 7 }
 };
 
 /** \brief Test message B for the linked list module. */
