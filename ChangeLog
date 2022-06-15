@@ -1,4 +1,12 @@
 -----------------------------------------------------------------------------------------
+2022-06-15 Frank Voorburg <voorburg@feaser.com>
+
+* Added unit tests.
+* Configured GitHub actions for building and running unit tests.
+* Added port for GNU/Linux.
+* Configured CRC16 as CRC16-CCITT-False and CRC32 as CRC32-MPEG2
+* Public release of version 1.0.0.
+-----------------------------------------------------------------------------------------
 2022-03-09 Frank Voorburg <voorburg@feaser.com>
 
 * Added complete API reference to the documentation.
