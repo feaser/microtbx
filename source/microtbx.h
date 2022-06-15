@@ -67,13 +67,13 @@ extern "C" {
 * Version definitions
 ****************************************************************************************/
 /** \brief Main version number of MicroTBX. */
-#define TBX_VERSION_MAIN                         (0U)
+#define TBX_VERSION_MAIN                         (1U)
 
 /** \brief Minor version number of MicroTBX. */
-#define TBX_VERSION_MINOR                        (9U)
+#define TBX_VERSION_MINOR                        (0U)
 
 /** \brief Patch number of MicroTBX. */
-#define TBX_VERSION_PATCH                        (5U)
+#define TBX_VERSION_PATCH                        (0U)
 
 
 /****************************************************************************************
