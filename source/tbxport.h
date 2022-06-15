@@ -46,7 +46,7 @@ extern "C" {
 * Function prototypes
 ****************************************************************************************/
 tTbxPortCpuSR TbxPortInterruptsDisable(void);
-void          TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr);
+void          TbxPortInterruptsRestore(tTbxPortCpuSR prevCpuSr);
 
 
 #ifdef __cplusplus

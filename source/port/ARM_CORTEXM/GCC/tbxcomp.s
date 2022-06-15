@@ -73,8 +73,8 @@ TbxPortInterruptsDisable:
 **            by writing the value of the CPU status register that was returned by
 **            TbxPortInterruptsDisable(). 
 **            Prototype: 
-**              void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr);
-** \param     prev_cpu_sr The previous value of the CPU status register from right before
+**              void TbxPortInterruptsRestore(tTbxPortCpuSR prevCpuSr);
+** \param     prevCpuSr The previous value of the CPU status register from right before
 **            the interrupts where disabled. This value is returned by function
 **            TbxPortInterruptsDisable().
 **

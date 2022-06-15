@@ -94,15 +94,15 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
 **            function TbxPortInterruptsDisable() was previously called. It does this
 **            by writing the value of the CPU status register that was returned by
 **            TbxPortInterruptsDisable().
-** \param     prev_cpu_sr The previous value of the CPU status register from right before
+** \param     prevCpuSr The previous value of the CPU status register from right before
 **            the interrupts where disabled. This value is returned by function
 **            TbxPortInterruptsDisable().
 **
 ****************************************************************************************/
-void TbxPortInterruptsRestore(tTbxPortCpuSR prev_cpu_sr)
+void TbxPortInterruptsRestore(tTbxPortCpuSR prevCpuSr)
 {
   /* Should the simulated global interrupts be restored to the enabled state? */
-  if (prev_cpu_sr == TBX_PORT_CPU_SR_IRQ_EN)
+  if (prevCpuSr == TBX_PORT_CPU_SR_IRQ_EN)
   {
     /* Simulate enabling the global interrupts by no longer locking out other threads. */
     (void)pthread_mutex_unlock(&critSectMutex);
