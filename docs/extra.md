@@ -46,5 +46,17 @@ Alternatively, you can directly add and configure the `configASSERT` macro as fo
 #define configASSERT( x ) TBX_ASSERT( x )
 ```
 
+## C++ new and delete using MicroTBX memory pools
 
+On a microcontroller it is totally fine to dynamically allocate memory on the heap using `new` (or `malloc`). It gets potentially troublesome when you also release it at run-time using `delete` (or `free`). Multiple allocation and release operations can cause memory fragmentation. In a worst case scenario this leads to memory allocation failures, because of running out of heap memory.
+
+A possible solution is by dynamically allocating memory using memory pools. This lowers the risk of memory fragmentation. With a carefully selected memory pool setup, you can even eliminate this risk completely. Allowing you to dynamically allocate and release memory during run-time. MicroTBX includes a ready-made memory pool module that can be used for this purpose.
+
+One way to approach this is by using C++ *placement new* instead of the usual *new*. This allows you the first allocate memory from a memory pool and then place the new object exactly at that memory, instead of having the `new` operator do the allocation. The only issue with this is that there is no *placement delete*. This means that to delete the object, you need to manually call its destructor and then give the allocated memory back to the memory pool. Definitely an option, it just requires a bit more work.
+
+Another approach is to overload the default `new` and `delete` operators to do all the memory allocation and release using memory pools automatically. The following source-file implements these operator overloads for the [GNU ARM Embedded](https://developer.arm.com/Tools%20and%20Software/GNU%20Toolchain) toolchain:
+
+* `source/extra/cplusplus/tbxcxx.cpp`
+
+By compiling and linking this source file with your project, the global `new` and `delete` operators are overloaded, such that they by default always use the memory pools module of MicroTBX. This also apply to objects created using smart pointers.
 
