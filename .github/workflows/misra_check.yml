@@ -12,18 +12,18 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install cppcheck
       - name: Checkout tests repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: feaser/microtbx-tests
           submodules: true
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: 'third_party/microtbx'
       - name: Generate build environment
-        working-directory: tests/base/LINUX_PC/build
+        working-directory: build
         run: cmake ..
-      - name: Perform MISRA compliance check
-        working-directory: tests/base/LINUX_PC/build
+      - name: Build test application
+        working-directory: build/tests/base/LINUX_PC
         run: make microtbx_MISRA
 
