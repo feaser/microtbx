@@ -15,33 +15,42 @@ if (CMAKE_CXX_CPPCHECK)
     list(APPEND search_path_incs ${microtbx_template_incs})
     list(TRANSFORM search_path_incs PREPEND "-I")
 
-    # Build list with MicroTBX target sources to check.
-    # TODO Add Cortex-M port sources.
+    # Collect MicroTBX sources.
     get_target_property(microtbx_srcs microtbx INTERFACE_SOURCES)
+    # Collect MicroTBX Cortex-M port sources.
+    get_target_property(microtbx_cortexm_srcs microtbx-cortexm INTERFACE_SOURCES)
+
+    # Build list with MicroTBX sources to check.
+    set(check_srcs)
+    list(APPEND check_srcs ${microtbx_srcs})
+    list(APPEND check_srcs ${microtbx_cortexm_srcs})
 
     # Set variable pointing to the addon for configuring the MISRA checks.
     set(misra_addon "${CMAKE_CURRENT_LIST_DIR}/misra.json")
 
     # Build list with cppcheck commands, one for each given source file
     set(cppcheck_commands)
-    foreach(sourcefile ${microtbx_srcs})
-        # create command line for running cppcheck on one source file and add it
-        # to the list of commands
-        list(APPEND cppcheck_commands
-            COMMAND ${CMAKE_CXX_CPPCHECK}
-            --platform=arm32-wchar_t2.xml
-            --addon=${misra_addon}
-            --relative-paths
-            --error-exitcode=1
-            --language=c
-            --std=c11
-            --inline-suppr 
-            --suppress=missingIncludeSystem
-            --suppress=unmatchedSuppression
-            --enable=warning,style,information,missingInclude
-            -DDEBUG
-            ${search_path_incs}
-            ${sourcefile})
+    foreach(sourcefile ${check_srcs})
+        # only include C-source files
+        if( sourcefile MATCHES \\.c$ )
+            # create command line for running cppcheck on one source file and add it
+            # to the list of commands
+            list(APPEND cppcheck_commands
+                COMMAND ${CMAKE_CXX_CPPCHECK}
+                --platform=arm32-wchar_t2.xml
+                --addon=${misra_addon}
+                --relative-paths
+                --error-exitcode=1
+                --language=c
+                --std=c11
+                --inline-suppr 
+                --suppress=missingIncludeSystem
+                --suppress=unmatchedSuppression
+                --enable=warning,style,information,missingInclude
+                -DDEBUG
+                ${search_path_incs}
+                ${sourcefile})
+        endif()
     endforeach(sourcefile)
 
     # add a custom target consisting of all the commands generated above
