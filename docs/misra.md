@@ -26,7 +26,7 @@ For this reason, an exception was added regarding MISRA rule:
 Suppression of the messages related to this MISRA directive exception are marked with:
 
 ```c
-/* cppcheck-suppress [misra-c2012-8.7,,unmatchedSuppression] 
+/* cppcheck-suppress [misra-c2012-8.7,unmatchedSuppression] 
  * MISRA exception: External linkage for API functions.
  */
 ```
