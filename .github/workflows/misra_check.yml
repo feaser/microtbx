@@ -23,7 +23,7 @@ jobs:
       - name: Generate build environment
         working-directory: build
         run: cmake ..
-      - name: Build test application
+      - name: Perform MISRA compliance check
         working-directory: build/tests/base/LINUX_PC
         run: make microtbx_MISRA
 
