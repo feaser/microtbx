@@ -1,6 +1,6 @@
 # MISRA compliance
 
-Static code analysis was performed to verify compliance with MISRA-C 2012. The document lists the compliance exceptions:
+Static code analysis was performed to verify compliance with MISRA-C 2012. This document lists the compliance exceptions:
 
 ## Global
 
