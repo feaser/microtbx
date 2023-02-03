@@ -3,7 +3,7 @@
 * \brief        Random number generator source file.
 * \details      The RNG algorithm is based on a linear feedback shift register (LFSR) as
 *               presented in application note 4400 from Maxim Integrated. It can be found
-*               at: https://www.maximintegrated.com/en/app-notes/index.mvp/id/4400.
+*               at: www.maximintegrated.com/en/app-notes/index.mvp/id/4400.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -195,7 +195,6 @@ static void TbxRandomInitLFSRs(void)
 static uint32_t TbxRandomShiftLFSR(uint32_t * lfsr, uint32_t polymask)
 {
   uint32_t result = 0;
-  uint32_t feedback;
 
   /* Verify parameter. */
   TBX_ASSERT(lfsr != NULL);
@@ -204,7 +203,7 @@ static uint32_t TbxRandomShiftLFSR(uint32_t * lfsr, uint32_t polymask)
   if (lfsr != NULL)
   {
     /* Perform the linear feedback shift operation. */
-    feedback = *lfsr & 1U;
+    uint32_t feedback = *lfsr & 1U;
     *lfsr >>=1U;
     if (feedback == 1U)
     {

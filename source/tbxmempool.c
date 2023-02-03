@@ -134,11 +134,8 @@ static tPoolList tbxPoolList = NULL;
 uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
 {
   uint8_t      result = TBX_ERROR;
-  size_t       blockNodeIdx;
-  tBlockNode * blockNodePtr;
   void       * blockPtr;
   tPool      * poolPtr;
-  tPoolNode  * poolNodePtr;
 
   /* Verify parameters. */
   TBX_ASSERT(numBlocks > 0U);
@@ -154,7 +151,7 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
     /* Attempt to locate a memory pool node in the list that is configured for the same
      * block size.
      */
-    poolNodePtr = TbxMemPoolListFind(blockSize);
+    tPoolNode * poolNodePtr = TbxMemPoolListFind(blockSize);
     /* Create a new memory pool node and its associated empty memory pool if a memory
      * pool node for this block size does not yet exist.
      */
@@ -216,10 +213,10 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
        * memory pool that can be extended. Create the blocks one by one and add them as
        * nodes to the free block list.
        */
-      for (blockNodeIdx = 0U; blockNodeIdx < numBlocks; blockNodeIdx++)
+      for (size_t blockNodeIdx = 0U; blockNodeIdx < numBlocks; blockNodeIdx++)
       {
         /* Allocate memory for the block node. */
-        blockNodePtr = TbxHeapAllocate(sizeof(tBlockNode));
+        tBlockNode * blockNodePtr = TbxHeapAllocate(sizeof(tBlockNode));
         /* Verify that the node could be allocated. */
         if (blockNodePtr == NULL)
         {
@@ -294,10 +291,8 @@ uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
 void * TbxMemPoolAllocate(size_t size)
 {
   void            * result = NULL;
-  tBlockNode      * blockNodePtr;
   void            * blockDataPtr;
   tPoolNode const * poolNodePtr;
-  tPool     const * poolPtr;
 
   /* Verify parameter. */
   TBX_ASSERT(size > 0U);
@@ -313,14 +308,14 @@ void * TbxMemPoolAllocate(size_t size)
     if (poolNodePtr != NULL)
     {
       /* Get the pointer to the actual memory pool. */
-      poolPtr = poolNodePtr->poolPtr;
+      tPool const * poolPtr = poolNodePtr->poolPtr;
       /* Sanity check. The memory pool should not be NULL here. */
       TBX_ASSERT(poolPtr != NULL);
       /* Only continue if the sanity check passed. */
       if (poolPtr != NULL)
       {
         /* Attempt to extract a block node from the linked list with free block nodes. */
-        blockNodePtr = TbxMemPoolBlockListExtract(poolPtr->freeBlockListPtr);
+        tBlockNode * blockNodePtr = TbxMemPoolBlockListExtract(poolPtr->freeBlockListPtr);
         /* Only continue if a free block node could be extracted. */
         if (blockNodePtr != NULL)
         {
@@ -359,11 +354,8 @@ void * TbxMemPoolAllocate(size_t size)
 ****************************************************************************************/
 void TbxMemPoolRelease(void * memPtr)
 {
-  size_t            blockSize;
-  tBlockNode      * blockNodePtr;
   void            * blockPtr;
   tPoolNode const * poolNodePtr;
-  tPool     const * poolPtr;
 
   /* Verify parameter. */
   TBX_ASSERT(memPtr != NULL);
@@ -379,7 +371,7 @@ void TbxMemPoolRelease(void * memPtr)
     if (blockPtr != NULL)
     {
       /* Get the block's data size. */
-      blockSize = TbxMemPoolBlockGetBlockSize(blockPtr);
+      size_t blockSize = TbxMemPoolBlockGetBlockSize(blockPtr);
       /* Attempt to locate the memory pool node that holds the memory pool with this
        * block size.
        */
@@ -392,7 +384,7 @@ void TbxMemPoolRelease(void * memPtr)
       if (poolNodePtr != NULL)
       {
         /* Get the pointer to the actual memory pool. */
-        poolPtr = poolNodePtr->poolPtr;
+        tPool const * poolPtr = poolNodePtr->poolPtr;
         /* Sanity check. The memory pool should not be NULL here. */
         TBX_ASSERT(poolPtr != NULL);
         /* Only continue if the sanity check passed. */
@@ -401,7 +393,7 @@ void TbxMemPoolRelease(void * memPtr)
           /* Attempt to extract a block node from the linked list with used block
            * nodes.
            */
-          blockNodePtr = TbxMemPoolBlockListExtract(poolPtr->usedBlockListPtr);
+          tBlockNode * blockNodePtr = TbxMemPoolBlockListExtract(poolPtr->usedBlockListPtr);
           /* Sanity check. A node should be available, otherwise more blocks were
            * released than actually allocated, which shouldn't happen.
            */
@@ -573,41 +565,45 @@ static void TbxMemPoolListInsert(tPoolNode * nodePtr)
       {
         /* Sanity check. The pointer to the memory pool should not be NULL here. */
         TBX_ASSERT(currentNodePtr->poolPtr != NULL);
-        /* This function should not be used to insert a memory pool node that has a
-         * block size that equals an already existing node. Verify this.
-         */
-        TBX_ASSERT(currentNodePtr->poolPtr->blockSize != nodePtr->poolPtr->blockSize);
-        /* Is the block size of this node's memory pool larger than the new one? */
-        if (currentNodePtr->poolPtr->blockSize > nodePtr->poolPtr->blockSize)
+        /* Only continue if the sanity check passed. */
+        if (currentNodePtr->poolPtr != NULL)
         {
-          /* The new node should be inserted before this one. If the current node is
-           * the head of the list, the new node should become the new head.
-           */
-          if (currentNodePtr == tbxPoolList)
+          /* This function should not be used to insert a memory pool node that has a
+           * block size that equals an already existing node. Verify this.
+          */
+          TBX_ASSERT(currentNodePtr->poolPtr->blockSize != nodePtr->poolPtr->blockSize);
+          /* Is the block size of this node's memory pool larger than the new one? */
+          if (currentNodePtr->poolPtr->blockSize > nodePtr->poolPtr->blockSize)
           {
-            /* Sanity check. In this case the previous node should still be NULL. */
-            TBX_ASSERT(prevNodePtr == NULL);
-            /* Add the node at the start of the list, right before the current node. */
-            nodePtr->nextNodePtr = currentNodePtr;
-            tbxPoolList = nodePtr;
-          }
-          /* The current node is not the head of the list, so the new node should be
-           * inserted between previous node and the current node.
-           */
-          else
-          {
-            /* Sanity check. In this case the previous node should not be NULL. */
-            TBX_ASSERT(prevNodePtr != NULL);
-            /* Only continue if the sanity check passed. */
-            if (prevNodePtr != NULL)
+            /* The new node should be inserted before this one. If the current node is
+             * the head of the list, the new node should become the new head.
+            */
+            if (currentNodePtr == tbxPoolList)
             {
-              /* Insert the node between the previous and current nodes. */
+              /* Sanity check. In this case the previous node should still be NULL. */
+              TBX_ASSERT(prevNodePtr == NULL);
+              /* Add the node at the start of the list, right before the current node. */
               nodePtr->nextNodePtr = currentNodePtr;
-              prevNodePtr->nextNodePtr = nodePtr;
+              tbxPoolList = nodePtr;
             }
+            /* The current node is not the head of the list, so the new node should be
+             * inserted between previous node and the current node.
+            */
+            else
+            {
+              /* Sanity check. In this case the previous node should not be NULL. */
+              TBX_ASSERT(prevNodePtr != NULL);
+              /* Only continue if the sanity check passed. */
+              if (prevNodePtr != NULL)
+              {
+                /* Insert the node between the previous and current nodes. */
+                nodePtr->nextNodePtr = currentNodePtr;
+                prevNodePtr->nextNodePtr = nodePtr;
+              }
+            }
+            /* Set flag to indicate that the new node was successfully inserted. */
+            nodeInserted = TBX_TRUE;
           }
-          /* Set flag to indicate that the new node was successfully inserted. */
-          nodeInserted = TBX_TRUE;
         }
         /* Did we reach the end of the list and the new node was not yet inserted? */
         if ( (currentNodePtr->nextNodePtr == NULL) && (nodeInserted == TBX_FALSE) )
@@ -658,7 +654,6 @@ static void * TbxMemPoolBlockCreate(size_t size)
 {
   void   * result = NULL;
   void   * blockMemPtr;
-  size_t * blockSizeArray;
 
   /* Verify parameter. */
   TBX_ASSERT(size > 0U);
@@ -674,7 +669,7 @@ static void * TbxMemPoolBlockCreate(size_t size)
       /* Set the result value. */
       result = blockMemPtr;
       /* Create a pointer to an array of size_t elements. */
-      blockSizeArray = blockMemPtr;
+      size_t * blockSizeArray = blockMemPtr;
       /* Write to the first element, which should hold the block size. */
       blockSizeArray[0U] = size;
     }
@@ -728,7 +723,6 @@ static size_t TbxMemPoolBlockGetBlockSize(void const * memPtr)
 {
   size_t         result = 0U;
   size_t const * blockSizeArray;
-  size_t         blockSize;
 
   /* Verify parameter. */
   TBX_ASSERT(memPtr != NULL);
@@ -739,7 +733,7 @@ static size_t TbxMemPoolBlockGetBlockSize(void const * memPtr)
     /* Create a pointer to an array of size_t elements. */
     blockSizeArray = memPtr;
     /* The block size value is located at the start of the block, */
-    blockSize = blockSizeArray[0U];
+    size_t blockSize = blockSizeArray[0U];
     /* Set the result value. */
     result = blockSize;
   }

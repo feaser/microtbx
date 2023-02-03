@@ -3,7 +3,7 @@
 * \brief        Checksum module source file.
 * \details      The CRC algorithms are based on the examples presents in a how-to blog
 *               article from the Barr Group. It can be found at:
-*               https://barrgroup.com/Embedded-Systems/How-To/CRC-Calculation-C-Code.
+*               barrgroup.com/Embedded-Systems/How-To/CRC-Calculation-C-Code.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -90,8 +90,6 @@
 uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, size_t len)
 {
   uint16_t result = 0;
-  size_t   byteIdx;
-  uint8_t  bitIdx;
 
   /* Verify parameters. */
   TBX_ASSERT((data != NULL) && (len > 0U));
@@ -103,12 +101,12 @@ uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, size_t len)
     result = TBX_CONF_CHECKSUM_CRC16_INITIAL;
 
     /* Loop through all data bytes to perform modulo 2 division per byte. */
-    for (byteIdx = 0U; byteIdx < len; byteIdx++)
+    for (size_t byteIdx = 0U; byteIdx < len; byteIdx++)
     {
       /* Introduce the next byte into the remainder. */
       result = result ^ ((uint16_t)data[byteIdx] << 8U);
       /* Loop through the bits to perform modulo 2 division per bit. */
-      for (bitIdx = 0U; bitIdx <= 7U; bitIdx++)
+      for (uint8_t bitIdx = 0U; bitIdx <= 7U; bitIdx++)
       {
         /* Attempt to divide the current bit. */
         if ((result & 0x8000U) != 0U)
@@ -144,8 +142,6 @@ uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, size_t len)
 uint32_t TbxChecksumCrc32Calculate(uint8_t const * data, size_t len)
 {
   uint32_t result = 0;
-  size_t   byteIdx;
-  uint8_t  bitIdx;
 
   /* Verify parameters. */
   TBX_ASSERT((data != NULL) && (len > 0U));
@@ -157,12 +153,12 @@ uint32_t TbxChecksumCrc32Calculate(uint8_t const * data, size_t len)
     result = TBX_CONF_CHECKSUM_CRC32_INITIAL;
 
     /* Loop through all data bytes to perform modulo 2 division per byte. */
-    for (byteIdx = 0U; byteIdx < len; byteIdx++)
+    for (size_t byteIdx = 0U; byteIdx < len; byteIdx++)
     {
       /* Introduce the next byte into the remainder. */
       result = result ^ ((uint32_t)data[byteIdx] << 24U);
       /* Loop through the bits to perform modulo 2 division per bit. */
-      for (bitIdx = 0U; bitIdx <= 7U; bitIdx++)
+      for (uint8_t bitIdx = 0U; bitIdx <= 7U; bitIdx++)
       {
         /* Attempt to divide the current bit. */
         if ((result & 0x80000000UL) != 0U)

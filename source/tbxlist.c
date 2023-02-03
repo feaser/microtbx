@@ -144,6 +144,9 @@ void TbxListDelete(tTbxList * list)
 } /*** end of TbxListDelete ***/
 
 
+/* cppcheck-suppress [misra-c2012-8.7,unmatchedSuppression] 
+ * MISRA exception: External linkage for API functions.
+ */
 /************************************************************************************//**
 ** \brief     Removes all items from the linked list. Keep in mind that it is the
 **            caller's responsibility to release the memory of the items that were placed
@@ -154,7 +157,6 @@ void TbxListDelete(tTbxList * list)
 void TbxListClear(tTbxList * list)
 {
   tTbxListNode * currentListNodePtr;
-  tTbxListNode * tempListNodePtr;
 
   /* Verify parameters. */
   TBX_ASSERT(list != NULL);
@@ -172,7 +174,7 @@ void TbxListClear(tTbxList * list)
       /* Make a copy of the current node pointer, which will later be used to release its
        * allocated memory back to the memory pool.
        */
-      tempListNodePtr = currentListNodePtr;
+      tTbxListNode * tempListNodePtr = currentListNodePtr;
       /* Update the node pointer to continue with the next node in the following loop
        * iteration.
        */
@@ -533,10 +535,14 @@ uint8_t TbxListInsertItemAfter(tTbxList * list, void * item, void const * itemRe
         {
           /* Sanity check. The reference node must have a next node. */
           TBX_ASSERT(refListNodePtr->nextNodePtr != NULL);
-          newListNodePtr->prevNodePtr = refListNodePtr;
-          newListNodePtr->nextNodePtr = refListNodePtr->nextNodePtr;
-          newListNodePtr->prevNodePtr->nextNodePtr = newListNodePtr;
-          newListNodePtr->nextNodePtr->prevNodePtr = newListNodePtr;
+          /* Only continue if the sanity check passed. */
+          if (refListNodePtr->nextNodePtr != NULL)
+          {
+            newListNodePtr->prevNodePtr = refListNodePtr;
+            newListNodePtr->nextNodePtr = refListNodePtr->nextNodePtr;
+            newListNodePtr->prevNodePtr->nextNodePtr = newListNodePtr;
+            newListNodePtr->nextNodePtr->prevNodePtr = newListNodePtr;
+          }
         }
         /* Increment the node counter. */
         list->nodeCount++;
@@ -818,9 +824,6 @@ void * TbxListGetNextItem(tTbxList const * list, void const * itemRef)
 ****************************************************************************************/
 void TbxListSwapItems(tTbxList const * list, void * item1, void * item2)
 {
-  tTbxListNode * listNode1Ptr;
-  tTbxListNode * listNode2Ptr;
-
   /* Verify parameters. */
   TBX_ASSERT(list != NULL);
   TBX_ASSERT(item1 != NULL);
@@ -832,8 +835,8 @@ void TbxListSwapItems(tTbxList const * list, void * item1, void * item2)
     /* Obtain mutual exclusive access to the list. */
     TbxCriticalSectionEnter();
     /* Obtain the node pointers of the items that need to be swapped. */
-    listNode1Ptr = TbxListFindListNode(list, item1);
-    listNode2Ptr = TbxListFindListNode(list, item2);
+    tTbxListNode * listNode1Ptr = TbxListFindListNode(list, item1);
+    tTbxListNode * listNode2Ptr = TbxListFindListNode(list, item2);
 
     /* Only continue if the nodes actually exist in the list. */
     if ( (listNode1Ptr != NULL) && (listNode2Ptr != NULL) )

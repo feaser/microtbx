@@ -66,13 +66,13 @@ static size_t tbxHeapAllocated = 0U;
 ****************************************************************************************/
 void * TbxHeapAllocate(size_t size)
 {
-  /** \brief Heap buffer. Whenever memory needs to be dynamically allocated, it will be
-   *         taken from this buffer.
+  /* cppcheck-suppress [unassignedVariable,unmatchedSuppression] 
+   * The actual heap buffer. Whenever memory needs to be dynamically allocated, it will
+   * be taken from this buffer. As such, it is okay to not be initialized and therefore
+   * the warning about no value being assigned to this variable can be ignored.
    */
   static uint8_t tbxHeapBuffer[TBX_CONF_HEAP_SIZE];
   void * result = NULL;
-  size_t sizeWanted;
-  size_t sizeAvailable;
 
   /* Verify parameter. */
   TBX_ASSERT(size > 0U);
@@ -81,11 +81,11 @@ void * TbxHeapAllocate(size_t size)
   if (size > 0U)
   {
     /* Align the desired size to the address size to make it work on all targets. */
-    sizeWanted = (size + (sizeof(void *) - 1U)) & ~(sizeof(void *) - 1U);
+    size_t sizeWanted = (size + (sizeof(void *) - 1U)) & ~(sizeof(void *) - 1U);
     /* Obtain mutual exclusive access to tbxHeapAllocated. */
     TbxCriticalSectionEnter();
       /* Determine the number of still available bytes in the heap buffer. */
-    sizeAvailable = TBX_CONF_HEAP_SIZE - tbxHeapAllocated;
+    size_t sizeAvailable = TBX_CONF_HEAP_SIZE - tbxHeapAllocated;
     /* Is there enough space left on the heap for this allocation request? */
     if (sizeAvailable >= sizeWanted)
     {

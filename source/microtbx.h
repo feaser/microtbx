@@ -94,7 +94,7 @@ extern "C" {
 /** \brief Macro to flag a function parameter as unused, which allows the associated
  *         lint message and/or compiler warning to be suppressed.
  */
-#define TBX_UNUSED_ARG(x)                        (void)x
+#define TBX_UNUSED_ARG(x)                        (void)(x)
 
 
 #ifdef __cplusplus

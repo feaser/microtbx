@@ -188,7 +188,8 @@ static void aes_addRoundKey_cpy(uint8_t *buf, uint8_t const *key, uint8_t *cpk)
 /* -------------------------------------------------------------------------- */
 static void aes_shiftRows(uint8_t *buf)
 {
-    register uint8_t i, j; /* to make it potentially parallelable :) */
+    register uint8_t i; /* to make it potentially parallelable :) */
+    register uint8_t j;
 
     i       = buf[1];
     buf[1]  = buf[5];
@@ -211,7 +212,8 @@ static void aes_shiftRows(uint8_t *buf)
 /* -------------------------------------------------------------------------- */
 static void aes_shiftRows_inv(uint8_t *buf)
 {
-    register uint8_t i, j; /* same as above :) */
+    register uint8_t i; /* same as above :) */
+    register uint8_t j;
 
     i       = buf[1];
     buf[1]  = buf[13];
@@ -234,10 +236,16 @@ static void aes_shiftRows_inv(uint8_t *buf)
 /* -------------------------------------------------------------------------- */
 static void aes_mixColumns(uint8_t *buf)
 {
-    register uint8_t i, a, b, c, d, e;
+    register uint8_t i;
 
     for (i = 0U; i < 16U; i += 4U)
     {
+        register uint8_t a;
+        register uint8_t b;
+        register uint8_t c;
+        register uint8_t d;
+        register uint8_t e;
+
         a = buf[i];
         b = buf[i + 1U];
         c = buf[i + 2U];
@@ -253,10 +261,19 @@ static void aes_mixColumns(uint8_t *buf)
 /* -------------------------------------------------------------------------- */
 static void aes_mixColumns_inv(uint8_t *buf)
 {
-    register uint8_t i, a, b, c, d, e, x, y, z;
+    register uint8_t i;
 
     for (i = 0U; i < 16U; i += 4U)
     {
+        register uint8_t a;
+        register uint8_t b;
+        register uint8_t c;
+        register uint8_t d;
+        register uint8_t e;
+        register uint8_t x;
+        register uint8_t y;
+        register uint8_t z;
+
         a = buf[i];
         b = buf[i + 1U];
         c = buf[i + 2U];
@@ -355,7 +372,7 @@ void tbx_aes256_init(tbx_aes256_context *ctx, uint8_t const *k)
         ctx->deckey[i] = k[i];
         ctx->enckey[i] = k[i];
     }
-    for (i = 8U; (--i > 0U); )
+    for (i = 7U; i > 0U; --i)
     {
         aes_expandEncKey(ctx->deckey, &rcon);
     }
@@ -377,7 +394,8 @@ void tbx_aes256_done(tbx_aes256_context *ctx)
 /* -------------------------------------------------------------------------- */
 void tbx_aes256_encrypt_ecb(tbx_aes256_context *ctx, uint8_t *buf)
 {
-    uint8_t i, rcon = 1U;
+    uint8_t i;
+    uint8_t rcon = 1U;
 
     aes_addRoundKey_cpy(buf, ctx->enckey, ctx->key);
     for (i = 1U; i < 14U; ++i)
@@ -404,13 +422,14 @@ void tbx_aes256_encrypt_ecb(tbx_aes256_context *ctx, uint8_t *buf)
 /* -------------------------------------------------------------------------- */
 void tbx_aes256_decrypt_ecb(tbx_aes256_context *ctx, uint8_t *buf)
 {
-    uint8_t i, rcon = 0x80U;
+    uint8_t i;
+    uint8_t rcon = 0x80U;
 
     aes_addRoundKey_cpy(buf, ctx->deckey, ctx->key);
     aes_shiftRows_inv(buf);
     aes_subBytes_inv(buf);
 
-    for (i = 14; (--i > 0U); )
+    for (i = 13U; i > 0U; --i)
     {
         if ((i & 1U) > 0U)
         {

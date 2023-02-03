@@ -73,6 +73,9 @@ void TbxAssertSetHandler(tTbxAssertHandler assertHandler)
 
 
 #if (TBX_CONF_ASSERTIONS_ENABLE > 0U)
+/* cppcheck-suppress [misra-c2012-8.7,unmatchedSuppression] 
+ * MISRA exception: External linkage for API functions.
+ */
 /************************************************************************************//**
 ** \brief     Triggers the run-time assertion. The default implementation is to enter an
 **            infinite loop, which halts the program and can be used for debugging 
