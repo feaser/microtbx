@@ -31,6 +31,17 @@ target_include_directories(microtbx-cortexm INTERFACE
     "${CMAKE_CURRENT_LIST_DIR}/source/port/ARM_CORTEXM/GCC"
 )
 
+# Create interface library for Raspberry PI Pico RP2040 port specific sources.
+add_library(microtbx-rp2040 INTERFACE)
+
+target_sources(microtbx-rp2040 INTERFACE
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/RP2040/tbxport.c"
+)
+
+target_include_directories(microtbx-rp2040 INTERFACE 
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/RP2040"
+)
+
 # Create interface library for Linux port specific sources.
 add_library(microtbx-linux INTERFACE)
 

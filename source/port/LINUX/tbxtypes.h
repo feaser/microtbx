@@ -1,5 +1,5 @@
 /************************************************************************************//**
-* \file         port/LINUX/tbxporttypes.h
+* \file         port/LINUX/tbxtypes.h
 * \brief        Port specific types header file.
 * \internal
 *----------------------------------------------------------------------------------------
@@ -30,8 +30,8 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef TBXPORTTYPES_H
-#define TBXPORTTYPES_H
+#ifndef TBXTYPES_H
+#define TBXTYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,5 +51,5 @@ typedef uint32_t tTbxPortCpuSR;
 }
 #endif
 
-#endif /* TBXPORTTYPES_H */
-/*********************************** end of tbxporttypes.h *****************************/
+#endif /* TBXTYPES_H */
+/*********************************** end of tbxtypes.h *********************************/
