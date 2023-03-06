@@ -540,3 +540,19 @@ Decrypts the len-bytes in the specified data-array, using the specified 256-bit 
 | `len`     | The number of bytes in the data-array to decrypt. It must be a multiple of 16, as this is<br>the AES256 minimal block size. |
 | `key`     | The 256-bit decryption key as a array of 32 bytes.           |
 
+### Platform
+
+More information regarding this software component is, including code examples, found [here](platform.md).
+
+#### TbxPlatformLittleEndian
+
+```c
+uint8_t TbxPlatformLittleEndian(void)
+```
+
+Utility function to determine if the targets memory storage organization is little endian (Intel) or big endian (Motorola).
+
+| Return value                                          |
+| ----------------------------------------------------- |
+| TBX_TRUE for little endian, TBX_FALSE for big endian. |
+

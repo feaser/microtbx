@@ -49,6 +49,7 @@
 #else
 #include "tbx_conf.h"                       /* Standard MicroTBX configuration file    */
 #endif /* PROJ_TBX_CONF_H */
+#include "tbxplatform.h"                    /* Platform specifics                      */
 #include "tbxport.h"                        /* MicroTBX port specifics                 */
 #include "tbxassert.h"                      /* Run-time assertions                     */
 #include "tbxcritsect.h"                    /* Critical sections                       */

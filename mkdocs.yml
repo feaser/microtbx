@@ -15,4 +15,5 @@ nav:
   - Random numbers: 'random.md'
   - Checksums: 'checksum.md'
   - Cryptography: 'crypto.md'
+  - Platform: 'platform.md'
   - Extra functionality: 'extra.md'

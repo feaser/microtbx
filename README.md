@@ -11,6 +11,7 @@ MicroTBX is an open source Microcontroller ToolBoX consisting of software compon
 * Random Numbers - For generating random numbers.
 * Checksums - For calculating data checksums.
 * Cryptography - For data encryption and decryption.
+* Platform - For platform specifics.
 
 MicroTBX is written in the C programming language (C99) with MISRA compliance in mind. It currently supports all microcontrollers based on an ARM Cortex-M core, for example: ST STM32, Infineon XMC, and NXP S32K. There is little effort involved with porting MicroTBX to different microcontroller families.
 

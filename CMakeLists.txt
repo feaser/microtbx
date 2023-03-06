@@ -10,6 +10,7 @@ target_sources(microtbx INTERFACE
     "${CMAKE_CURRENT_LIST_DIR}/source/tbxheap.c"
     "${CMAKE_CURRENT_LIST_DIR}/source/tbxlist.c"
     "${CMAKE_CURRENT_LIST_DIR}/source/tbxmempool.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbxplatform.c"
     "${CMAKE_CURRENT_LIST_DIR}/source/tbxrandom.c"
 )
 

@@ -24,6 +24,7 @@ The following table presents an overview of the currently supported software com
 | [Random Numbers](random.md)           | For generating random numbers. |
 | [Checksums](checksum.md)              | For calculating data checksums. |
 | [Cryptography](crypto.md)             | For data encryption and decryption. |
+| [Platform](platform.md)               | For platform specifics. |
 
 ## MISRA
 

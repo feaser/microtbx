@@ -1748,7 +1748,6 @@ void test_TbxListRemoveItem_ShouldRemoveItem(void)
   tTbxList * myList;
   tListTestMsg * myMsg;
   uint8_t sameMsg;
-  uint8_t result;
 
   /* Create a new linked list. */
   myList = TbxListCreate();
@@ -1804,7 +1803,6 @@ void test_TbxListGetFirstItem_ShouldReturnFirstItem(void)
   tTbxList * myList;
   tListTestMsg * myMsg;
   uint8_t sameMsg;
-  uint8_t result;
 
   /* Create a new linked list. */
   myList = TbxListCreate();
@@ -1860,7 +1858,6 @@ void test_TbxListGetLastItem_ShouldReturnLastItem(void)
   tTbxList * myList;
   tListTestMsg * myMsg;
   uint8_t sameMsg;
-  uint8_t result;
 
   /* Create a new linked list. */
   myList = TbxListCreate();
@@ -1929,7 +1926,6 @@ void test_TbxListGetPreviousItem_ShouldReturnPreviousItem(void)
   tTbxList * myList;
   tListTestMsg * myMsg;
   uint8_t sameMsg;
-  uint8_t result;
 
   /* Create a new linked list. */
   myList = TbxListCreate();
@@ -1997,7 +1993,6 @@ void test_TbxListGetNextItem_ShouldReturnNextItem(void)
   tTbxList * myList;
   tListTestMsg * myMsg;
   uint8_t sameMsg;
-  uint8_t result;
 
   /* Create a new linked list. */
   myList = TbxListCreate();
@@ -2066,7 +2061,6 @@ void test_TbxListSwapItems_ShouldSwapItems(void)
   tTbxList * myList;
   tListTestMsg * myMsg;
   uint8_t sameMsg;
-  uint8_t result;
 
   /* Create a new linked list. */
   myList = TbxListCreate();
@@ -2131,7 +2125,6 @@ void test_TbxListSwapItems_ShouldSwapItems(void)
 ****************************************************************************************/
 void test_TbxListSortItems_ShouldAssertOnInvalidParams(void)
 {
-  uint8_t result;
   tTbxList * myList;
 
   /* Create a new linked list. */
@@ -2159,8 +2152,6 @@ void test_TbxListSortItems_ShouldSortItems(void)
 {
   tTbxList * myList;
   tListTestMsg * myMsg;
-  uint8_t sameMsg;
-  uint8_t result;
 
   /* Create a new linked list. */
   myList = TbxListCreate();
@@ -2188,6 +2179,22 @@ void test_TbxListSortItems_ShouldSortItems(void)
   /* Make sure no assertion was triggered. */
   TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
 } /*** end of test_TbxListSortItems_ShouldSortItems ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the platform reports that its architecture is little endian,
+**            because the tests run on either a x86-64 or ARMv7l platform.
+**
+****************************************************************************************/
+void test_TbxPlatformLittleEndian_ShouldReportLittleEndian(void)
+{
+  uint8_t result;
+
+  /* Determine endianness of the platform. */
+  result = TbxPlatformLittleEndian();
+  /* Verify that little endian was reported. */
+  TEST_ASSERT_EQUAL_UINT8(TBX_TRUE, result);
+} /*** end of test_TbxPlatformLittleEndian_ShouldReportLittleEndian ***/
 
 
 /************************************************************************************//**
@@ -2273,6 +2280,9 @@ int runTests(void)
   RUN_TEST(test_TbxListSwapItems_ShouldSwapItems);
   RUN_TEST(test_TbxListSortItems_ShouldAssertOnInvalidParams);
   RUN_TEST(test_TbxListSortItems_ShouldSortItems);
+  /* Tests for the platform module. */
+  RUN_TEST(test_TbxPlatformLittleEndian_ShouldReportLittleEndian);
+
   /* Inform the framework that unit testing is done and return the result. */
   return UNITY_END();
 } /*** end of runUnittests ***/
