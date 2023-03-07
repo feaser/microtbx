@@ -42,6 +42,18 @@ target_include_directories(microtbx-rp2040 INTERFACE
     "${CMAKE_CURRENT_LIST_DIR}/source/port/RP2040"
 )
 
+# Create interface library for AVR port specific sources.
+add_library(microtbx-avr INTERFACE)
+
+target_sources(microtbx-avr INTERFACE
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/AVR/GCC/tbxport.c"
+)
+
+target_include_directories(microtbx-avr INTERFACE 
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/AVR"
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/AVR/GCC"
+)
+
 # Create interface library for Linux port specific sources.
 add_library(microtbx-linux INTERFACE)
 
