@@ -43,13 +43,13 @@
 /** \brief Counter that gets incremented each time a critical section is entered and
  *         decremented each time a critical section is left.
  */
-static uint32_t tbxCritSectNestingCounter = 0U;
+static volatile uint32_t tbxCritSectNestingCounter = 0U;
 
 /** \brief Holds the copy of the CPU status register from right before the interrupts
  *         were disabled. Needed to restore the interrupts enabled/disabled status upon
  *         exiting the critical section,
  */
-static tTbxPortCpuSR tbxCritSectCpuSR = 0U;
+static volatile tTbxPortCpuSR tbxCritSectCpuSR = 0U;
 
 
 /************************************************************************************//**

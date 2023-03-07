@@ -46,7 +46,7 @@
 * Local data declarations
 ****************************************************************************************/
 /** \brief Spin lock handle. */
-static spin_lock_t * spinLock = NULL;
+static volatile spin_lock_t * spinLock = NULL;
 
 
 /************************************************************************************//**
