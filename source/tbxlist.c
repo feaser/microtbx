@@ -229,7 +229,8 @@ size_t TbxListGetSize(tTbxList const * list)
 ** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
 **
 ****************************************************************************************/
-uint8_t TbxListInsertItemFront(tTbxList * list, void * item)
+uint8_t TbxListInsertItemFront(tTbxList * list, 
+                               void     * item)
 {
   uint8_t        result = TBX_ERROR;
   tTbxListNode * newListNodePtr;
@@ -308,7 +309,8 @@ uint8_t TbxListInsertItemFront(tTbxList * list, void * item)
 ** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
 **
 ****************************************************************************************/
-uint8_t TbxListInsertItemBack(tTbxList * list, void * item)
+uint8_t TbxListInsertItemBack(tTbxList * list, 
+                              void     * item)
 {
   uint8_t        result = TBX_ERROR;
   tTbxListNode * newListNodePtr;
@@ -388,7 +390,9 @@ uint8_t TbxListInsertItemBack(tTbxList * list, void * item)
 ** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
 **
 ****************************************************************************************/
-uint8_t TbxListInsertItemBefore(tTbxList * list, void * item, void const * itemRef)
+uint8_t TbxListInsertItemBefore(tTbxList       * list, 
+                                void           * item, 
+                                void     const * itemRef)
 {
   uint8_t        result = TBX_ERROR;
   tTbxListNode * newListNodePtr;
@@ -475,7 +479,9 @@ uint8_t TbxListInsertItemBefore(tTbxList * list, void * item, void const * itemR
 ** \return    TBX_OK if the item could be inserted, TBX_ERROR otherwise.
 **
 ****************************************************************************************/
-uint8_t TbxListInsertItemAfter(tTbxList * list, void * item, void const * itemRef)
+uint8_t TbxListInsertItemAfter(tTbxList       * list, 
+                               void           * item, 
+                               void     const * itemRef)
 {
   uint8_t        result = TBX_ERROR;
   tTbxListNode * newListNodePtr;
@@ -567,7 +573,8 @@ uint8_t TbxListInsertItemAfter(tTbxList * list, void * item, void const * itemRe
 ** \param     item Pointer to the item to remove.
 **
 ****************************************************************************************/
-void TbxListRemoveItem(tTbxList * list, void const * item)
+void TbxListRemoveItem(tTbxList       * list, 
+                       void     const * item)
 {
   tTbxListNode * listNodePtr;
 
@@ -730,7 +737,8 @@ void * TbxListGetLastItem(tTbxList const * list)
 **            more items in the list before the item given in the parameter.
 **
 ****************************************************************************************/
-void * TbxListGetPreviousItem(tTbxList const * list, void const * itemRef)
+void * TbxListGetPreviousItem(tTbxList const * list, 
+                              void     const * itemRef)
 {
   void               * result = NULL;
   tTbxListNode const * listNodePtr;
@@ -778,7 +786,8 @@ void * TbxListGetPreviousItem(tTbxList const * list, void const * itemRef)
 **            more items in the list after the item given in the parameter.
 **
 ****************************************************************************************/
-void * TbxListGetNextItem(tTbxList const * list, void const * itemRef)
+void * TbxListGetNextItem(tTbxList const * list, 
+                          void     const * itemRef)
 {
   void               * result = NULL;
   tTbxListNode const * listNodePtr;
@@ -822,7 +831,9 @@ void * TbxListGetNextItem(tTbxList const * list, void const * itemRef)
 ** \param     item2 The second item for the swap operation.
 **
 ****************************************************************************************/
-void TbxListSwapItems(tTbxList const * list, void * item1, void * item2)
+void TbxListSwapItems(tTbxList const * list, 
+                      void           * item1, 
+                      void           * item2)
 {
   /* Verify parameters. */
   TBX_ASSERT(list != NULL);
@@ -858,7 +869,8 @@ void TbxListSwapItems(tTbxList const * list, void * item1, void * item2)
 ** \param     compareItemsFcn Callback function that does the item comparison.
 **
 ****************************************************************************************/
-void TbxListSortItems(tTbxList const * list, tTbxListCompareItems compareItemsFcn)
+void TbxListSortItems(tTbxList             const * list, 
+                      tTbxListCompareItems         compareItemsFcn)
 {
   tTbxListNode * currentNode;
   tTbxListNode * idxNode;
@@ -921,7 +933,8 @@ void TbxListSortItems(tTbxList const * list, tTbxListCompareItems compareItemsFc
 ** \return    Pointer to the node if successful, NULL otherwise.
 **
 ****************************************************************************************/
-static tTbxListNode * TbxListFindListNode(tTbxList const * list, void const * item)
+static tTbxListNode * TbxListFindListNode(tTbxList const * list, 
+                                          void     const * item)
 {
   tTbxListNode * result = NULL;
   tTbxListNode * currentListNodePtr;

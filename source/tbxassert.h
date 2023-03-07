@@ -63,7 +63,7 @@ extern "C" {
 * Type definitions
 ****************************************************************************************/
 /** \brief Function type for a run-time assertion handler function. */
-typedef void (* tTbxAssertHandler)(const char * const file, uint32_t line);
+typedef void (* tTbxAssertHandler)(char const * const file, uint32_t line);
 
 
 /****************************************************************************************
@@ -71,7 +71,7 @@ typedef void (* tTbxAssertHandler)(const char * const file, uint32_t line);
 ****************************************************************************************/
 void TbxAssertSetHandler(tTbxAssertHandler assertHandler);
 #if (TBX_CONF_ASSERTIONS_ENABLE > 0U)
-void TbxAssertTrigger(const char * const file, uint32_t line);
+void TbxAssertTrigger(char const * const file, uint32_t line);
 #endif /* (TBX_CONF_ASSERTIONS_ENABLE > 0U) */
 
 

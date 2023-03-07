@@ -45,15 +45,15 @@
 ****************************************************************************************/
 uint8_t TbxPlatformLittleEndian(void) 
 {
-  uint8_t                  result = TBX_FALSE;
-  volatile uint32_t        endianTestVal = 0x01234567UL;
-  volatile uint8_t const * firstBytePtr;
+  uint8_t                   result = TBX_FALSE;
+  volatile uint32_t         endianTestVal = 0x01234567UL;
+  volatile uint8_t  const * firstBytePtr;
 
   /* Initialize the pointer to the first byte of the test value. */
   firstBytePtr = (volatile uint8_t const *)&endianTestVal;
 
   /* Is the target little ending? In this case the LSB is stored first in memory. */
-  if (*firstBytePtr == 0x67U)
+  if (firstBytePtr[0] == 0x67U)
   {
     result = TBX_TRUE;
   }

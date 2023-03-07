@@ -131,7 +131,8 @@ static tPoolList tbxPoolList = NULL;
 **            more space available on the heap to statically preallocated the blocks.
 **
 ****************************************************************************************/
-uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
+uint8_t TbxMemPoolCreate(size_t numBlocks, 
+                         size_t blockSize)
 {
   uint8_t      result = TBX_ERROR;
   void       * blockPtr;
@@ -814,7 +815,8 @@ static tBlockList * TbxMemPoolBlockListCreate(void)
 ** \param     nodePtr Pointer to the block node to insert.
 **
 ****************************************************************************************/
-static void TbxMemPoolBlockListInsert(tBlockList * listPtr, tBlockNode * nodePtr)
+static void TbxMemPoolBlockListInsert(tBlockList * listPtr, 
+                                      tBlockNode * nodePtr)
 {
   /* Verify parameters. */
   TBX_ASSERT(listPtr != NULL);

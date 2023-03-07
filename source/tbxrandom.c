@@ -192,7 +192,8 @@ static void TbxRandomInitLFSRs(void)
 ** \return    The newly generated LFSR value.
 **
 ****************************************************************************************/
-static uint32_t TbxRandomShiftLFSR(uint32_t * lfsr, uint32_t polymask)
+static uint32_t TbxRandomShiftLFSR(uint32_t * lfsr, 
+                                   uint32_t   polymask)
 {
   uint32_t result = 0;
 

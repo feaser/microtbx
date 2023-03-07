@@ -87,7 +87,8 @@ void TbxAssertSetHandler(tTbxAssertHandler assertHandler)
 ** \param     line The line number inside the file where the assertion occurred.
 **
 ****************************************************************************************/
-void TbxAssertTrigger(const char * const file, uint32_t line)
+void TbxAssertTrigger(char     const * const file, 
+                      uint32_t               line)
 {
   /* Check if there is an application specific assertion handler configured. */
   if (tbxAssertHandlerPtr != NULL)

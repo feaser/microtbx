@@ -55,7 +55,9 @@
 ** \param     key The 256-bit encryption key as a array of 32 bytes.
 **
 ****************************************************************************************/
-void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
+void TbxCryptoAes256Encrypt(uint8_t       * data, 
+                            size_t          len, 
+                            uint8_t const * key)
 {
   tbx_aes256_context ctx;
 
@@ -92,7 +94,9 @@ void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
 ** \param     key The 256-bit decryption key as a array of 32 bytes.
 **
 ****************************************************************************************/
-void TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key)
+void TbxCryptoAes256Decrypt(uint8_t       * data, 
+                            size_t          len, 
+                            uint8_t const * key)
 {
   tbx_aes256_context ctx;
 
