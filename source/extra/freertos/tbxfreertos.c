@@ -107,8 +107,8 @@ void * pvPortMalloc(size_t xWantedSize)
     (void)TbxMemPoolCreate(1U, xWantedSize);
 
     /* Assuming sufficient heap was available, the memory pool was extended.
-      * Attempt to allocate the block again.
-      */
+     * Attempt to allocate the block again.
+     */
     result = TbxMemPoolAllocate(xWantedSize);
   }
   /* Allow memory allocation tracing. */
