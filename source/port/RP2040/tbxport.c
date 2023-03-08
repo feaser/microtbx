@@ -48,6 +48,9 @@
 /** \brief Spin lock handle. */
 static volatile spin_lock_t * spinLock = NULL;
 
+/** \brief Flags to keep track if a specific core has the spin lock. */
+static volatile uint8_t coreHasLock[NUM_CORES] = { 0 };
+
 
 /************************************************************************************//**
 ** \brief     Stores the current state of the CPU status register and then disables the
@@ -67,6 +70,11 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
   {
     /* Initialization only needs to be done once. */
     spinLockInitialized = TBX_TRUE;
+    /* Initialize the flags. */
+    for (uint8_t coreIdx = 0U; coreIdx < NUM_CORES; coreIdx++)
+    {
+      coreHasLock[coreIdx] = TBX_FALSE;
+    }
     /* Initialize the spin lock handle. Start by getting a free lock number. */
     int32_t claimResult = spin_lock_claim_unused(false);
     /* Make sure a spin lock could be claimed. */
@@ -87,17 +95,21 @@ tTbxPortCpuSR TbxPortInterruptsDisable(void)
   if (spinLock != NULL)
   {
     /* This function is called upon every critical section entry, so it can be called
-     * when we already have the spin lock. In that case there is no need to lock it
-     * again. In fact, we shouldn't because it will fail. Therefore only continue if we
-     * do not already have the spin lock.
+     * when the calling core already has the spin lock. In that case there is no need to
+     * obtain it again. In fact, the code shouldn't, because it will deadlock. Therefore
+     * only continue if we do not already have the spin lock.
      */
-    if (is_spin_locked(spinLock) == 0U)
+    if (coreHasLock[get_core_num()] == TBX_FALSE)
     {
-      /* Wait (spin) the calling core to obtain the lock. Basically a multicore hardware
-       * mutex. Additionally, disable the interrupts on the calling core, while storing
-      * the current state of its CPU status register.
-      */
+      /* Wait (spin) the calling core to obtain the spin lock. Basically a multicore
+       * hardware mutex. Additionally, disable the interrupts on the calling core, while
+       * storing the current state of its CPU status register.
+       */
       result = spin_lock_blocking(spinLock);
+      /* Set flag that this core now has the lock. Needs to be done after the call to
+       * spin_lock_blocking(), because it is a shared resource for each core.
+       */
+      coreHasLock[get_core_num()] = TBX_TRUE;
     }
   }
   /* Give the result back to the caller. */
@@ -120,8 +132,12 @@ void TbxPortInterruptsRestore(tTbxPortCpuSR prevCpuSr)
   /* Only continue with a valid instance handle. */
   if (spinLock != NULL)
   {
-    /* Restore the interrupts on the core that disabled the interrupts previously, and
-     * unlock the spin lock.
+    /* Reset the flag now that this core is about to release the lock. Needs to be done
+     * before the call to spin_unlock(), because it is a shared resource for each core.
+     */
+    coreHasLock[get_core_num()] = TBX_FALSE;
+    /* Release the spin lock and restore the interrupts on the core that disabled the
+     * interrupts previously.
      */
     spin_unlock(spinLock, prevCpuSr);
   }
