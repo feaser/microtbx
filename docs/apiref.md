@@ -15,6 +15,8 @@ This section provides a full reference of all the functions, macros and types th
 | `TBX_FALSE`                       | Boolean false value. |
 | `TBX_OK`                          | Generic okay value. |
 | `TBX_ERROR`                       | Generic error value. |
+| `TBX_ON` | Generic on value. |
+| `TBX_OFF` | Generic off value. |
 | `TBX_UNUSED_ARG()`                | Function-like macro to flag a function parameter as unused. |
 | `TBX_ASSERT()` | Function-like macro to perform an assertion check. |
 

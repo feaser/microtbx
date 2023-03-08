@@ -200,6 +200,18 @@ void test_TbxGeneric_BooleanMacrosShouldBePresent(void)
   #else
   TEST_ASSERT_EQUAL(0, TBX_ERROR);
   #endif
+  /* Check TBX_ON macro. */
+  #ifndef TBX_ON
+  TEST_FAIL();
+  #else
+  TEST_ASSERT_EQUAL(1, TBX_ON);
+  #endif
+  /* Check TBX_OFF macro. */
+  #ifndef TBX_OFF
+  TEST_FAIL();
+  #else
+  TEST_ASSERT_EQUAL(0, TBX_OFF);
+  #endif
 } /*** end of test_TbxGeneric_BooleanMacrosShouldBePresent ***/
 
 

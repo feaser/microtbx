@@ -92,6 +92,12 @@ extern "C" {
 /** \brief Generic error value. */
 #define TBX_ERROR                                (0U)
 
+/** \brief Generic on value. */
+#define TBX_ON                                   (1U)
+
+/** \brief Generic off value. */
+#define TBX_OFF                                  (0U)
+
 /** \brief Macro to flag a function parameter as unused, which allows the associated
  *         lint message and/or compiler warning to be suppressed.
  */
