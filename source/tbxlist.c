@@ -40,7 +40,8 @@
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-static tTbxListNode * TbxListFindListNode(tTbxList const * list, void const * item);
+static tTbxListNode * TbxListFindListNode(tTbxList const * list, 
+                                          void     const * item);
 
 
 /************************************************************************************//**

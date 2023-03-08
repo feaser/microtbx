@@ -71,8 +71,8 @@ void * TbxHeapAllocate(size_t size)
    * be taken from this buffer. As such, it is okay to not be initialized and therefore
    * the warning about no value being assigned to this variable can be ignored.
    */
-  static uint8_t tbxHeapBuffer[TBX_CONF_HEAP_SIZE];
-  void * result = NULL;
+  uint8_t static   tbxHeapBuffer[TBX_CONF_HEAP_SIZE];
+  void           * result = NULL;
 
   /* Verify parameter. */
   TBX_ASSERT(size > 0U);

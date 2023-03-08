@@ -39,9 +39,12 @@ extern "C" {
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-uint8_t   TbxMemPoolCreate(size_t numBlocks, size_t blockSize);
-void    * TbxMemPoolAllocate(size_t size);
-void      TbxMemPoolRelease(void * memPtr);
+uint8_t   TbxMemPoolCreate  (size_t   numBlocks,
+                             size_t   blockSize);
+
+void    * TbxMemPoolAllocate(size_t   size);
+
+void      TbxMemPoolRelease (void   * memPtr);
 
 
 #ifdef __cplusplus

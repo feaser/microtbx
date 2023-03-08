@@ -40,7 +40,8 @@ extern "C" {
 * Function prototypes
 ****************************************************************************************/
 void * TbxHeapAllocate(size_t size);
-size_t TbxHeapGetFree(void);
+
+size_t TbxHeapGetFree (void);
 
 
 #ifdef __cplusplus

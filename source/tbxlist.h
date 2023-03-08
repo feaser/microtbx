@@ -72,27 +72,54 @@ typedef struct
  *         return value of the callback function has the following meaning: TBX_TRUE if
  *         item1's data is greater than item2's data, TBX_FALSE otherwise.
  */
-typedef uint8_t (* tTbxListCompareItems)(void const * item1, void const * item2);
+typedef uint8_t (* tTbxListCompareItems)(void const * item1, 
+                                         void const * item2);
 
 
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-tTbxList * TbxListCreate(void);
-void       TbxListDelete(tTbxList * list);
-void       TbxListClear(tTbxList * list);
-size_t     TbxListGetSize(tTbxList const * list);
-uint8_t    TbxListInsertItemFront(tTbxList * list, void * item);
-uint8_t    TbxListInsertItemBack(tTbxList * list, void * item);
-uint8_t    TbxListInsertItemBefore(tTbxList * list, void * item, void const * itemRef);
-uint8_t    TbxListInsertItemAfter(tTbxList * list, void * item, void const * itemRef);
-void       TbxListRemoveItem(tTbxList * list, void const * item);
-void     * TbxListGetFirstItem(tTbxList const * list);
-void     * TbxListGetLastItem(tTbxList const * list);
-void     * TbxListGetPreviousItem(tTbxList const * list, void const * itemRef);
-void     * TbxListGetNextItem(tTbxList const * list, void const * itemRef);
-void       TbxListSwapItems(tTbxList const * list, void * item1, void * item2);
-void       TbxListSortItems(tTbxList const * list, tTbxListCompareItems compareItemsFcn);
+tTbxList * TbxListCreate          (void);
+
+void       TbxListDelete          (tTbxList                   * list);
+
+void       TbxListClear           (tTbxList                   * list);
+
+size_t     TbxListGetSize         (tTbxList             const * list);
+
+uint8_t    TbxListInsertItemFront(tTbxList                    * list,
+                                  void                        * item);
+
+uint8_t    TbxListInsertItemBack  (tTbxList                   * list,
+                                   void                       * item);
+
+uint8_t    TbxListInsertItemBefore(tTbxList                   * list,
+                                   void                       * item,
+                                   void                 const * itemRef);
+
+uint8_t    TbxListInsertItemAfter (tTbxList                   * list,
+                                   void                       * item,
+                                   void                 const * itemRef);
+
+void       TbxListRemoveItem      (tTbxList                   * list,
+                                   void                 const * item);
+
+void     * TbxListGetFirstItem    (tTbxList             const * list);
+
+void     * TbxListGetLastItem     (tTbxList             const * list);
+
+void     * TbxListGetPreviousItem (tTbxList             const * list,
+                                   void                 const * itemRef);
+
+void     * TbxListGetNextItem     (tTbxList             const * list, 
+                                   void                 const * itemRef);
+
+void       TbxListSwapItems       (tTbxList             const * list,
+                                   void                       * item1,
+                                   void                       * item2);
+
+void       TbxListSortItems       (tTbxList             const * list, 
+                                   tTbxListCompareItems         compareItemsFcn);
 
 
 #ifdef __cplusplus

@@ -55,7 +55,7 @@
 /** \brief Flag that simulates the global interrupt enabled/disabled state. Assume
  *         enabled by default.
  */
-static atomic_bool interruptsDisabledFlag = ATOMIC_VAR_INIT(false);
+static atomic_bool     interruptsDisabledFlag = ATOMIC_VAR_INIT(false);
 
 /** \brief Critial section mutex. */
 static pthread_mutex_t critSectMutex = PTHREAD_MUTEX_INITIALIZER;

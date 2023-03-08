@@ -40,7 +40,8 @@ extern "C" {
 * Function prototypes
 ****************************************************************************************/
 void TbxCriticalSectionEnter(void);
-void TbxCriticalSectionExit(void);
+
+void TbxCriticalSectionExit (void);
 
 
 #ifdef __cplusplus

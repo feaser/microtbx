@@ -41,8 +41,11 @@ extern "C" {
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, size_t len);
-uint32_t TbxChecksumCrc32Calculate(uint8_t const * data, size_t len);
+uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, 
+                                   size_t          len);
+                                   
+uint32_t TbxChecksumCrc32Calculate(uint8_t const * data, 
+                                   size_t          len);
 
 
 #ifdef __cplusplus

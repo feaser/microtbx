@@ -57,8 +57,11 @@
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-static void     TbxRandomInitLFSRs(void);
-static uint32_t TbxRandomShiftLFSR(uint32_t * lfsr, uint32_t polymask);
+static void     TbxRandomInitLFSRs     (void);
+
+static uint32_t TbxRandomShiftLFSR     (uint32_t * lfsr,
+                                        uint32_t   polymask);
+
 static uint16_t TbxRandomNumber16BitGet(void);
 
 
@@ -69,10 +72,10 @@ static uint16_t TbxRandomNumber16BitGet(void);
 static tTbxRandomSeedInitHandler tbxRandomSeedInitHandler = NULL;
 
 /** \brief Storage for the 32-bit LFSR value. */
-static uint32_t tbxRandomNumberLFSR32;
+static uint32_t                  tbxRandomNumberLFSR32;
 
 /** \brief Storage for the 31-bit LFSR value. */
-static uint32_t tbxRandomNumberLFSR31;
+static uint32_t                  tbxRandomNumberLFSR31;
 
 
 /************************************************************************************//**
@@ -82,8 +85,8 @@ static uint32_t tbxRandomNumberLFSR31;
 ****************************************************************************************/
 uint32_t TbxRandomNumberGet(void)
 {
-  uint32_t        result;
-  static uint8_t  seeded = TBX_FALSE;
+  uint32_t       result;
+  static uint8_t seeded = TBX_FALSE;
 
   /* Make sure both the 32-bit and 31-bit LFSRs are seeded. */
   if (seeded == TBX_FALSE)

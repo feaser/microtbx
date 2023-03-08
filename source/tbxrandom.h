@@ -46,7 +46,8 @@ typedef uint32_t (* tTbxRandomSeedInitHandler)(void);
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-uint32_t TbxRandomNumberGet(void);
+uint32_t TbxRandomNumberGet         (void);
+
 void     TbxRandomSetSeedInitHandler(tTbxRandomSeedInitHandler seedInitHandler);
 
 

@@ -84,20 +84,30 @@ typedef tPoolNode (* tPoolList);
 * Function prototypes
 ****************************************************************************************/
 /* Pool list management functions */
-static tPoolNode  * TbxMemPoolListFind(size_t blockSize);
-static tPoolNode  * TbxMemPoolListFindBestFit(size_t blockSize);
-static void         TbxMemPoolListInsert(tPoolNode * nodePtr);
+static tPoolNode  * TbxMemPoolListFind         (size_t             blockSize);
+
+static tPoolNode  * TbxMemPoolListFindBestFit  (size_t             blockSize);
+
+static void         TbxMemPoolListInsert       (tPoolNode        * nodePtr);
+
 /* Block management functions. */
-static void       * TbxMemPoolBlockCreate(size_t size);
-static void       * TbxMemPoolBlockGetDataPtr(void * memPtr);
-static size_t       TbxMemPoolBlockGetBlockSize(void const * memPtr);
-static void       * TbxMemPoolBlockGetMemPtr(void * dataPtr);
+static void       * TbxMemPoolBlockCreate      (size_t             size);
+
+static void       * TbxMemPoolBlockGetDataPtr  (void             * memPtr);
+
+static size_t       TbxMemPoolBlockGetBlockSize(void       const * memPtr);
+
+static void       * TbxMemPoolBlockGetMemPtr   (void             * dataPtr);
+
 /* Block list management functions. */
-static tBlockList * TbxMemPoolBlockListCreate(void);
-static void         TbxMemPoolBlockListInsert(tBlockList * listPtr,
-                                              tBlockNode * nodePtr);
-static tBlockNode * TbxMemPoolBlockListExtract(tBlockList * listPtr);
-static uint8_t      TbxMemPoolBlockListIsEmpty(tBlockList const * listPtr);
+static tBlockList * TbxMemPoolBlockListCreate  (void);
+
+static void         TbxMemPoolBlockListInsert  (tBlockList       * listPtr,
+                                                tBlockNode       * nodePtr);
+                                              
+static tBlockNode * TbxMemPoolBlockListExtract (tBlockList       * listPtr);
+
+static uint8_t      TbxMemPoolBlockListIsEmpty (tBlockList const * listPtr);
 
 
 /****************************************************************************************

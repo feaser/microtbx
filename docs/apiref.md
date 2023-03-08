@@ -30,7 +30,8 @@ This section provides a full reference of all the functions, macros and types th
 #### tTbxAssertHandler
 
 ```c
-typedef void (* tTbxAssertHandler)(const char * const file, uint32_t line)
+typedef void (* tTbxAssertHandler)(char     const * const file,
+                                   uint32_t               line)
 ```
 
 Function type for a run-time assertion handler function.
@@ -54,7 +55,8 @@ Layout of a linked list. Its pointer serves as the handle to the linked list whi
 #### tTbxListCompareItems
 
 ```c
-typedef uint8_t (* tTbxListCompareItems)(void const * item1, void const * item2)
+typedef uint8_t (* tTbxListCompareItems)(void const * item1, 
+                                         void const * item2)
 ```
 
 Callback function to compare items. It is called during list sorting. The return value of the callback function has the following meaning: `TBX_TRUE` if `item1`'s data is greater than `item2`'s data, `TBX_FALSE` otherwise.
@@ -137,7 +139,8 @@ More information regarding this software component, including code examples, is 
 #### TbxMemPoolCreate
 
 ```c
-uint8_t TbxMemPoolCreate(size_t numBlocks, size_t blockSize)
+uint8_t TbxMemPoolCreate(size_t numBlocks,
+                         size_t blockSize)
 ```
 
 Creates a new memory pool with the specified number of blocks, where each block has the size as specified by the second function parameter. The required memory is statically preallocated on the heap. This function is typically called one or more times during software program initialization, before the infinite program loop is entered. Once one ore more memory pools were created, the functions [`TbxMemPoolAllocate()`](#tbxmempoolallocate) and [`TbxMemPoolRelease()`](#tbxmempoolrelease) can be called to perform dynamic memory allocation.
@@ -257,7 +260,8 @@ Obtains the number of items that are currently stored in the list.
 #### TbxListInsertItemFront
 
 ```c
-uint8_t TbxListInsertItemFront(tTbxList * list, void * item)
+uint8_t TbxListInsertItemFront(tTbxList * list, 
+                               void     * item)
 ```
 
 Inserts an item into the list. The item will be added at the start of the list.
@@ -274,7 +278,8 @@ Inserts an item into the list. The item will be added at the start of the list.
 #### TbxListInsertItemBack
 
 ```c
-uint8_t TbxListInsertItemBack(tTbxList * list, void * item)
+uint8_t TbxListInsertItemBack(tTbxList * list,
+                              void     * item)
 ```
 
 Inserts an item into the list. The item will be added at the end of the list.
@@ -291,7 +296,9 @@ Inserts an item into the list. The item will be added at the end of the list.
 #### TbxListInsertItemBefore
 
 ```c
-uint8_t TbxListInsertItemBefore(tTbxList * list, void * item, void const * itemRef)
+uint8_t TbxListInsertItemBefore(tTbxList       * list,
+                                void           * item,
+                                void     const * itemRef)
 ```
 
 Inserts an item into the list. The item will be added before the reference item.
@@ -309,7 +316,9 @@ Inserts an item into the list. The item will be added before the reference item.
 #### TbxListInsertItemAfter
 
 ```c
-uint8_t TbxListInsertItemAfter(tTbxList * list, void * item, void const * itemRef)
+uint8_t TbxListInsertItemAfter(tTbxList       * list, 
+                               void           * item,
+                               void     const * itemRef)
 ```
 
 Inserts an item into the list. The item will be added after the reference item.
@@ -327,7 +336,8 @@ Inserts an item into the list. The item will be added after the reference item.
 #### TbxListRemoveItem
 
 ```c
-void TbxListRemoveItem(tTbxList * list, void const * item)
+void TbxListRemoveItem(tTbxList       * list,
+                       void     const * item)
 ```
 
 Removes an item from the list, if present. Keep in mind that it is the caller's responsibility to release the memory of the item that is being removed from the list, before calling this function.
@@ -372,7 +382,8 @@ Obtains the item that is located at the end of the list. Note that the item is j
 #### TbxListGetPreviousItem
 
 ```c
-void * TbxListGetPreviousItem(tTbxList const * list, void const * itemRef)
+void * TbxListGetPreviousItem(tTbxList const * list,
+                              void     const * itemRef)
 ```
 
 Obtains the item that is located one position before in the list, relative to the item given in the parameter. Note that the item is just read, not removed.
@@ -389,7 +400,8 @@ Obtains the item that is located one position before in the list, relative to th
 #### TbxListGetNextItem
 
 ```c
-void * TbxListGetNextItem(tTbxList const * list, void const * itemRef)
+void * TbxListGetNextItem(tTbxList const * list,
+                          void     const * itemRef)
 ```
 
 Obtains the item that is located one position further down in the list, relative to the item given in the parameter. Note that the item is just read, not removed.
@@ -406,7 +418,9 @@ Obtains the item that is located one position further down in the list, relative
 #### TbxListSwapItems
 
 ```c
-void TbxListSwapItems(tTbxList const * list, void * item1, void * item2)
+void TbxListSwapItems(tTbxList const * list,
+                      void           * item1,
+                      void           * item2)
 ```
 
 Swaps the specified list items around.
@@ -420,7 +434,8 @@ Swaps the specified list items around.
 #### TbxListSortItems
 
 ```c
-void TbxListSortItems(tTbxList const * list, tTbxListCompareItems compareItemsFcn)
+void TbxListSortItems(tTbxList             const * list,
+                      tTbxListCompareItems         compareItemsFcn)
 ```
 
 Sorts the items in the list. While sorting, it calls the specified callback function which should do the actual comparison of the items.
@@ -476,7 +491,8 @@ More information regarding this software component, including code examples, is 
 #### TbxChecksumCrc16Calculate
 
 ```c
-uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, size_t len)
+uint16_t TbxChecksumCrc16Calculate(uint8_t const * data,
+                                   size_t          len)
 ```
 
 Calculates a 16-bit CRC value over the specified data.
@@ -493,7 +509,8 @@ Calculates a 16-bit CRC value over the specified data.
 #### TbxChecksumCrc32Calculate
 
 ```c
-uint32_t TbxChecksumCrc32Calculate(uint8_t const * data, size_t len)
+uint32_t TbxChecksumCrc32Calculate(uint8_t const * data,
+                                   size_t          len)
 ```
 
 Calculates a 32-bit CRC value over the specified data.
@@ -515,7 +532,9 @@ More information regarding this software component is, including code examples, 
 #### TbxCryptoAes256Encrypt
 
 ```c
-void TbxCryptoAes256Encrypt(uint8_t * data, size_t len, uint8_t const * key)
+void TbxCryptoAes256Encrypt(uint8_t       * data,
+                            size_t          len,
+                            uint8_t const * key)
 ```
 
 Encrypts the len-bytes in the specified data-array, using the specified 256-bit (32 bytes) key. The results are written back into the same array.
@@ -529,7 +548,9 @@ Encrypts the len-bytes in the specified data-array, using the specified 256-bit 
 #### TbxCryptoAes256Decrypt
 
 ```c
-void TbxCryptoAes256Decrypt(uint8_t * data, size_t len, uint8_t const * key)
+void TbxCryptoAes256Decrypt(uint8_t       * data,
+                            size_t          len,
+                            uint8_t const * key)
 ```
 
 Decrypts the len-bytes in the specified data-array, using the specified 256-bit (32 bytes) key. The results are written back into the same array.

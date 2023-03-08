@@ -49,7 +49,7 @@
 static volatile spin_lock_t * spinLock = NULL;
 
 /** \brief Flags to keep track if a specific core has the spin lock. */
-static volatile uint8_t coreHasLock[NUM_CORES] = { 0 };
+static volatile uint8_t       coreHasLock[NUM_CORES] = { 0 };
 
 
 /************************************************************************************//**
