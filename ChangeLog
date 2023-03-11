@@ -1,4 +1,12 @@
 -----------------------------------------------------------------------------------------
+2023-03-11 Frank Voorburg <voorburg@feaser.com>
+
+* Added RP2040 multicore and AVR ports.
+* Added platform module for run-time endianness detection.
+* Added TBX_ON and TBX_OFF macros.
+* Coding style updates.
+* Public release of version 1.2.0.
+-----------------------------------------------------------------------------------------
 2023-02-03 Frank Voorburg <voorburg@feaser.com>
 
 * Added GitHub action workflow for automated MISRA compliance check.
