@@ -40,6 +40,29 @@ Adding MicroTBX to your software project is a simple five step process:
 4. Add the directories that contain the `.h` files to your compiler's include search path.
 5. Customize the MicroTBX configuration in `tbx_conf.h`, if desired.
 
+Alternatively, when you use [CMake](https://cmake.org/) to manage your project's the build environment, you can use `add_subdirectory()` to register the MicroTBX interface library and add the desired libraries to your project's `target_link_libraries()`.  A minimal `CMakeLists.txt` example follows, which assumes that:
+
+* You copied MicroTBX to directory `third_party/microtbx` .
+* You copied `source/template/tbx_conf.h`  to the same directory as where your `main.c` resides.
+* You are using an ARM Cortex-M based microcontroller.
+
+```cmake
+project(MyProject)
+
+add_subdirectory(third_party/microtbx)
+
+add_executable(MyProject
+	main.c
+)
+
+target_link_libraries(MyProject
+    microtbx
+    microtbx-cortexm
+)
+```
+
+
+
 ## Usage
 
 1. Add the following line to each source-file, where you intend to make use of MicroTBX:
