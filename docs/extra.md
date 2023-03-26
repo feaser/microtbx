@@ -32,7 +32,7 @@ In the FreeRTOS configuration header file `FreeRTOSConfig.h`, you can add and co
 #define INCLUDE_uxTaskGetStackHighWaterMark           1
 
 /* Use MicroTBX assertion in FreeRTOS. */
-#include "tbxfreertos.h" /* <---- ADD THIS LINE */
+#include "tbx_freertos.h" /* <---- ADD THIS LINE */
 
 #endif /* FREERTOS_CONFIG_H */
 ```
