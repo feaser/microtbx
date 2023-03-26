@@ -1,4 +1,12 @@
 -----------------------------------------------------------------------------------------
+2023-03-26 Frank Voorburg <voorburg@feaser.com>
+
+* Renamed files.
+* Added CMake integration details to the user manual.
+* Resolved a compiler warning.
+* Public release of version 1.3.0.
+
+-----------------------------------------------------------------------------------------
 2023-03-11 Frank Voorburg <voorburg@feaser.com>
 
 * Added RP2040 multicore and AVR ports.
@@ -6,6 +14,7 @@
 * Added TBX_ON and TBX_OFF macros.
 * Coding style updates.
 * Public release of version 1.2.0.
+
 -----------------------------------------------------------------------------------------
 2023-02-03 Frank Voorburg <voorburg@feaser.com>
 
@@ -14,6 +23,7 @@
 * Added CMake interface library for convenient integration in CMake based projects.
 * Added tbxcxx.cpp with C++ new/delete overloads that use MicroTBX memory pools.
 * Public release of version 1.1.0.
+
 -----------------------------------------------------------------------------------------
 2022-06-15 Frank Voorburg <voorburg@feaser.com>
 
@@ -22,6 +32,7 @@
 * Added port for GNU/Linux.
 * Configured CRC16 as CRC16-CCITT-False and CRC32 as CRC32-MPEG2
 * Public release of version 1.0.0.
+
 -----------------------------------------------------------------------------------------
 2022-03-09 Frank Voorburg <voorburg@feaser.com>
 
@@ -29,12 +40,14 @@
 * Added extra functionality for usinig MicroTBX in combination with FreeRTOS.
 * Configured GitHub actions for building and publishing the documentation.
 * Public release of version 0.9.5.
+
 -----------------------------------------------------------------------------------------
 2021-10-29 Frank Voorburg <voorburg@feaser.com>
 
 * Moved demos to a separate git repository.
 * Moved tbx_conf.h to the "template" subdirectory.
 * Public release of version 0.9.4.
+
 -----------------------------------------------------------------------------------------
 2020-04-09 Frank Voorburg <voorburg@feaser.com>
 
@@ -64,5 +77,4 @@
 2019-07-06 Frank Voorburg <voorburg@feaser.com>
 
 * Setup of GitHub project and kick-off for development. 
-
 
