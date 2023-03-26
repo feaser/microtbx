@@ -52,16 +52,16 @@
 #else
 #include "tbx_conf.h"                       /* Standard MicroTBX configuration file    */
 #endif /* PROJ_TBX_CONF_H */
-#include "tbxplatform.h"                    /* Platform specifics                      */
-#include "tbxport.h"                        /* MicroTBX port specifics                 */
-#include "tbxassert.h"                      /* Run-time assertions                     */
-#include "tbxcritsect.h"                    /* Critical sections                       */
-#include "tbxheap.h"                        /* Heap memory allocation                  */
-#include "tbxlist.h"                        /* Linked lists                            */
-#include "tbxmempool.h"                     /* Pool based heap memory manager          */
-#include "tbxrandom.h"                      /* Random number generator                 */
-#include "tbxchecksum.h"                    /* Checksum module                         */
-#include "tbxcrypto.h"                      /* Cryptography module                     */
+#include "tbx_platform.h"                   /* Platform specifics                      */
+#include "tbx_port.h"                       /* MicroTBX port specifics                 */
+#include "tbx_assert.h"                     /* Run-time assertions                     */
+#include "tbx_critsect.h"                   /* Critical sections                       */
+#include "tbx_heap.h"                       /* Heap memory allocation                  */
+#include "tbx_list.h"                       /* Linked lists                            */
+#include "tbx_mempool.h"                    /* Pool based heap memory manager          */
+#include "tbx_random.h"                     /* Random number generator                 */
+#include "tbx_checksum.h"                   /* Checksum module                         */
+#include "tbx_crypto.h"                     /* Cryptography module                     */
 
 
 #ifdef __cplusplus

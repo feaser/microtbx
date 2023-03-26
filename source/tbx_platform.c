@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_platform.c
+* \brief        Platform specifics module source file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2023 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,23 +33,36 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 /****************************************************************************************
-* Function prototypes
+* Include files
 ****************************************************************************************/
-void initializeTests(void);
-
-int  runTests(void);
+#include "microtbx.h"                            /* MicroTBX global header             */
 
 
-#ifdef __cplusplus
-}
-#endif
+/************************************************************************************//**
+** \brief     Utility function to determine if the targets memory storage organization
+**            is little endian (Intel) or big endian (Motorola).
+** \return    TBX_TRUE for little endian, TBX_FALSE for big endian.
+**
+****************************************************************************************/
+uint8_t TbxPlatformLittleEndian(void) 
+{
+  uint8_t                   result = TBX_FALSE;
+  volatile uint32_t         endianTestVal = 0x01234567UL;
+  volatile uint8_t  const * firstBytePtr;
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+  /* Initialize the pointer to the first byte of the test value. */
+  firstBytePtr = (volatile uint8_t const *)&endianTestVal;
+
+  /* Is the target little endian? In this case the LSB is stored first in memory. */
+  if (firstBytePtr[0] == 0x67U)
+  {
+    result = TBX_TRUE;
+  }
+  /* Give the result back to the caller. */
+  return result;
+} /*** end of TbxPlatformLittleEndian ***/
+
+
+/*********************************** end of tbx_platform.c *****************************/

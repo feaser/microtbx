@@ -1,5 +1,5 @@
 ;****************************************************************************************
-;* \file         port/ARM_CORTEXM/Keil/tbxcomp.s
+;* \file         port/ARM_CORTEXM/Keil/tbx_comp.s
 ;* \brief        Keil compiler specifics of the port source file.
 ;* \internal
 ;*---------------------------------------------------------------------------------------
@@ -88,4 +88,4 @@ TbxPortInterruptsRestore FUNCTION
 
   
   END
-;*********************************** end of tbxcomp.s ***********************************
+;*********************************** end of tbx_comp.s **********************************

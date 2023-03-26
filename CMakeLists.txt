@@ -2,16 +2,16 @@
 add_library(microtbx INTERFACE)
 
 target_sources(microtbx INTERFACE
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxaes256.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxassert.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxchecksum.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxcritsect.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxcrypto.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxheap.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxlist.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxmempool.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxplatform.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/tbxrandom.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_aes256.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_assert.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_checksum.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_critsect.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_crypto.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_heap.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_list.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_mempool.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_platform.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/tbx_random.c"
 )
 
 target_include_directories(microtbx INTERFACE 
@@ -22,8 +22,8 @@ target_include_directories(microtbx INTERFACE
 add_library(microtbx-cortexm INTERFACE)
 
 target_sources(microtbx-cortexm INTERFACE
-    "${CMAKE_CURRENT_LIST_DIR}/source/port/ARM_CORTEXM/tbxport.c"
-    "${CMAKE_CURRENT_LIST_DIR}/source/port/ARM_CORTEXM/GCC/tbxcomp.s"
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/ARM_CORTEXM/tbx_port.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/ARM_CORTEXM/GCC/tbx_comp.s"
 )
 
 target_include_directories(microtbx-cortexm INTERFACE 
@@ -35,7 +35,7 @@ target_include_directories(microtbx-cortexm INTERFACE
 add_library(microtbx-rp2040 INTERFACE)
 
 target_sources(microtbx-rp2040 INTERFACE
-    "${CMAKE_CURRENT_LIST_DIR}/source/port/RP2040/tbxport.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/RP2040/tbx_port.c"
 )
 
 target_include_directories(microtbx-rp2040 INTERFACE 
@@ -46,7 +46,7 @@ target_include_directories(microtbx-rp2040 INTERFACE
 add_library(microtbx-avr INTERFACE)
 
 target_sources(microtbx-avr INTERFACE
-    "${CMAKE_CURRENT_LIST_DIR}/source/port/AVR/GCC/tbxport.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/AVR/GCC/tbx_port.c"
 )
 
 target_include_directories(microtbx-avr INTERFACE 
@@ -58,7 +58,7 @@ target_include_directories(microtbx-avr INTERFACE
 add_library(microtbx-linux INTERFACE)
 
 target_sources(microtbx-linux INTERFACE
-    "${CMAKE_CURRENT_LIST_DIR}/source/port/LINUX/tbxport.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/port/LINUX/tbx_port.c"
 )
 
 target_include_directories(microtbx-linux INTERFACE 
@@ -69,7 +69,7 @@ target_include_directories(microtbx-linux INTERFACE
 add_library(microtbx-extra-freertos INTERFACE)
 
 target_sources(microtbx-extra-freertos INTERFACE
-    "${CMAKE_CURRENT_LIST_DIR}/source/extra/freertos/tbxfreertos.c"
+    "${CMAKE_CURRENT_LIST_DIR}/source/extra/freertos/tbx_freertos.c"
 )
 
 target_include_directories(microtbx-extra-freertos INTERFACE 

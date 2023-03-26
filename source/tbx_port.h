@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_port.h
+* \brief        Port specifics header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2019 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,23 +33,29 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_PORT_H
+#define TBX_PORT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
+* Include files
+****************************************************************************************/
+#include "tbx_types.h"                      /* MicroTBX port specific types            */
+
+
+/****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void initializeTests(void);
+tTbxPortCpuSR TbxPortInterruptsDisable(void);
 
-int  runTests(void);
+void          TbxPortInterruptsRestore(tTbxPortCpuSR prevCpuSr);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+#endif /* TBX_PORT_H */
+/*********************************** end of tbx_port.h *********************************/

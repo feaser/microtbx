@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         port/AVR/tbx_types.h
+* \brief        Port specific types header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2023 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,23 +33,26 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_TYPES_H
+#define TBX_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
-* Function prototypes
+* Type definitions
 ****************************************************************************************/
-void initializeTests(void);
-
-int  runTests(void);
+/** \brief The type for the CPU status register. This type should be configured such
+ *         that the CPU's status register can be fully stored in it. This is the register
+ *         with information about global interrupts being enabled/disabled, among other
+ *         things.
+ */
+typedef uint8_t tTbxPortCpuSR;
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+#endif /* TBX_TYPES_H */
+/*********************************** end of tbx_types.h ********************************/

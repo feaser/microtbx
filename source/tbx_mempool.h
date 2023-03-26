@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_mempool.h
+* \brief        Pool based dynamic heap memory manager header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2019 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,8 +33,8 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_MEMPOOL_H
+#define TBX_MEMPOOL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,14 +42,17 @@ extern "C" {
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void initializeTests(void);
+uint8_t   TbxMemPoolCreate  (size_t   numBlocks,
+                             size_t   blockSize);
 
-int  runTests(void);
+void    * TbxMemPoolAllocate(size_t   size);
+
+void      TbxMemPoolRelease (void   * memPtr);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+#endif /* TBX_MEMPOOL_H */
+/*********************************** end of tbx_mempool.h ******************************/

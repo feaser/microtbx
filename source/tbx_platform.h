@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_platform.h
+* \brief        Platform specifics module header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2023 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,8 +33,8 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_PLATFORM_H
+#define TBX_PLATFORM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,14 +42,12 @@ extern "C" {
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void initializeTests(void);
-
-int  runTests(void);
+uint8_t TbxPlatformLittleEndian(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+#endif /* TBX_PLATFORM_H */
+/*********************************** end of tbx_platform.h *****************************/

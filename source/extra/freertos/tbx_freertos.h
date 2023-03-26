@@ -1,6 +1,6 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_freertos.h
+* \brief        MicroTBX support for FreeRTOS.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -33,23 +33,31 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_FREERTOS_H
+#define TBX_FREERTOS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+/*
+ * Include this file at the end of FreeRTOSConfig.h to add support of MicroTBX to
+ * FreeRTOS. The current implementation remamps the assertion macro to the one from
+ * MicroTBX.
+ */
+
 /****************************************************************************************
-* Function prototypes
-****************************************************************************************/
-void initializeTests(void);
-
-int  runTests(void);
+* Include files
+***************************************************************************************/
+#include "microtbx.h"
 
 
-#ifdef __cplusplus
-}
+/****************************************************************************************
+* Macro definitions
+***************************************************************************************/
+#ifdef configASSERT
+#undef configASSERT
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+/** \brief Map the MicroTBX assertions macro to FreeRTOS. */
+#define configASSERT(x) TBX_ASSERT(x)
+
+
+#endif /* TBX_FREERTOS_H */
+/*********************************** end of tbx_freertos.h *****************************/

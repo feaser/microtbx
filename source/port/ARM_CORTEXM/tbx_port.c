@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         port/ARM_CORTEXM/tbx_port.c
+* \brief        Port specifics source file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2019 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,23 +33,20 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 /****************************************************************************************
-* Function prototypes
+* Include files
 ****************************************************************************************/
-void initializeTests(void);
-
-int  runTests(void);
+#include "microtbx.h"                            /* MicroTBX global header             */
 
 
-#ifdef __cplusplus
-}
-#endif
+/* At this point nothing is implemented here. The TbxPortInterruptsXxx functions were
+ * implemented in assembly for MISRA compliance. MISRA requires that where assembly
+ * language instructions are required, it is recommended that they be encapsulated and
+ * isolated in either: (a) assembler functions, (b) C functions or (c) macros.
+ * Recommendation (a) was chosen for the TbxPortInterruptsXxx functions. They are located
+ * in the compiler specific part of the port.
+ */
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+
+/*********************************** end of tbx_port.c *********************************/

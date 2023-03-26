@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_checksum.h
+* \brief        Checksum module header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2019 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,23 +33,27 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_CHECKSUM_H
+#define TBX_CHECKSUM_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void initializeTests(void);
-
-int  runTests(void);
+uint16_t TbxChecksumCrc16Calculate(uint8_t const * data, 
+                                   size_t          len);
+                                   
+uint32_t TbxChecksumCrc32Calculate(uint8_t const * data, 
+                                   size_t          len);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+#endif /* TBX_CHECKSUM_H */
+/*********************************** end of tbx_checksum.h *****************************/

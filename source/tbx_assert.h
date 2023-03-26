@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_assert.h
+* \brief        Run-time assertions header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2019 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,23 +33,57 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_ASSERT_H
+#define TBX_ASSERT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /****************************************************************************************
+* Configuration macros
+****************************************************************************************/
+#ifndef TBX_CONF_ASSERTIONS_ENABLE
+/** \brief Enable/disable run-time assertions. Note that it is possible to override this
+ *         value by adding this macro definition to the configuration header file.
+ */
+#define TBX_CONF_ASSERTIONS_ENABLE               (0U)
+#endif
+
+
+/****************************************************************************************
+* Macro definitions
+****************************************************************************************/
+#if (TBX_CONF_ASSERTIONS_ENABLE > 0U)
+/** \brief Macro for run-time assertions. */
+#define TBX_ASSERT(cond) { if(!(cond)) { TbxAssertTrigger(__FILE__, __LINE__); } }
+#else
+/** \brief Dummy macro for when assertions are disabled. */
+#define TBX_ASSERT(cond) { ; }
+#endif /* (TBX_CONF_ASSERTIONS_ENABLE > 0U) */
+
+
+/****************************************************************************************
+* Type definitions
+****************************************************************************************/
+/** \brief Function type for a run-time assertion handler function. */
+typedef void (* tTbxAssertHandler)(char     const * const file, 
+                                   uint32_t               line);
+
+
+/****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void initializeTests(void);
+void TbxAssertSetHandler(tTbxAssertHandler assertHandler);
 
-int  runTests(void);
+#if (TBX_CONF_ASSERTIONS_ENABLE > 0U)
+void TbxAssertTrigger   (char     const * const file, 
+                         uint32_t line);
+#endif /* (TBX_CONF_ASSERTIONS_ENABLE > 0U) */
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+#endif /* TBX_ASSERT_H */
+/*********************************** end of tbx_assert.h *******************************/

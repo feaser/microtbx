@@ -1,11 +1,11 @@
 /************************************************************************************//**
-* \file         unittests.h
-* \brief        Unit tests header file.
+* \file         tbx_heap.h
+* \brief        Heap memory allocation header file.
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
 *----------------------------------------------------------------------------------------
-*   Copyright (c) 2022 by Feaser     www.feaser.com     All rights reserved
+*   Copyright (c) 2019 by Feaser     www.feaser.com     All rights reserved
 *
 *----------------------------------------------------------------------------------------
 *                            L I C E N S E
@@ -33,8 +33,8 @@
 *
 * \endinternal
 ****************************************************************************************/
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef TBX_HEAP_H
+#define TBX_HEAP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,14 +42,14 @@ extern "C" {
 /****************************************************************************************
 * Function prototypes
 ****************************************************************************************/
-void initializeTests(void);
+void * TbxHeapAllocate(size_t size);
 
-int  runTests(void);
+size_t TbxHeapGetFree (void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UNITTESTS_H */
-/*********************************** end of unittests.h ********************************/
+#endif /* TBX_HEAP_H */
+/*********************************** end of tbx_heap.h *********************************/
