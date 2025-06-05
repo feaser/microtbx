@@ -1230,6 +1230,235 @@ void test_TbxMemPoolAllocate_CanReallocate(void)
 
 
 /************************************************************************************//**
+** \brief     Tests that invalid parameters trigger an assertion and returns NULL.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocateAuto_ShouldAssertOnInvalidParams(void)
+{
+  void * result;
+
+  /* Attempt to allocate zero bytes, which is not a valid size. */
+  result = TbxMemPoolAllocateAuto(0);
+
+  /* Make sure an assertion was triggered. */
+  TEST_ASSERT_GREATER_THAN_UINT32(0, assertionCnt);
+  /* Make sure a NULL pointer was returned. */
+  TEST_ASSERT_NULL(result);
+} /*** end of test_TbxMemPoolAllocateAuto_ShouldAssertOnInvalidParams ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the automatic allocation can create a new memory pool when
+**            needed.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocateAuto_CanCreateNewPool(void)
+{
+  void * allocBlock;
+  size_t heapFreeBefore;
+  size_t heapFreeAfter;
+
+  /* Store heap size from before creating a new memory pool. */
+  heapFreeBefore = TbxHeapGetFree();
+
+  /* Try to allocate a block from a memory pool using the non-auto allocation. This
+   * should fail because a fitting memory pool should not yet be created at this point.
+   * For this reason a size of memPoolBlockSize + 2 is used instead of memPoolBlockSize. 
+   */
+  allocBlock = TbxMemPoolAllocate(memPoolBlockSize + 2);
+  /* Make sure a NULL pointer was returned. */
+  TEST_ASSERT_NULL(allocBlock);
+
+  /* Try the same allocation but now using the auto allocation. A new memory pool should
+   * be created automatically and a block allocated from it.
+   */
+  allocBlock = TbxMemPoolAllocateAuto(memPoolBlockSize + 2);
+  /* Make sure a valid pointer was returned, indicating that the memory pool was created
+   * and a block could be allocated from it.
+   */
+  TEST_ASSERT_NOT_NULL(allocBlock);
+  /* Release the allocated memory again. */
+  TbxMemPoolRelease(allocBlock);
+
+  /* Store heap size from after creating a new memory pool and the alloc and release
+   * operation. 
+   */
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure at least the data for the block was allocated from the heap. */
+  TEST_ASSERT_GREATER_OR_EQUAL(memPoolBlockSize + 2, 
+                               heapFreeBefore - heapFreeAfter);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocateAuto_CanCreateNewPool ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that a new block automatically gets added to the existing memory
+**            pool, when attempting an allocation when there are no more free blocks.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocateAuto_CanResizeWhenFull(void)
+{
+  void * allocBlocks[2];
+  size_t heapFreeBefore;
+  size_t heapFreeAfter;
+
+  /* Store heap size from before adding a new block to the memory pool. */
+  heapFreeBefore = TbxHeapGetFree();
+
+  /* Auto alloc one block. This should work because a previous test already automatically
+   * created a memory pool of this size.
+   */
+  allocBlocks[0] = TbxMemPoolAllocateAuto(memPoolBlockSize + 2);
+  /* Store heap size from after the allocation. */
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure a valid pointer was returned, indicating that a block could be allocated
+   * from it.
+   */
+  TEST_ASSERT_NOT_NULL(allocBlocks[0]);
+  /* No new data should have been allocated, because the memory pool already existed and
+   * a block has been allocated from it in a previous test.
+   */
+  TEST_ASSERT_EQUAL_size_t(heapFreeBefore, heapFreeAfter);
+
+  /* Try to allocate a block from a memory pool using the non-auto allocation. This
+   * should fail because the fitting memory pool is created but should have no more free
+   * blocks at this point.
+   */
+  allocBlocks[1] = TbxMemPoolAllocate(memPoolBlockSize + 2);
+  /* Make sure a NULL pointer was returned. */
+  TEST_ASSERT_NULL(allocBlocks[1]);
+
+  /* Try the same allocation but now using the auto allocation. A new block should be
+   * automatically added to it.
+   */
+  allocBlocks[1] = TbxMemPoolAllocateAuto(memPoolBlockSize + 2);
+  /* Make sure a valid pointer was returned, indicating that the memory pool was expanded
+   * and a block could be allocated from it.
+   */
+  TEST_ASSERT_NOT_NULL(allocBlocks[1]);
+  /* Release the allocated memory again. */
+  TbxMemPoolRelease(allocBlocks[0]);
+  TbxMemPoolRelease(allocBlocks[1]);
+
+  /* Store heap size from after a new block was added to the memory pool. 
+   */
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure at least the data for the block was allocated from the heap. */
+  TEST_ASSERT_GREATER_OR_EQUAL(memPoolBlockSize + 2, 
+                               heapFreeBefore - heapFreeAfter);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocateAuto_CanResizeWhenFull ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that previously allocated blocks from an already created memory pool
+**            can be reallocated.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocateAllocateAuto_CanReallocate(void)
+{
+  void * allocBlocks[3];
+  size_t heapFreeBefore;
+  size_t heapFreeAfter;
+
+  /* Store heap size from before reallocating the blocks. */
+  heapFreeBefore = TbxHeapGetFree();
+
+  /* The previously created memory pool should have 2 blocks. Try to re-allocate them. */
+  allocBlocks[0] = TbxMemPoolAllocateAuto(memPoolBlockSize + 2);
+  allocBlocks[1] = TbxMemPoolAllocateAuto(memPoolBlockSize + 2);
+  /* Store heap size from after the reallocation. */
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure valid pointers were returned, indicating that the blocks could be 
+   * allocated from it.
+   */
+  TEST_ASSERT_NOT_NULL(allocBlocks[0]);
+  TEST_ASSERT_NOT_NULL(allocBlocks[1]);
+  /* No new blocks should have been added to the memory pool, because the memory pool
+   * already existed and two blocks have been allocated from it in a previous test.
+   */
+  TEST_ASSERT_EQUAL_size_t(heapFreeBefore, heapFreeAfter);
+
+  /* Try to allocate a block from a memory pool using the non-auto allocation. This
+   * should fail because the fitting memory pool is created but should have no more free
+   * blocks at this point.
+   */
+  allocBlocks[2] = TbxMemPoolAllocate(memPoolBlockSize + 2);
+  /* Make sure a NULL pointer was returned. */
+  TEST_ASSERT_NULL(allocBlocks[2]);
+
+  /* Release the allocated memory again. */
+  TbxMemPoolRelease(allocBlocks[0]);
+  TbxMemPoolRelease(allocBlocks[1]);
+
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocateAllocateAuto_CanReallocate ***/
+
+
+/************************************************************************************//**
+** \brief     Tests that the auto alloc works on exact block size memory pools, in
+**            contrast to the non-auto alloc. At this point two memory pools are present.
+**            One with blocksize of memPoolBlockSize and one with memPoolBlockSize + 2.
+**            When using auto alloc for a size of memPoolBlockSize + 1, it should create
+**            a new memory pool for this block size. Note that in case non-auto alloc
+**            was used, it would succeed, because it uses a best fitting memory pool
+**            algorithm for blockSize >= size. For auto alloc the only fitting memory
+**            pool is one with blockSize == size.
+**
+****************************************************************************************/
+void test_TbxMemPoolAllocateAuto_CannotAllocateSmallerSize(void)
+{
+  void * allocBlock;
+  size_t heapFreeBefore;
+  size_t heapFreeAfter;
+
+  /* Store heap size from before adding a new block to the memory pool. */
+  heapFreeBefore = TbxHeapGetFree();
+  /* Try to allocate a block with size memPoolBlockSize + 1 from a memory pool using the
+   * non-auto allocation. This should work, because it would take a block from the
+   * existing memory pool with memPoolBlockSize + 2.
+   */
+  allocBlock = TbxMemPoolAllocate(memPoolBlockSize + 1);
+  /* Store heap size from after the allocation. */
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure a valid pointer was returned, indicating that a block could be allocated
+   * from it.
+   */
+  TEST_ASSERT_NOT_NULL(allocBlock);
+  /* No new data should have been take from the heap, because the memory pool already
+   * existed and a block has been allocated from it in a previous test.
+   */
+  TEST_ASSERT_EQUAL_size_t(heapFreeBefore, heapFreeAfter);
+  /* Release the allocated memory again. */
+  TbxMemPoolRelease(allocBlock);
+
+  /* Now try the same allocation but using auto alloc. This should work yet also create
+   * a new memory pool for the blockSize of memPoolBlockSize + 1 
+   */
+  allocBlock = TbxMemPoolAllocateAuto(memPoolBlockSize + 1);
+  /* Store heap size from after the allocation. */
+  heapFreeAfter = TbxHeapGetFree();
+  /* Make sure a valid pointer was returned, indicating that a block could be allocated
+   * from it.
+   */
+  TEST_ASSERT_NOT_NULL(allocBlock);
+
+  /* Release the allocated memory again. */
+  TbxMemPoolRelease(allocBlock);
+  /* Make sure at least the data for the block was allocated from the heap, which 
+   * indicates that new memory pool was created.
+   */
+  TEST_ASSERT_GREATER_OR_EQUAL(memPoolBlockSize + 1, 
+                               heapFreeBefore - heapFreeAfter);
+  /* Make sure no assertion was triggered. */
+  TEST_ASSERT_EQUAL_UINT32(0, assertionCnt);
+} /*** end of test_TbxMemPoolAllocateAuto_CannotAllocateSmallerSize ***/
+
+
+/************************************************************************************//**
 ** \brief     Tests that a new list can be created.
 **
 ****************************************************************************************/
@@ -2264,6 +2493,11 @@ int runTests(void)
   RUN_TEST(test_TbxMemPoolRelease_ShouldAssertOnInvalidParams);
   RUN_TEST(test_TbxMemPoolRelease_CanReleaseBlocks);
   RUN_TEST(test_TbxMemPoolAllocate_CanReallocate);
+  RUN_TEST(test_TbxMemPoolAllocateAuto_ShouldAssertOnInvalidParams);
+  RUN_TEST(test_TbxMemPoolAllocateAuto_CanCreateNewPool);
+  RUN_TEST(test_TbxMemPoolAllocateAuto_CanResizeWhenFull);
+  RUN_TEST(test_TbxMemPoolAllocateAllocateAuto_CanReallocate);
+  RUN_TEST(test_TbxMemPoolAllocateAuto_CannotAllocateSmallerSize);
   /* Tests for the linked list module. */
   RUN_TEST(test_TbxListCreate_ReturnsValidListPointer);
   RUN_TEST(test_TbxListCreate_CanReuseMemory);

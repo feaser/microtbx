@@ -190,6 +190,34 @@ Then the memory will be allocated from the memory pool with block size 16, so th
 | ------------------------------------------------------------ |
 | Pointer to the start of the newly allocated memory if successful, `NULL` otherwise. |
 
+#### TbxMemPoolAllocateAuto
+
+```c
+void * TbxMemPoolAllocateAuto(size_t size)
+```
+An alternative version of  [`TbxMemPoolAllocate()`](#tbxmempoolallocate), which automatically creates  a new memory pool with one block, if one with the exact same blockSize was not yet created. If one with the exact same blockSize was already created, but it's full, then the memory pool is automatically expanded to have one more block.
+
+This offers a convenient way of working with memory pools compared to  [`TbxMemPoolAllocate()`](#tbxmempoolallocate). In addition, it guarantees that it always works on a memory pool where the `blockSize == "size"`. It bypasses the best fitting algorithm used by [`TbxMemPoolAllocate()`](#tbxmempoolallocate), which looks for an existing memory pool with a `blockSize >= "size"`.
+
+For example, to allocate two blocks of 32 bytes using memory pools, all you need to do is:
+
+```c
+uint8_t * myMem[2];
+
+myMem[0] = TbxMemPoolAllocateAuto(32);
+myMem[1] = TbxMemPoolAllocateAuto(32);
+```
+
+Note that there was no need to first create this memory pool with a call to [`TbxMemPoolCreate()`](#tbxmempoolcreate). During the first call to `TbxMemPoolAllocateAuto()`, the memory pool with a block size of 32 bytes was automatically created, including adding one block of 32 bytes to it, which was immediately allocated. During the second call to `TbxMemPoolAllocateAuto()`, another block of 32 bytes was automatically added to the existing memory pool and the newly added block was immediately allocated.
+
+| Parameter | Description                                          |
+| --------- | ---------------------------------------------------- |
+| `size`    | The number of bytes to allocate using a memory pool. |
+
+| Return value                                                 |
+| ------------------------------------------------------------ |
+| Pointer to the start of the newly allocated memory if successful, `NULL` otherwise. |
+
 #### TbxMemPoolRelease
 
 ```c
