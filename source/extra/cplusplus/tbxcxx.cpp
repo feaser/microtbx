@@ -79,27 +79,11 @@ void * operator new(size_t size)
 {
   void * result;
   
-  /* Attempt to allocate a block from the best fitting memory pool. */
-  result = TbxMemPoolAllocate(size);
-  /* Was the allocation not successful? */
-  if (result == nullptr)
-  {
-    /* The allocation failed. This can have two reasons:
-     *   1. A memory pool for the requested size hasn't yet been created.
-     *   2. The memory pool for the requested size has no more free blocks.
-     * Both situations can be solved by calling TbxMemPoolCreate(), as this
-     * function automatically extends a memory pool, if it was created before.
-     * Note that there is no need to check the return value, because we will
-     * attempt to allocate again right afterwards. We can catch the error
-     * there in case the allocation fails.
-     */
-    (void)TbxMemPoolCreate(1U, size);
-
-    /* Assuming sufficient heap was available, the memory pool was extended.
-     * Attempt to allocate the block again.
-     */
-    result = TbxMemPoolAllocate(size);
-  }
+  /* Attempt to allocate a block from a memory pool with the same size. If non-existant,
+   * automatically create the memory pool. If no more free blocks available in the
+   * memory pool, automatically expand the memory pool by adding one more block.
+   */
+  result = TbxMemPoolAllocateAuto(size);
   /* Verify the allocation result. */
   if (result == nullptr)
   {
