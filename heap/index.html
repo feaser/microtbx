@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Heap - MicroTBX User Manual</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Heap";
+        var mkdocs_page_input_path = "heap.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> MicroTBX User Manual
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../apiref/">API reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../misra/">MISRA compliance</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assertions/">Assertions</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../critsect/">Critical sections</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Heap</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../mempools/">Memory pools</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../lists/">Linked lists</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../random/">Random numbers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../checksum/">Checksums</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../platform/">Platform</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../extra/">Extra functionality</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">MicroTBX User Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Heap</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/feaser/microtbx/edit/master/docs/heap.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="heap">Heap</h1>
+<p>In an embedded software program, memory can be dynamically allocated. The heap is
+available for this, which is a part of RAM specifically reserved for dynamically
+allocated memory.</p>
+<p>The C standard library offers the functions <code>malloc()</code> and <code>free()</code> for allocating
+and releasing memory on the heap. Both functions treat the heap as a byte pool, which
+means there is always a fragmentation risk present. The fragmentation eventually
+leads to a situation where memory can no longer be allocated, resulting in lost
+functionality or a crash of the software program in the worst case.</p>
+<p>This fragmentation risk is therefore unacceptable and another solution needs to be
+found for handling dynamic allocation. The solution is two-fold:</p>
+<ol>
+<li>Use static memory preallocation. This entails performing the memory
+   allocation once during software program initialization and never releasing
+   (free-ing) the allocated memory. This means that the lifetime of the allocated data spans the run-time of the entire software program.</li>
+<li>Use memory pools. With a memory pool, memory is allocated as fixed-size memory
+   blocks (partitions). The benefit of dynamic memory allocation using memory
+   pools is that the memory can be released again without the before mentioned
+   fragmentation risk. It is perfect in situations when temporary data storage is needed, and the lifetime of the data is longer than just one function.</li>
+</ol>
+<p>MicroTBX offers software components for both solutions. The heap software
+component described in this section covers solution (1) with static memory
+preallocation. The <a href="../mempools/">memory pools</a> software component covers
+solution (2).</p>
+<h2 id="usage">Usage</h2>
+<p>The heap software component offers the function <a href="../apiref/#tbxheapallocate"><code>TbxHeapAllocate()</code></a> for performing
+memory allocation on the heap. Because it is meant for static memory preallocation
+only, there is no function for free-ing the allocated memory. The idea is that
+function <a href="../apiref/#tbxheapallocate"><code>TbxHeapAllocate()</code></a> is only called during the initialization of the
+software program, so before the infinite program loop is entered. It is basically
+its own implementation of <code>malloc()</code>, without <code>free()</code>.</p>
+<p>To find out how many bytes of memory are still available on the heap, function
+<a href="../apiref/#tbxheapgetfree"><code>TbxHeapGetFree()</code></a> can be called.</p>
+<p>If a software program has a need to allocate and release memory during the
+infinite program loop, the memory allocation should be performed with the
+functionality present in the <a href="../mempools/">memory pools</a> software component.</p>
+<h2 id="examples">Examples</h2>
+<p>The following example demonstrates how to call the functions of the heap software
+component. Memory for a FIFO buffer is preallocated during the software program
+initialization.</p>
+<pre><code class="language-c">/* A first-in first-out buffer of 32-bit values. */
+uint32_t       * fifoBuffer  = NULL;
+uint32_t const   fifoMaxSize = 32;
+uint8_t          fifoIdx;
+
+/* Make sure there is enough space on the heap for the FIFO buffer. */
+if (TbxHeapGetFree() &lt; (fifoMaxSize * sizeof(uint32_t)))
+{
+  TBX_ASSERT(TBX_FALSE);
+}
+
+/* Perform static preallocation of the FIFO buffer. */
+fifoBuffer = TbxHeapAllocate(fifoMaxSize * sizeof(uint32_t));
+
+/* Make sure the allocation was successful. */
+TBX_ASSERT(fifoBuffer != NULL);
+
+/* Initialize the FIFO buffer. */
+for (fifoIdx = 0; fifoIdx &lt; fifoMaxSize; fifoIdx++)
+{
+  fifoBuffer[fifoIdx] = 0;
+}
+</code></pre>
+<h2 id="configuration">Configuration</h2>
+<p>The maximum size of the heap is configured with macro <a href="../apiref/#configuration"><code>TBX_CONF_HEAP_SIZE</code></a>:</p>
+<pre><code class="language-c">/** \brief Configure the size of the heap in bytes. */
+#define TBX_CONF_HEAP_SIZE                       (2048U)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../critsect/" class="btn btn-neutral float-left" title="Critical sections"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../mempools/" class="btn btn-neutral float-right" title="Memory pools">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/feaser/microtbx" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../critsect/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../mempools/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

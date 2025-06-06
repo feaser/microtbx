@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Assertions - MicroTBX User Manual</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Assertions";
+        var mkdocs_page_input_path = "assertions.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> MicroTBX User Manual
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../apiref/">API reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../misra/">MISRA compliance</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Assertions</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#extra-tips">Extra tips</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../critsect/">Critical sections</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../heap/">Heap</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../mempools/">Memory pools</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../lists/">Linked lists</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../random/">Random numbers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../checksum/">Checksums</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../platform/">Platform</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../extra/">Extra functionality</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">MicroTBX User Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Assertions</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/feaser/microtbx/edit/master/docs/assertions.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="assertions">Assertions</h1>
+<p>Assertions are statements used for checking situations that should never happen. It is a good coding practice to add such statements to your software program. For example to validate the values of function
+parameters, to check pointers for not being NULL, to check that an array index is not out of range, etc.</p>
+<h2 id="usage">Usage</h2>
+<p>In MicroTBX, assertions are implemented with the <a href="../apiref/#generic"><code>TBX_ASSERT(argument)</code></a> macro. The argument must evaluate
+to boolean <code>true</code> for the program to continue its execution as expected. If the argument evaluates to
+boolean <code>false</code>, an error is triggered.</p>
+<p>In this error case, MicroTBX jumps to an internal function with an infinite loop to hang the program. This
+function is called with two important parameters for debugging purposes: the filename of the source file
+that caused the assertion to fail and the line number inside this file where the assertion occurred.</p>
+<p>Practically, this means that when debugging and testing your software program, you simply set a breakpoint
+inside the internal function <code>TbxAssertTrigger()</code>. If an assertion is triggered, the debugger stops at the
+breakpoint. At this point you can inspect the function parameters <code>file</code> and <code>line</code> to determine which
+assertion statement caused the problem. Once you know the root cause of the assertion error, you can start
+working on a solution to fix the problem from happening in the future.</p>
+<p>In case you do not like the default assertion error handling, MicroTBX also makes it possible for you to configure your own assertion handler with function <a href="../apiref/#tbxassertsethandler"><code>TbxAssertSetHandler()</code></a>. For example to execute a
+<code>printf</code> statement, to turn on an LED, or to write assertion error info to a file an on SD-card to indicate that an assertion error was detected.</p>
+<h2 id="examples">Examples</h2>
+<p>The following example demonstrates how assertions can be used to test that a function parameter has a
+valid value range:</p>
+<pre><code class="language-c">uint8_t myArray[4] = { 1, 2, 3, 4 };
+
+void IncrementArrayElement(int8_t index)
+{
+  /* Make sure the array index is positive. */
+  TBX_ASSERT(index &gt;= 0);
+  /* Make sure the array index is not out of range. */
+  TBX_ASSERT(index &lt; (sizeof(myArray)/sizeof(myArray[0])));
+
+  /* Increment the array element at the requested index. */
+  myArray[index]++;
+}
+</code></pre>
+<p>The next example shows how you can register your own assertion error handler, which overrides the
+internal error handling:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void MyAssertionHandler(const char * const file, uint32_t line)
+{
+  /* Display the assertion error info. */
+  printf(&quot;[ERROR] Assertion in %s at line %lu&quot;, file, line);
+}
+
+int main(void)
+{
+  /* Register the application specific assertion handler. */
+  TbxAssertSetHandler(MyAssertionHandler);
+
+  /* TODO Implement your program here. */
+
+  return 0;
+}
+</code></pre>
+<h2 id="configuration">Configuration</h2>
+<p>The enable the assertion error handling, set the macro <a href="../apiref/#configuration"><code>TBX_CONF_ASSERTIONS_ENABLE</code></a> to a value of <code>1</code>:</p>
+<pre><code class="language-c">/** \brief Enable/disable run-time assertions. */
+#define TBX_CONF_ASSERTIONS_ENABLE              (1U)
+</code></pre>
+<p>To disable the assertion error handling, set this macro to a value of <code>0</code>. Note that there is not need
+to remove the <a href="../apiref/#generic"><code>TBX_ASSERT()</code></a> macros from your code. MicroTBX automatically makes the <a href="../apiref/#generic"><code>TBX_ASSERT()</code></a> macro and empty macro without side effect, when assertion error handling was disabled.</p>
+<p>Assertions are typically enabled in a debug version of the software program and disabled in a
+release version of the software program.</p>
+<h2 id="extra-tips">Extra tips</h2>
+<p>Make sure to write your assertion statements such that you do not accidentally remove functionality
+from your software program, after disabling the assertion error handling. So instead of the following:</p>
+<pre><code class="language-c">FATFS fs;
+
+void MountDrive(void)
+{
+  /* Mount the drive and make sure the drive mounting succeeded. */
+  TBX_ASSERT(f_mount(&amp;fs, &quot;0:&quot;, 0) == FR_OK);
+}
+</code></pre>
+<p>Do the following:</p>
+<pre><code class="language-c">FATFS fs;
+
+void MountDrive(void)
+{
+  FRESULT fresult;
+
+  /* Mount the drive. */
+  fresult = f_mount(&amp;fs, &quot;0:&quot;, 0);
+
+  /* Make sure the drive mounting succeeded. */
+  TBX_ASSERT(fresult == FR_OK);
+}
+</code></pre>
+<p>To be sure that the before mentioned problem does not occur, one could make the argument that assertion error handling should simply never be disabled.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../license/" class="btn btn-neutral float-left" title="License"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../critsect/" class="btn btn-neutral float-right" title="Critical sections">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/feaser/microtbx" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../license/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../critsect/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

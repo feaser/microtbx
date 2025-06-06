@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Checksums - MicroTBX User Manual</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Checksums";
+        var mkdocs_page_input_path = "checksum.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> MicroTBX User Manual
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../apiref/">API reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../misra/">MISRA compliance</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assertions/">Assertions</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../critsect/">Critical sections</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../heap/">Heap</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../mempools/">Memory pools</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../lists/">Linked lists</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../random/">Random numbers</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Checksums</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../platform/">Platform</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../extra/">Extra functionality</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">MicroTBX User Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Checksums</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/feaser/microtbx/edit/master/docs/checksum.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="checksums">Checksums</h1>
+<p>A checksum is an integer value that can verify the contents of a data block. In
+embedded software programs, the common purposes of a checksum are: to validate
+the contents of a data bock, and to detect accidental changes in a data block.</p>
+<p>A checksum could for example be calculated over the entire program code that is
+programmed into flash memory. The checksum could then stored at another
+location in flash memory, with the help of the debugger / flash programmer. At program startup, the initialization code could recalculate the checksum and
+compare it with the value programmed by the debugger / flash programmer. It the
+values do not match, you can conclude that somehow the flash contents got
+changed and the software program might not execute properly.</p>
+<p>Checksums are also often embedded in communication data streams. The sender
+calculates and adds the checksum to the communication data. Upon reception,
+the receiver recalculates the checksum and compares the calculated value with
+the value that was added by the sender. The communication data is deemed valid
+if both values match.</p>
+<h2 id="usage">Usage</h2>
+<p>MicroTBX includes functionality to calculate both 16-bit and 32-bit checksum
+values over a fixed length byte array, using the following cyclic redundancy check (CRC)
+algorithms:</p>
+<ul>
+<li>CRC16-CCITT-FALSE</li>
+<li>CRC32-MPEG2</li>
+</ul>
+<p>To calculate the 16-bit checksum value over a number of bytes, function <a href="../apiref/#tbxchecksumcrc16calculate"><code>TbxChecksumCrc16Calculate()</code></a> is available. In case a 32-bit checksum value
+is preferred, function <a href="../apiref/#tbxchecksumcrc32calculate"><code>TbxChecksumCrc32Calculate()</code></a> can be called.</p>
+<h2 id="examples">Examples</h2>
+<p>The following example declares a data block with communication data, consisting
+of 32 bytes (8 * 4). Function <code>CalculateChecksum()</code> demonstrates how a 32-bit
+checksum over the communication data is calculated. The sender of this data
+packet could send the checksum value together with the actual packet data.</p>
+<p>The receiver could read out the received packet data and packet checksum value.
+Next, it calls function <code>VerifyChecksum()</code> to check if the packet data is valid
+and no bits got changed during the communication transfer.</p>
+<pre><code class="language-c">uint32_t communicationData[8] =
+{
+  0x8ef9c15f, 0x4323a3cb, 0xb12ba488, 0xb3f5ec04,
+  0xc1c7544f, 0x4140ec9d, 0xc5dd421a, 0x14d57e3d
+};
+
+uint32_t CalculateChecksum(void)
+{
+  uint8_t   result;
+  uint8_t * dataPtr;
+  size_t    dataLen;
+
+  /* Collect data block settings. */
+  dataPtr = (uint8_t *)&amp;communicationData[0];
+  dataLen = sizeof(communicationData)/sizeof(uint8_t);
+  /* Calculate the checksum. */
+  result = TbxChecksumCrc32Calculate(dataPtr, dataLen);
+  /* Return the result. */
+  return result;
+}
+
+uint8_t VerifyChecksum(uint32_t checksum)
+{
+  uint8_t  result = TBX_FALSE;
+  uint32_t calculatedChecksum;
+
+  /* Recalculate the checksum. */
+  calculatedChecksum = CalculateChecksum();
+  /* Verify that the data contents are still valid. */
+  if (calculatedChecksum == checksum)
+  {
+    result = TBX_TRUE;
+  }
+  /* Return the result. */
+  return result;
+}
+</code></pre>
+<h2 id="configuration">Configuration</h2>
+<p>The 16-bit and 32-bit CRC algorithms uses a specific polynomial value and are
+seeded with an initial value. The default configuration of these values work
+fine and there is no need to change these.</p>
+<p>If for some reason your application requires you to set different values for the
+initial and polynomial values, you can override the default configuration by
+adding the following macros to the <code>tbx_conf.h</code> configuration file and assign
+the values you prefer:</p>
+<pre><code class="language-c">/** \brief Polynomial of the 16-bit CRC. */
+#define TBX_CONF_CHECKSUM_CRC16_POLYNOM          (0x1021U)
+
+/** \brief Initial value of the 6-bit CRC calculation. */
+#define TBX_CONF_CHECKSUM_CRC16_INITIAL          (0xFFFFU)
+
+/** \brief Polynomial of the 32-bit CRC. */
+#define TBX_CONF_CHECKSUM_CRC32_POLYNOM          (0x04C11DB7UL)
+
+/** \brief Initial value of the 32-bit CRC calculation. */
+#define TBX_CONF_CHECKSUM_CRC32_INITIAL          (0xFFFFFFFFUL)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../random/" class="btn btn-neutral float-left" title="Random numbers"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../crypto/" class="btn btn-neutral float-right" title="Cryptography">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/feaser/microtbx" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../random/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../crypto/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
