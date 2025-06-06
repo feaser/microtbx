@@ -216,7 +216,7 @@ Note that the items in the list are now sorted based on the message identifier i
 
 ## Limitations
 
-This convenient and easy-to-use set of functions, for managing and sorting items in a linked list, does come with one limitation: Not all API functions can be used, If you plan on storing items in the list that could potentially point to the same memory address. In case you plan on potentially storing such duplicate entries in the list, the following API functions should NOT be used:
+This convenient and easy-to-use set of functions, for managing and sorting items in a linked list, does come with one limitation: Not all API functions can be used, if you plan on storing items in the list that could potentially point to the same memory address. In case you plan on potentially storing such duplicate entries in the list, the following API functions should NOT be used:
 
 * `TbxListInsertItemBefore()`
 * `TbxListInsertItemAfter()`
