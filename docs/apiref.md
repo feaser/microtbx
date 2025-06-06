@@ -333,6 +333,8 @@ uint8_t TbxListInsertItemBefore(tTbxList       * list,
 
 Inserts an item into the list. The item will be added before the reference item.
 
+Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.
+
 | Parameter | Description                                                  |
 | --------- | ------------------------------------------------------------ |
 | `list`    | Pointer to a previously created linked list to operate on.   |
@@ -353,6 +355,8 @@ uint8_t TbxListInsertItemAfter(tTbxList       * list,
 
 Inserts an item into the list. The item will be added after the reference item.
 
+Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.
+
 | Parameter | Description                                                 |
 | --------- | ----------------------------------------------------------- |
 | `list`    | Pointer to a previously created linked list to operate on.  |
@@ -371,6 +375,8 @@ void TbxListRemoveItem(tTbxList       * list,
 ```
 
 Removes an item from the list, if present. Keep in mind that it is the caller's responsibility to release the memory of the item that is being removed from the list, before calling this function.
+
+Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.
 
 | Parameter | Description                                                |
 | --------- | ---------------------------------------------------------- |
@@ -418,6 +424,8 @@ void * TbxListGetPreviousItem(tTbxList const * list,
 
 Obtains the item that is located one position before in the list, relative to the item given in the parameter. Note that the item is just read, not removed.
 
+Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.
+
 | Parameter | Description                                                  |
 | --------- | ------------------------------------------------------------ |
 | `list`    | Pointer to a previously created linked list to operate on.   |
@@ -435,6 +443,8 @@ void * TbxListGetNextItem(tTbxList const * list,
 ```
 
 Obtains the item that is located one position further down in the list, relative to the item given in the parameter. Note that the item is just read, not removed.
+
+Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.
 
 | Parameter | Description                                                  |
 | --------- | ------------------------------------------------------------ |
@@ -454,6 +464,8 @@ void TbxListSwapItems(tTbxList const * list,
 ```
 
 Swaps the specified list items around.
+
+Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.
 
 | Parameter | Description                                                |
 | --------- | ---------------------------------------------------------- |
