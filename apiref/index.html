@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>API reference - MicroTBX User Manual</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "API reference";
+        var mkdocs_page_input_path = "apiref.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> MicroTBX User Manual
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">API reference</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#macros">Macros</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#generic">Generic</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#types">Types</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#ttbxasserthandler">tTbxAssertHandler</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ttbxrandomseedinithandler">tTbxRandomSeedInitHandler</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ttbxlist">tTbxList</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ttbxlistcompareitems">tTbxListCompareItems</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#assertions">Assertions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxassertsethandler">TbxAssertSetHandler</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#critical-sections">Critical Sections</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxcriticalsectionenter">TbxCriticalSectionEnter</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxcriticalsectionexit">TbxCriticalSectionExit</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#heap">Heap</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxheapallocate">TbxHeapAllocate</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxheapgetfree">TbxHeapGetFree</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#memory-pools">Memory Pools</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxmempoolcreate">TbxMemPoolCreate</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxmempoolallocate">TbxMemPoolAllocate</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxmempoolallocateauto">TbxMemPoolAllocateAuto</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxmempoolrelease">TbxMemPoolRelease</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linked-lists">Linked Lists</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistcreate">TbxListCreate</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistdelete">TbxListDelete</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistclear">TbxListClear</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistgetsize">TbxListGetSize</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistinsertitemfront">TbxListInsertItemFront</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistinsertitemback">TbxListInsertItemBack</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistinsertitembefore">TbxListInsertItemBefore</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistinsertitemafter">TbxListInsertItemAfter</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistremoveitem">TbxListRemoveItem</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistgetfirstitem">TbxListGetFirstItem</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistgetlastitem">TbxListGetLastItem</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistgetpreviousitem">TbxListGetPreviousItem</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistgetnextitem">TbxListGetNextItem</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistswapitems">TbxListSwapItems</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxlistsortitems">TbxListSortItems</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#random-numbers">Random Numbers</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxrandomnumberget">TbxRandomNumberGet</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxrandomsetseedinithandler">TbxRandomSetSeedInitHandler</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#checksums">Checksums</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxchecksumcrc16calculate">TbxChecksumCrc16Calculate</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxchecksumcrc32calculate">TbxChecksumCrc32Calculate</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cryptography">Cryptography</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxcryptoaes256encrypt">TbxCryptoAes256Encrypt</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxcryptoaes256decrypt">TbxCryptoAes256Decrypt</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#platform">Platform</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tbxplatformlittleendian">TbxPlatformLittleEndian</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../misra/">MISRA compliance</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assertions/">Assertions</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../critsect/">Critical sections</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../heap/">Heap</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../mempools/">Memory pools</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../lists/">Linked lists</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../random/">Random numbers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../checksum/">Checksums</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../platform/">Platform</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../extra/">Extra functionality</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">MicroTBX User Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">API reference</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/feaser/microtbx/edit/master/docs/apiref.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="api-reference">API reference</h1>
+<p>This section provides a full reference of all the functions, macros and types that MicroTBX offers.</p>
+<h2 id="macros">Macros</h2>
+<h4 id="generic">Generic</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Macro</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>TBX_VERSION_MAIN</code></td>
+<td style="text-align: left;">Main version number of MicroTBX.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_VERSION_MINOR</code></td>
+<td style="text-align: left;">Minor version number of MicroTBX.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_VERSION_PATCH</code></td>
+<td style="text-align: left;">Patch number of MicroTBX.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_TRUE</code></td>
+<td style="text-align: left;">Boolean true value.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_FALSE</code></td>
+<td style="text-align: left;">Boolean false value.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_OK</code></td>
+<td style="text-align: left;">Generic okay value.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_ERROR</code></td>
+<td style="text-align: left;">Generic error value.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_ON</code></td>
+<td style="text-align: left;">Generic on value.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_OFF</code></td>
+<td style="text-align: left;">Generic off value.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_UNUSED_ARG()</code></td>
+<td style="text-align: left;">Function-like macro to flag a function parameter as unused.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TBX_ASSERT()</code></td>
+<td style="text-align: left;">Function-like macro to perform an assertion check.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="configuration">Configuration</h4>
+<table>
+<thead>
+<tr>
+<th>Macro</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TBX_CONF_HEAP_SIZE</code></td>
+<td>Configure the size of the heap in bytes.</td>
+</tr>
+<tr>
+<td><code>TBX_CONF_ASSERTIONS_ENABLE</code></td>
+<td>Enable/disable run-time assertions.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="types">Types</h2>
+<h4 id="ttbxasserthandler">tTbxAssertHandler</h4>
+<pre><code class="language-c">typedef void (* tTbxAssertHandler)(char     const * const file,
+                                   uint32_t               line)
+</code></pre>
+<p>Function type for a run-time assertion handler function.</p>
+<h4 id="ttbxrandomseedinithandler">tTbxRandomSeedInitHandler</h4>
+<pre><code class="language-c">typedef uint32_t (* tTbxRandomSeedInitHandler)(void)
+</code></pre>
+<p>Function type for an application specific seed initialization handler.</p>
+<h4 id="ttbxlist">tTbxList</h4>
+<pre><code class="language-c">typedef struct tTbxList
+</code></pre>
+<p>Layout of a linked list. Its pointer serves as the handle to the linked list which is obtained after creation of the list and which is needed in the other functions of this module. Note that its elements should be considered private and only be accessed internally by the linked list module.</p>
+<h4 id="ttbxlistcompareitems">tTbxListCompareItems</h4>
+<pre><code class="language-c">typedef uint8_t (* tTbxListCompareItems)(void const * item1, 
+                                         void const * item2)
+</code></pre>
+<p>Callback function to compare items. It is called during list sorting. The return value of the callback function has the following meaning: <code>TBX_TRUE</code> if <code>item1</code>'s data is greater than <code>item2</code>'s data, <code>TBX_FALSE</code> otherwise.</p>
+<h2 id="functions">Functions</h2>
+<h3 id="assertions">Assertions</h3>
+<p>More information regarding this software component, including code examples, is found <a href="../assertions/">here</a>.</p>
+<h4 id="tbxassertsethandler">TbxAssertSetHandler</h4>
+<pre><code class="language-c">void TbxAssertSetHandler(tTbxAssertHandler assertHandler)
+</code></pre>
+<p>Sets the application specific assertion handler. Use macro <a href="##generic"><code>TBX_ASSERT()</code></a> in your code for assertions.</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>assertHandler</code></td>
+<td>Pointer to the application specific assertion handler to use instead of the default<br>internal handler. The type is <a href="#ttbxasserthandler"><code>tTbxAssertHandler</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="critical-sections">Critical Sections</h3>
+<p>More information regarding this software component, including code examples, is found <a href="../critsect/">here</a>.</p>
+<h4 id="tbxcriticalsectionenter">TbxCriticalSectionEnter</h4>
+<pre><code class="language-c">void TbxCriticalSectionEnter(void)
+</code></pre>
+<p>Enter a critical section. Critical sections are needed in an interrupt driven software program to obtain mutual exclusive access shared resources such as global data and certain peripherals. Note that each call to this function should always be followed by a call to <a href="#tbxcriticalsectionexit"><code>TbxCriticalSectionExit()</code></a>. </p>
+<h4 id="tbxcriticalsectionexit">TbxCriticalSectionExit</h4>
+<pre><code class="language-c">void TbxCriticalSectionExit(void)
+</code></pre>
+<p>Exit a critical section. Critical sections are needed in an interrupt driven software program to obtain mutual exclusive access shared resources such as global data and certain peripherals. Note that each call to this function should always be preceded by a call to <a href="#tbxcriticalsectionenter"><code>TbxCriticalSectionEnter()</code></a>.</p>
+<h3 id="heap">Heap</h3>
+<p>More information regarding this software component, including code examples, is found <a href="../heap/">here</a>.</p>
+<h4 id="tbxheapallocate">TbxHeapAllocate</h4>
+<pre><code class="language-c">void * TbxHeapAllocate(size_t size)
+</code></pre>
+<p>Allocates the desired number of bytes on the heap. It can be used instead of the compiler specific <code>malloc()</code> function. Note that free-ing of allocated memory is not supported to prevent memory fragmentation. If you want to dynamically allocate and release memory, use <a href="../mempools/">memory pools</a>. Note that you configure the overall heap size with macro <a href="#configuration"><code>TBX_CONF_HEAP_SIZE</code></a> in <code>tbx_conf.h</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size</code></td>
+<td>The number of bytes to allocate on the heap.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pointer to the start of the newly allocated heap memory if successful, <code>NULL</code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxheapgetfree">TbxHeapGetFree</h4>
+<pre><code class="language-c">size_t TbxHeapGetFree(void)
+</code></pre>
+<p>Obtains the current amount of bytes that are still available on the heap.</p>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Number of free bytes on the heap.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="memory-pools">Memory Pools</h3>
+<p>More information regarding this software component, including code examples, is found <a href="../mempools/">here</a>.</p>
+<h4 id="tbxmempoolcreate">TbxMemPoolCreate</h4>
+<pre><code class="language-c">uint8_t TbxMemPoolCreate(size_t numBlocks,
+                         size_t blockSize)
+</code></pre>
+<p>Creates a new memory pool with the specified number of blocks, where each block has the size as specified by the second function parameter. The required memory is statically preallocated on the heap. This function is typically called one or more times during software program initialization, before the infinite program loop is entered. Once one ore more memory pools were created, the functions <a href="#tbxmempoolallocate"><code>TbxMemPoolAllocate()</code></a> and <a href="#tbxmempoolrelease"><code>TbxMemPoolRelease()</code></a> can be called to perform dynamic memory allocation.</p>
+<p>A well designed memory pool approach makes dynamic memory allocation possible on RAM constrained microcontrollers, without the need to worry about memory fragmentation. Note that deleting a previously created memory pool is not supported on purpose to prevent memory fragmentation. </p>
+<p>When this function is called to create a memory pool with a size that was already created before, the already existing memory pool is extended instead of creating a new memory pool. This is an important feature because it makes it possible to automatically expand the memory pool if more blocks are needed.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>numBlocks</code></td>
+<td>The number of blocks to statically preallocate on the heap for this memory pool.</td>
+</tr>
+<tr>
+<td><code>blockSize</code></td>
+<td>The size of each block in bytes.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TBX_OK</code> if successful, <code>TBX_ERROR</code> otherwise for example when there is no more space available on<br>the heap to statically preallocated the blocks.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxmempoolallocate">TbxMemPoolAllocate</h4>
+<pre><code class="language-c">void * TbxMemPoolAllocate(size_t size)
+</code></pre>
+<p>Attempts to allocate the desired number of bytes in a previously created memory pool. A block will be allocated in a memory pool that best fits the requested byte size. For example, if the following memory pools were created during program initialization:</p>
+<pre><code class="language-c">TbxMemPoolCreate(10, 8);
+TbxMemPoolCreate(10, 16);
+TbxMemPoolCreate(10, 32);
+</code></pre>
+<p>And the following function call is made:</p>
+<pre><code class="language-c">uint8_t * myMem = TbxMemPoolAllocate(9);
+</code></pre>
+<p>Then the memory will be allocated from the memory pool with block size 16, so the second memory pool that was created. If there are no more blocks available in that memory pool, then <code>NULL</code> is returned. So note that this function does NOT move on to the memory pool with one block size larger. Such a feature would be easy to realize but this design decision was made on purpose.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size</code></td>
+<td>The number of bytes to allocate in a memory pool.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pointer to the start of the newly allocated memory if successful, <code>NULL</code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxmempoolallocateauto">TbxMemPoolAllocateAuto</h4>
+<pre><code class="language-c">void * TbxMemPoolAllocateAuto(size_t size)
+</code></pre>
+<p>An alternative version of  <a href="#tbxmempoolallocate"><code>TbxMemPoolAllocate()</code></a>, which automatically creates  a new memory pool with one block, if one with the exact same blockSize was not yet created. If one with the exact same blockSize was already created, but it's full, then the memory pool is automatically expanded to have one more block.</p>
+<p>This offers a convenient way of working with memory pools compared to  <a href="#tbxmempoolallocate"><code>TbxMemPoolAllocate()</code></a>. In addition, it guarantees that it always works on a memory pool where the <code>blockSize == "size"</code>. It bypasses the best fitting algorithm used by <a href="#tbxmempoolallocate"><code>TbxMemPoolAllocate()</code></a>, which looks for an existing memory pool with a <code>blockSize &gt;= "size"</code>.</p>
+<p>For example, to allocate two blocks of 32 bytes using memory pools, all you need to do is:</p>
+<pre><code class="language-c">uint8_t * myMem[2];
+
+myMem[0] = TbxMemPoolAllocateAuto(32);
+myMem[1] = TbxMemPoolAllocateAuto(32);
+</code></pre>
+<p>Note that there was no need to first create this memory pool with a call to <a href="#tbxmempoolcreate"><code>TbxMemPoolCreate()</code></a>. During the first call to <code>TbxMemPoolAllocateAuto()</code>, the memory pool with a block size of 32 bytes was automatically created, including adding one block of 32 bytes to it, which was immediately allocated. During the second call to <code>TbxMemPoolAllocateAuto()</code>, another block of 32 bytes was automatically added to the existing memory pool and the newly added block was immediately allocated.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size</code></td>
+<td>The number of bytes to allocate using a memory pool.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pointer to the start of the newly allocated memory if successful, <code>NULL</code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxmempoolrelease">TbxMemPoolRelease</h4>
+<pre><code class="language-c">void TbxMemPoolRelease(void * memPtr)
+</code></pre>
+<p>Releases the previously allocated block of memory. Once the memory is released, it can be allocated again afterwards with function <a href="#tbxmempoolallocate"><code>TbxMemPoolAllocate()</code></a>. Note that this function automatically finds the memory pool that the memory block belongs to.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>memPtr</code></td>
+<td>Pointer to the start of the memory block. Basically, the pointer that was returned by<br>function <a href="#tbxmempoolallocate"><code>TbxMemPoolAllocate()</code></a>, when the memory was initially allocated.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="linked-lists">Linked Lists</h3>
+<p>More information regarding this software component, including code examples, is found <a href="../lists/">here</a>.</p>
+<h4 id="tbxlistcreate">TbxListCreate</h4>
+<pre><code class="language-c">tTbxList * TbxListCreate(void)
+</code></pre>
+<p>Creates a new and empty linked list and returns its pointer. Make sure to store the pointer because it serves as a handle to the linked list, which is needed when calling the other API functions in this module.</p>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The pointer to the created linked list or <code>NULL</code> in case or error. The type is <a href="#ttbxlist"><code>tTbxList</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistdelete">TbxListDelete</h4>
+<pre><code class="language-c">void TbxListDelete(tTbxList * list)
+</code></pre>
+<p>Deletes a previously created linked list. Afterwards, the pointer to the linked list is no longer valid and should not be used anymore.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistclear">TbxListClear</h4>
+<pre><code class="language-c">void TbxListClear(tTbxList * list)
+</code></pre>
+<p>Removes all items from the linked list. Keep in mind that it is the caller's responsibility to release the memory of the items that were placed in the list, before calling this function.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistgetsize">TbxListGetSize</h4>
+<pre><code class="language-c">size_t TbxListGetSize(tTbxList const * list)
+</code></pre>
+<p>Obtains the number of items that are currently stored in the list.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total number of items currently stored in the list.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistinsertitemfront">TbxListInsertItemFront</h4>
+<pre><code class="language-c">uint8_t TbxListInsertItemFront(tTbxList * list, 
+                               void     * item)
+</code></pre>
+<p>Inserts an item into the list. The item will be added at the start of the list.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>item</code></td>
+<td>Pointer to the item to insert.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TBX_OK</code> if the item could be inserted, <code>TBX_ERROR</code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistinsertitemback">TbxListInsertItemBack</h4>
+<pre><code class="language-c">uint8_t TbxListInsertItemBack(tTbxList * list,
+                              void     * item)
+</code></pre>
+<p>Inserts an item into the list. The item will be added at the end of the list.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>item</code></td>
+<td>Pointer to the item to insert.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TBX_OK</code> if the item could be inserted, <code>TBX_ERROR</code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistinsertitembefore">TbxListInsertItemBefore</h4>
+<pre><code class="language-c">uint8_t TbxListInsertItemBefore(tTbxList       * list,
+                                void           * item,
+                                void     const * itemRef)
+</code></pre>
+<p>Inserts an item into the list. The item will be added before the reference item.</p>
+<p>Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>item</code></td>
+<td>Pointer to the item to insert.</td>
+</tr>
+<tr>
+<td><code>itemRef</code></td>
+<td>Reference item before which the new item should be inserted.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TBX_OK</code> if the item could be inserted, <code>TBX_ERROR</code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistinsertitemafter">TbxListInsertItemAfter</h4>
+<pre><code class="language-c">uint8_t TbxListInsertItemAfter(tTbxList       * list, 
+                               void           * item,
+                               void     const * itemRef)
+</code></pre>
+<p>Inserts an item into the list. The item will be added after the reference item.</p>
+<p>Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>item</code></td>
+<td>Pointer to the item to insert.</td>
+</tr>
+<tr>
+<td><code>itemRef</code></td>
+<td>Reference item after which the new item should be inserted.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TBX_OK</code> if the item could be inserted, <code>TBX_ERROR</code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistremoveitem">TbxListRemoveItem</h4>
+<pre><code class="language-c">void TbxListRemoveItem(tTbxList       * list,
+                       void     const * item)
+</code></pre>
+<p>Removes an item from the list, if present. Keep in mind that it is the caller's responsibility to release the memory of the item that is being removed from the list, before calling this function.</p>
+<p>Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>item</code></td>
+<td>Pointer to the item to remove.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistgetfirstitem">TbxListGetFirstItem</h4>
+<pre><code class="language-c">void * TbxListGetFirstItem(tTbxList const * list)
+</code></pre>
+<p>Obtains the item that is located at the start of the list. Note that the item is just read, not removed.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The item at the start of the list or <code>NULL</code> if the list is empty.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistgetlastitem">TbxListGetLastItem</h4>
+<pre><code class="language-c">void * TbxListGetLastItem(tTbxList const * list)
+</code></pre>
+<p>Obtains the item that is located at the end of the list. Note that the item is just read, not removed.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The item at the end of the list or NULL if the list is empty.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistgetpreviousitem">TbxListGetPreviousItem</h4>
+<pre><code class="language-c">void * TbxListGetPreviousItem(tTbxList const * list,
+                              void     const * itemRef)
+</code></pre>
+<p>Obtains the item that is located one position before in the list, relative to the item given in the parameter. Note that the item is just read, not removed.</p>
+<p>Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>itemRef</code></td>
+<td>The item that is the next one in the list relative to the one this function should return.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The item one position before in the list or <code>NULL</code> if there are no more items in the list before the item<br>given in the parameter.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistgetnextitem">TbxListGetNextItem</h4>
+<pre><code class="language-c">void * TbxListGetNextItem(tTbxList const * list,
+                          void     const * itemRef)
+</code></pre>
+<p>Obtains the item that is located one position further down in the list, relative to the item given in the parameter. Note that the item is just read, not removed.</p>
+<p>Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>itemRef</code></td>
+<td>The item that is the previous one in the list relative to the one this function should<br>return.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The item one position further down in the list or NULL if there are no more items in the list after the<br>item given in the parameter.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistswapitems">TbxListSwapItems</h4>
+<pre><code class="language-c">void TbxListSwapItems(tTbxList const * list,
+                      void           * item1,
+                      void           * item2)
+</code></pre>
+<p>Swaps the specified list items around.</p>
+<p>Only use this API function if the list does NOT contain items with a duplicate value, meaning items that point to the exact same memory address.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>item1</code></td>
+<td>The first item for the swap operation.</td>
+</tr>
+<tr>
+<td><code>item2</code></td>
+<td>The second item for the swap operation.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxlistsortitems">TbxListSortItems</h4>
+<pre><code class="language-c">void TbxListSortItems(tTbxList             const * list,
+                      tTbxListCompareItems         compareItemsFcn)
+</code></pre>
+<p>Sorts the items in the list. While sorting, it calls the specified callback function which should do the actual comparison of the items.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>Pointer to a previously created linked list to operate on.</td>
+</tr>
+<tr>
+<td><code>compareItemsFcn</code></td>
+<td>Callback function that does the item comparison. It is of type<br><a href="#ttbxlistcompareitems"><code>tTbxListCompareItems</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="random-numbers">Random Numbers</h3>
+<p>More information regarding this software component, including code examples, is found <a href="../random/">here</a>.</p>
+<h4 id="tbxrandomnumberget">TbxRandomNumberGet</h4>
+<pre><code class="language-c">uint32_t TbxRandomNumberGet(void)
+</code></pre>
+<p>Obtains a random number.</p>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value of the newly generated random number.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxrandomsetseedinithandler">TbxRandomSetSeedInitHandler</h4>
+<pre><code class="language-c">void TbxRandomSetSeedInitHandler(tTbxRandomSeedInitHandler seedInitHandler)
+</code></pre>
+<p>Sets the application specific function that should be called when the seed for the random number generation should be initialized. The actual seed value is not really important, as long as it is a value that is different every time the software program runs, so after each reset event.</p>
+<p>Here are a few different approaches that could be implemented to realize an seed value that is different each time the software program runs: </p>
+<ol>
+<li>
+<p>Keep one of the analog inputs on your microcontroller unconnected. Such a floating analog input picks up noise from the surrounding environment and readings will therefore always vary slightly. Configure your ADC peripheral to perform an analog to digital conversion of this analog input and use its result value to seed the generator.</p>
+</li>
+<li>
+<p>If your microcontroller has EEPROM or a non-volatile register, you can use it to store a value that you use to seed the generator. Then simply increment its value by one upon software program startup. This way you have a different seed value every time your software program is started. Keep in mind though that these data storage options have a limited amount of write cycles. A better option might be to use external FRAM.</p>
+</li>
+<li>
+<p>If your microcontroller has access to an external file system such as an SD-card, you could store a value, which you use to seed the generator, in a file. Then simply increment its value by one upon software program startup. This way you have a different seed value every time your software program is started.</p>
+</li>
+<li>
+<p>If your microcontroller based system features a battery backed real-time clock, you could use the current date/time value to seed the generator algorithm.</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>seedInitHandler</code></td>
+<td>Pointer to the application specific seed initialization handler to use instead of the<br>default internal handler. If is of type <a href="#ttbxrandomseedinithandler"><code>tTbxRandomSeedInitHandler</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="checksums">Checksums</h3>
+<p>More information regarding this software component, including code examples, is found <a href="../checksum/">here</a>.</p>
+<h4 id="tbxchecksumcrc16calculate">TbxChecksumCrc16Calculate</h4>
+<pre><code class="language-c">uint16_t TbxChecksumCrc16Calculate(uint8_t const * data,
+                                   size_t          len)
+</code></pre>
+<p>Calculates a 16-bit CRC value over the specified data.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td>Array with bytes over which the CRC16 should be calculated.</td>
+</tr>
+<tr>
+<td><code>len</code></td>
+<td>Number of bytes in the data array.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The 16-bit CRC value.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxchecksumcrc32calculate">TbxChecksumCrc32Calculate</h4>
+<pre><code class="language-c">uint32_t TbxChecksumCrc32Calculate(uint8_t const * data,
+                                   size_t          len)
+</code></pre>
+<p>Calculates a 32-bit CRC value over the specified data.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td>Array with bytes over which the CRC32 should be calculated.</td>
+</tr>
+<tr>
+<td><code>len</code></td>
+<td>Number of bytes in the data array.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The 32-bit CRC value.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cryptography">Cryptography</h3>
+<p>More information regarding this software component is, including code examples, found <a href="../crypto/">here</a>.</p>
+<h4 id="tbxcryptoaes256encrypt">TbxCryptoAes256Encrypt</h4>
+<pre><code class="language-c">void TbxCryptoAes256Encrypt(uint8_t       * data,
+                            size_t          len,
+                            uint8_t const * key)
+</code></pre>
+<p>Encrypts the len-bytes in the specified data-array, using the specified 256-bit (32 bytes) key. The results are written back into the same array.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td>Pointer to the byte array with data to encrypt. The encrypted bytes are stored in the<br>same array.</td>
+</tr>
+<tr>
+<td><code>len</code></td>
+<td>The number of bytes in the data-array to encrypt. It must be a multiple of 16, as this is<br>the AES256 minimal block size.</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>The 256-bit encryption key as a array of 32 bytes.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tbxcryptoaes256decrypt">TbxCryptoAes256Decrypt</h4>
+<pre><code class="language-c">void TbxCryptoAes256Decrypt(uint8_t       * data,
+                            size_t          len,
+                            uint8_t const * key)
+</code></pre>
+<p>Decrypts the len-bytes in the specified data-array, using the specified 256-bit (32 bytes) key. The results are written back into the same array.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td>Pointer to the byte array with data to decrypt. The decrypted bytes are stored in the<br>same array.</td>
+</tr>
+<tr>
+<td><code>len</code></td>
+<td>The number of bytes in the data-array to decrypt. It must be a multiple of 16, as this is<br>the AES256 minimal block size.</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>The 256-bit decryption key as a array of 32 bytes.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="platform">Platform</h3>
+<p>More information regarding this software component is, including code examples, found <a href="../platform/">here</a>.</p>
+<h4 id="tbxplatformlittleendian">TbxPlatformLittleEndian</h4>
+<pre><code class="language-c">uint8_t TbxPlatformLittleEndian(void)
+</code></pre>
+<p>Utility function to determine if the targets memory storage organization is little endian (Intel) or big endian (Motorola).</p>
+<table>
+<thead>
+<tr>
+<th>Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TBX_TRUE for little endian, TBX_FALSE for big endian.</td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../misra/" class="btn btn-neutral float-right" title="MISRA compliance">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/feaser/microtbx" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../misra/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

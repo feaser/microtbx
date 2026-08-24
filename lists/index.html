@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Linked lists - MicroTBX User Manual</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Linked lists";
+        var mkdocs_page_input_path = "lists.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> MicroTBX User Manual
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../apiref/">API reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../misra/">MISRA compliance</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assertions/">Assertions</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../critsect/">Critical sections</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../heap/">Heap</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../mempools/">Memory pools</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Linked lists</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1-fifo-buffer">Example 1 - FIFO buffer</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-2-iterate-list">Example 2 - Iterate list</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-3-sort-list">Example 3 - Sort list</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#limitations">Limitations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../random/">Random numbers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../checksum/">Checksums</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../platform/">Platform</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../extra/">Extra functionality</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">MicroTBX User Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Linked lists</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/feaser/microtbx/edit/master/docs/lists.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="linked-lists">Linked lists</h1>
+<p>This software component consists of an easy-to-use set of functions for managing and sorting items in a linked list. It builds upon the <a href="../mempools/">memory pool</a>
+functionality, which makes is possible to dynamically create, delete and automatically grow linked lists in a convenient way. Think of a linked list as an array on steroids. You do not yet have to know its size upon creation and you can insert, remove and sort its items with ease.</p>
+<p>A linked list is a sequence of data items, where each data item contains a connection to the adjacent items. In this software component the definition of a data item is a pointer to the data. The only thing you as the programmer need to take care of, is that the data pointer actually points to valid data before inserting it into
+the linked list. Linked lists are commonly used data structures in software programs and they are perfect for scenarios where you need to store a sequence of data, but you do not yet know the maximum number of items to store ahead of time. An example would be a first-in-first-out (FIFO) buffer.</p>
+<h2 id="usage">Usage</h2>
+<p>Linked list can be created and deleted at any time in the software program with functions <a href="../apiref/#tbxlistcreate"><code>TbxListCreate()</code></a> and <a href="../apiref/#tbxlistdelete"><code>TbxListDelete()</code></a>. The <a href="../apiref/#tbxlistcreate"><code>TbxListCreate()</code></a> function returns a pointer to the new list. This list pointer serves as a handle to the list. You can pass this handle as a parameter to all the other functions in the software component to identify the list that should be operated on.</p>
+<p>Once the list is created, you can start adding items to the list with functions <a href="../apiref/#tbxlistinsertitemfront"><code>TbxListInsertItemFront()</code></a>, <a href="../apiref/#tbxlistinsertitemback"><code>TbxListInsertItemBack()</code></a>, <a href="../apiref/#tbxlistinsertitembefore"><code>TbxListInsertItemBefore()</code></a>, and <a href="../apiref/#tbxlistinsertitemafter"><code>TbxListInsertItemAfter()</code></a>. The function to call depends on where in the list you would like to add the item.</p>
+<p>For reading items and for iterating over items, the functions <a href="../apiref/#tbxlistgetfirstitem"><code>TbxListGetFirstItem()</code></a>, <a href="../apiref/#tbxlistgetlastitem"><code>TbxListGetLastItem()</code></a>, <a href="../apiref/#tbxlistgetpreviousitem"><code>TbxListGetPreviousItem()</code></a>, and <a href="../apiref/#tbxlistgetnextitem"><code>TbxListGetNextItem()</code></a> are available.</p>
+<p>At any given time, you can obtain the number of items that are stored in the list with function <a href="../apiref/#tbxlistgetsize"><code>TbxListGetSize()</code></a>. Call function <a href="../apiref/#tbxlistremoveitem"><code>TbxListRemoveItem()</code></a> to remove
+a single item from the list, or call <a href="../apiref/#tbxlistclear"><code>TbxListClear()</code></a> to remove all items at once.</p>
+<p>For editing the order of the items in the list, functions <a href="../apiref/#tbxlistswapitems"><code>TbxListSwapItems()</code></a> and <a href="../apiref/#tbxlistsortitems"><code>TbxListSortItems()</code></a> are available. When calling <a href="../apiref/#tbxlistsortitems"><code>TbxListSortItems()</code></a> you can
+specify your own function that will be called during the sort operation. In this callback function you can implement your own application specific logic for
+comparing two data items, therefore giving you full control and flexibility over how the sorting works.</p>
+<h2 id="examples">Examples</h2>
+<p>This section contains a few examples to demonstrate how the linked list software component works. To keep the examples simple, some error checking of function
+return values was omitted. The examples assume that the following type for an arbitrary message is defined:</p>
+<pre><code class="language-c">typedef struct
+{
+  uint32_t id;
+  uint8_t  len;
+  uint8_t  data[8];
+} tMsg;
+</code></pre>
+<h3 id="example-1-fifo-buffer">Example 1 - FIFO buffer</h3>
+<p>The first example demonstrates how quickly a first-in-first-out (FIFO) buffer can be created. Keep in mind that a linked list holds pointers to data items. It
+is up to the developer to allocate and release the memory for the data item. Luckily, this is easy with the help of a <a href="../mempools/">memory pool</a>.</p>
+<pre><code class="language-c">tTbxList * msgBuffer;
+
+void MsgBufferInit(void)
+{
+  /* Create the linked list. */
+  msgBuffer = TbxListCreate();
+}
+
+void MsgBufferAdd(tMsg const * msg)
+{
+  tMsg * newMsg;
+
+  /* Allocate block from an automatically created and expanded memory pool. */
+  newMsg = TbxMemPoolAllocateAuto(sizeof(tMsg));
+  /* Copy the message to the newly allocated memory. */
+  *newMsg = *msg;
+  /* Add the message at the end of the list. */
+  TbxListInsertItemBack(msgBuffer, newMsg);
+}
+
+uint8_t MsgBufferGet(tMsg * msg)
+{
+  uint8_t   result = TBX_ERROR;
+  tMsg    * oldMsg;
+  uint8_t   idx;
+
+  /* Get the oldest message from the list, if any. */
+  oldMsg = TbxListGetFirstItem(msgBuffer);
+  if (oldMsg != NULL)
+  {
+    /* Delete it from the list now that we read it. */
+    TbxListRemoveItem(msgBuffer, oldMsg);
+    /* Copy the message contents. */
+    *msg = *oldMsg;
+    /* Give the allocated memory for the message back to the pool. */
+    TbxMemPoolRelease(oldMsg);
+    /* Update the result. */
+    result = TBX_OK;
+  }
+  return result;
+}
+</code></pre>
+<p>You now not only have a FIFO buffer for storing messages, but its implementation is such that it can automatically grow in size. Memory pools form the foundation
+for this, meaning that you do not have to worry about memory fragmentation. The following code demonstrates how messages can be stored and retrieved from this FIFO buffer:</p>
+<pre><code class="language-c">/* Initialize the message FIFO buffer. */
+MsgBufferInit();
+
+/* Add a few messages. */
+tMsg newMsg1 = { 0x200, 8, { 1, 2, 3, 4, 5, 6, 7, 8} };
+tMsg newMsg2 = { 0x300, 8, { 1, 2, 3, 4, 5, 6, 7, 8} };
+tMsg newMsg3 = { 0x100, 8, { 1, 2, 3, 4, 5, 6, 7, 8} };
+MsgBufferAdd(&amp;newMsg1);
+MsgBufferAdd(&amp;newMsg2);
+MsgBufferAdd(&amp;newMsg3);
+
+/* Extract messages from the FIFO buffer. */
+tMsg msg;
+while (MsgBufferGet(&amp;msg) == TBX_OK)
+{
+  printf(&quot;  Item ID: 0x%x\n&quot;, msg.id);
+}
+</code></pre>
+<p>After running this code, the following is shown:</p>
+<pre><code>Item ID: 0x200
+Item ID: 0x300
+Item ID: 0x100
+</code></pre>
+<h3 id="example-2-iterate-list">Example 2 - Iterate list</h3>
+<p>The second example demonstrates how to iterate through contents of a linked list. The following function prints information about the list contents:</p>
+<pre><code class="language-c">void MsgBufferPrint(void)
+{
+  tMsg   * msg;
+  size_t   cnt = 0;
+
+  printf(&quot;Number of items: %d\n&quot;, TbxListGetSize(msgBuffer));
+  msg = TbxListGetFirstItem(msgBuffer);
+  while (msg != NULL)
+  {
+    printf(&quot;  Item %d ID: 0x%x\n&quot;, ++cnt, msg-&gt;id);
+    msg = TbxListGetNextItem(msgBuffer, msg);
+  }
+}
+</code></pre>
+<p>After running this example code:</p>
+<pre><code class="language-c">/* Initialize the message FIFO buffer. */
+MsgBufferInit();
+
+/* Add a few messages. */
+tMsg newMsg1 = { 0x200, 8, { 1, 2, 3, 4, 5, 6, 7, 8} };
+tMsg newMsg2 = { 0x300, 8, { 1, 2, 3, 4, 5, 6, 7, 8} };
+tMsg newMsg3 = { 0x100, 8, { 1, 2, 3, 4, 5, 6, 7, 8} };
+MsgBufferAdd(&amp;newMsg1);
+MsgBufferAdd(&amp;newMsg2);
+MsgBufferAdd(&amp;newMsg3);
+
+/* Print current FIFO buffer contents. */
+MsgBufferPrint();
+</code></pre>
+<p>The following is shown:</p>
+<pre><code>Number of items: 3
+  Item 1 ID: 0x200
+  Item 2 ID: 0x300
+  Item 3 ID: 0x100
+</code></pre>
+<h3 id="example-3-sort-list">Example 3 - Sort list</h3>
+<p>The third example builds upon example 2, where there are three messages in the list. Let's assume you want to sort the list contents based on the message
+identifier. For this you could implement the following function for comparing two messages:</p>
+<pre><code class="language-c">uint8_t CompareMessage(void const * item1, void const * item2)
+{
+  uint8_t         result = TBX_FALSE;
+  tMsg    const * msg1 = item1;
+  tMsg    const * msg2 = item2;
+
+  if (msg1-&gt;id &gt; msg2-&gt;id)
+  {
+    result = TBX_TRUE;
+  }
+  return result;
+}
+</code></pre>
+<p>To perform the actual sort operation, you could run this code:</p>
+<pre><code class="language-c">/* Print FIFO buffer contents before sorting. */
+printf(&quot;--- Before sorting ---\n&quot;);
+MsgBufferPrint();
+
+/* Sort the buffer based on the message identifier. */
+TbxListSortItems(msgBuffer, CompareMessage);
+
+/* Print FIFO buffer contents after sorting. */
+printf(&quot;--- After sorting ---\n&quot;);
+MsgBufferPrint();
+</code></pre>
+<p>The following is shown:</p>
+<pre><code>--- Before sorting ---
+Number of items: 3
+  Item 1 ID: 0x200
+  Item 2 ID: 0x300
+  Item 3 ID: 0x100
+--- After sorting ---
+Number of items: 3
+  Item 1 ID: 0x100
+  Item 2 ID: 0x200
+  Item 3 ID: 0x300
+</code></pre>
+<p>Note that the items in the list are now sorted based on the message identifier in ascending order.</p>
+<h2 id="limitations">Limitations</h2>
+<p>This convenient and easy-to-use set of functions, for managing and sorting items in a linked list, does come with one limitation: Not all API functions can be used, if you plan on storing items in the list that could potentially point to the same memory address. In case you plan on potentially storing such duplicate entries in the list, the following API functions should NOT be used:</p>
+<ul>
+<li><code>TbxListInsertItemBefore()</code></li>
+<li><code>TbxListInsertItemAfter()</code></li>
+<li><code>TbxListGetPreviousItem()</code></li>
+<li><code>TbxListGetNextItem()</code></li>
+<li><code>TbxListRemoveItem()</code></li>
+<li><code>TbxListSwapItems()</code></li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<p>The linked list software component itself does not have to be configured. However, when creating a linked list and inserting items into it, the memory needed is dynamically allocated with the help of a memory pool. Because a memory pool takes memory from the heap, make sure the heap size is configured large enough with the help of macro <a href="../apiref/#configuration"><code>TBX_CONF_HEAP_SIZE</code></a>:</p>
+<pre><code class="language-c">/** \brief Configure the size of the heap in bytes. */
+#define TBX_CONF_HEAP_SIZE                       (2048U)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../mempools/" class="btn btn-neutral float-left" title="Memory pools"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../random/" class="btn btn-neutral float-right" title="Random numbers">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/feaser/microtbx" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../mempools/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../random/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

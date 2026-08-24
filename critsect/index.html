@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Critical sections - MicroTBX User Manual</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Critical sections";
+        var mkdocs_page_input_path = "critsect.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> MicroTBX User Manual
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../apiref/">API reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../misra/">MISRA compliance</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assertions/">Assertions</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Critical sections</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../heap/">Heap</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../mempools/">Memory pools</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../lists/">Linked lists</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../random/">Random numbers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../checksum/">Checksums</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../crypto/">Cryptography</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../platform/">Platform</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../extra/">Extra functionality</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">MicroTBX User Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Critical sections</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/feaser/microtbx/edit/master/docs/critsect.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="critical-sections">Critical sections</h1>
+<p>In an interrupt driven embedded software program, problems can occur with global resource sharing. A global resource can for example be a global data structure, a peripheral, or a communication device.</p>
+<p>Imagine a situation where the software program is writing to a global variable and before the write operation is completed, an interrupt occurred. The associated interrupt handler could write to the same global variable. After the interrupt is completed, to initial write operation completes. The global variable now holds invalid data.</p>
+<p>Such data concurrency issues are resolved by performing the global resource access in a critical section. In a critical section, no interrupt can occur and you can therefore be certain that you have mutual exclusive access to the global resource.</p>
+<h2 id="usage">Usage</h2>
+<p>In MicroTBX a critical section is entered by calling the function <a href="../apiref/#tbxcriticalsectionenter"><code>TbxCriticalSectionEnter()</code></a>. After this the global resource can be safely accessed. Once done, the critical section is left by calling the function <a href="../apiref/#tbxcriticalsectionexit"><code>TbxCriticalSectionExit()</code></a>.</p>
+<p>This means that both functions must always be used pair-wise. Each call to <a href="../apiref/#tbxcriticalsectionenter"><code>TbxCriticalSectionEnter()</code></a> must eventually be followed by a call to <a href="../apiref/#tbxcriticalsectionexit"><code>TbxCriticalSectionExit()</code></a>. Note that MicroTBX supports nested critical sections. It is completely fine if your software program enters the critical section again, even if it is already in a critical section.</p>
+<h2 id="examples">Examples</h2>
+<p>The following example contains a global variable <code>myMessage</code> and a function <code>TransmitMessage()</code>. Imagine that this function can be called both from the main program loop and from an interrupt. This makes variable <code>myMessage</code> a shared resource. A critical section is applied to obtain mutual exclusive access to the variable <code>myMessage</code>:</p>
+<pre><code class="language-c">struct
+{
+  uint32_t id;
+  uint8_t  len;
+  uint8_t  data[8];
+} myMessage;
+
+void TransmitMessage(void)
+{
+  /* Obtain mutual exclusive access to myMessage. */
+  TbxCriticalSectionEnter();
+  /* Prepare and send the message. */
+  myMessage.id++;
+  myMessage.len = 1u;
+  myMessage.data[0]++;
+  SendMessage(&amp;myMessage);
+  /* Release mutual exclusive access to myMessage. */
+  TbxCriticalSectionExit();
+}
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../assertions/" class="btn btn-neutral float-left" title="Assertions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../heap/" class="btn btn-neutral float-right" title="Heap">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/feaser/microtbx" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../assertions/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../heap/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
